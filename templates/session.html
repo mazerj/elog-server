@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  {% include "header.html" %}
+
+  <body>
+
+    {% include "navbar.html" %}
+
+    <div class="container">
+      <div class="panel panel-default">
+
+        <div class="panel panel-heading">
+          session: {{date}} {{animal}}
+        </div>
+
+        <div class="panel panel-body">
+          <div class="col-md-3">
+            <table class="table table-striped table-bordered">
+              <tr>
+                <td class="text-right">animal</td>
+                <td>{{animal}}</td>
+              </tr>
+              <tr>
+                <td class="text-right">date</td>
+                <td>{{date}}</td>
+              </tr>
+              <tr>
+                <td class="text-right">user</td>
+                <td>{{user}}@{{computer}}</td>
+              </tr>
+              <tr>
+                <td class="text-right">rest,tested</td>
+                <td>{{restricted|safe}} {{restricted|safe}}</td>
+              </tr>
+            </table>
+          </div>
+          <div class="col-md-3">
+            <table class="table table-striped table-bordered">
+              <tr>
+                <td class="text-right">ncorr</td>
+                <td>{{ncorrect}}</td>
+              </tr>
+              <tr>
+                <td class="text-right">ntrials</td>
+                <td>{{ntrials}}</td>
+              </tr>
+              <tr>
+                <td class="text-right">water</td>
+                <td>{{water_work}}+{{water_sup}}+{{fruit_ml}}ml</td>
+              </tr>
+              <tr>
+                <td class="text-right">fruit</td>
+                <td>{{fruit}}</td>
+              </tr>
+            </table>
+          </div>
+          <div class="col-md-3">
+            <table class="table table-striped table-bordered">
+              <tr>
+                <td class="text-right">weight</td>
+                <td>{{weight}}kg</td>
+              </tr>
+              <tr>
+                <td class="text-right">thweight</td>
+                <td>{{thweight}}kg</td>
+              </tr>
+              <tr>
+                <td class="text-right">food</td>
+                <td>{{food}}bisc</td>
+              </tr>
+              <tr>
+                <td class="text-right">totalfluid</td>
+                <td>{{totalfluid}}</td>
+              </tr>
+            </table>
+          </div>
+          <div class="col-md-3">
+            <table class="table table-striped table-bordered">
+              <tr>
+                <td class="text-right">dtb</td>
+                <td>{{dtb_ml}}ml [{{dtb}}ml/kg]</td>
+              </tr>
+              <tr>
+                <td class="text-right">xdtb</td>
+                <td>{{xdtb}}ml [{{xdtb}}ml/kg]</td>
+              </tr>
+              <tr>
+                <td class="text-right">st/ur/sk/pcv</td>
+                <td>
+		  {{health_stool|safe}}
+		  {{health_urine|safe}}
+		  {{health_skin|safe}}
+		  {{health_pcv|safe}}
+		</td>
+              </tr>
+            </table>
+          </div>
+        </div>
+
+        {% for (code, content) in note %}
+          {% if code == 0 %}
+            <tt>{{content}}</tt><br>
+          {% else %}
+            {{content|safe}}
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+
+    {% include "js.html" %}
+    {% include "footer.html" %}
+
+  </body>
+
+</html>
+

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  {% include "header.html" %}
+
+  <body>
+
+    {% include "navbar.html" %}
+
+    <div class="panel panel-default">
+      <div class="panel-heading">
+	{{ANIMAL}}
+      </div>
+      <div class="panel-body">
+	{% for year in years %}
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            {{ANIMAL}} {{year}}
+          </div>
+          <div class="panel-body">
+            {% for month in range(12,0,-1) %}
+            {% if toc[year][month]|length > 0 %}
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                {{ANIMAL}} {{year}} {{MONTHS[month]}}
+              </div>
+              <div class="panel-body">
+                <div class="list-group">
+                  {% for session in toc[year][month] %}
+                  <a href="{{session}}" class="list-group-item">
+                    {{session}}
+                  </a>
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+            {% endif %}
+            {% endfor %}
+          </div>
+        </div>
+	{% endfor %}
+      </div>
+    </div>
+
+    {% include "footer.html" %}
+    {% include "js.html" %}
+
+  </body>
+
+</html>

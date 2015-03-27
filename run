@@ -1,0 +1,11 @@
+#!/bin/sh
+
+if [ $(hostname) = 'pippin' ]; then
+    # on pippin (dev laptop) use local databae
+    export ELOG_HOST=localhost ELOG_USER=root ELOG_PASSWD="" \
+	ELOG_DIR=/usr/local/lib/elog
+else
+    # otherwise, use the production database
+    export ELOG_DIR=/auto/share/lib/elog
+fi
+python ./app.py

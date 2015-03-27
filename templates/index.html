@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  {% include "header.html" %}
+
+  <body>
+
+    {% include "navbar.html" %}
+
+    <div class="panel panel-default">
+      <div class="panel panel-heading">
+	Available Animals
+      </div>
+      <div class="panel panel-body">
+	<ul class="list-group">
+	  {% for a in ANIMALS %}
+          <li class="list-group-item"><a href="/animals/{{a}}">{{a}}</a></li>
+	  {% endfor %}
+      </div>
+    </div>
+
+
+    {% include "footer.html" %}
+    {% include "js.html" %}
+
+  </body>
+</html>

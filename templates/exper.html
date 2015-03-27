@@ -1,0 +1,14 @@
+<div class="panel panel-default">
+  <div class="panel panel-heading">
+    exper: {{exper}}
+  </div>
+  <div class="panel panel-body">
+    {% for (code, content) in note %}
+      {% if code == 0 %}
+        <tt>{{content}}</tt><br>
+      {% else %}
+        {{content|safe}}
+      {% endif %}
+    {% endfor %}
+  </div>
+</div>

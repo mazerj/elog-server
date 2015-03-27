@@ -1,0 +1,17 @@
+<div class="panel panel-default">
+  <div class="panel panel-heading">
+    {{title}}
+  </div>
+  <div class="panel panel-body">
+    {% for (code, content) in note %}
+      {% if code == 0 %}
+        {{content}}<br>
+      {% else %}
+        {{content|safe}}
+      {% endif %}
+    {% endfor %}
+  </div>
+  <div class="panel panel-footer">
+    <img src="data:image/jpg;base64,{{data|safe}}" width="700">
+  </div>
+</div>  
