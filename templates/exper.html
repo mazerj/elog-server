@@ -3,12 +3,86 @@
     exper: {{exper}}
   </div>
   <div class="panel panel-body">
+    <!-- general notes -->
     {% for (code, content) in note %}
       {% if code == 0 %}
         <tt>{{content}}</tt><br>
       {% else %}
         {{content|safe}}
       {% endif %}
+    {% endfor %}
+
+    <!-- units -->
+    {% for unit in units %}
+      <div class="panel panel-default">
+	<div class="panel panel-heading">
+	  unit: {{exper}}_{{unit['unit']}}
+	</div>
+	<div class="panel panel-body">
+	  <div class="col-md-3">
+            <table class="table table-striped table-bordered">
+              <tr>
+		<td class="text-right">date</td>
+		<td>{{unit['date']}}</td>
+              </tr>
+              <tr>
+		<td class="text-right">well</td>
+		<td>#{{unit['well']}}</td>
+              </tr>
+	      <tr>
+		<td class="text-right">wellloc</td>
+		<td>{{unit['wellloc']}}</td>
+	      </tr>
+	    </table>
+	  </div>
+	  <div class="col-md-3">
+            <table class="table table-striped table-bordered">
+	      <tr>
+		<td class="text-right">area</td>
+		<td>{{unit['area']}}-{{unit['hemi']}}</td>
+	      </tr>
+	      <tr>
+		<td class="text-right">depth</td>
+		<td>{{unit['depth']}}um</td>
+	      </tr>
+	      <tr>
+		<td class="text-right">quality</td>
+		<td>{{unit['quality']}}/10</td>
+	      </tr>
+	    </table>
+	  </div>
+	  <div class="col-md-4">
+            <table class="table table-striped table-bordered">
+	      <tr>
+		<td class="text-right">ori</td>
+		<td>{{unit['ori']}}</td>
+	      </tr>
+	      <tr>
+		<td class="text-right">color</td>
+		<td>{{unit['color']}}</td>
+	      </tr>
+	      <tr>
+		<td class="text-right">rf</td>
+		<td>({{unit['rfx']|int}},{{unit['rfy']|int}})
+		  r={{unit['rfr']|int}}px</td>
+	      </tr>
+	      <tr>
+		<td class="text-right">latency</td>
+		<td>{{unit['latency']}}ms</td>
+	      </tr>
+	    </table>
+	  </div>
+	</div>
+
+        <!-- general notes -->
+        {% for (code, content) in unit['note'] %}
+          {% if code == 0 %}
+            <tt>{{content}}</tt><br>
+          {% else %}
+            {{content|safe}}
+          {% endif %}
+        {% endfor %}
+      </div>
     {% endfor %}
   </div>
 </div>

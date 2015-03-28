@@ -1,12 +1,11 @@
 # -*- Mode: Python; tab-width: 4; py-indent-offset: 4; -*-
 
 import sys, os, types
-from flask import Flask, render_template, send_from_directory, request
-import re, cgi
-import markdown
+from flask import Flask, render_template, send_from_directory, url_for
+import re, textwrap
 
 #sys.path.append('%s/lib/elog' % os.path.dirname(os.path.dirname(sys.argv[0])))
-#sys.path.append('/usr/local/lib/elog')
+
 sys.path.append(os.environ['ELOG_DIR'])
 from elogapi import getdb
 
@@ -29,7 +28,6 @@ def getanimals():
     db = getdb()
     rows = db.query("""SELECT animal FROM session WHERE 1""")
     return sorted(list(set([row['animal'] for row in rows])))
-
 
 def expandattachment(id):
     env = baseenv(ANIMAL=id)
@@ -58,6 +56,13 @@ def expandexper(id):
             env[k] = 'ND'
 
     env['note'] = expandnote(env['note'])
+
+    rows = db.query("""SELECT * FROM unit WHERE """\
+                    """exper='%s'""" % (env['exper'],))
+    env['units'] = rows
+    for u in env['units']:
+        u['note'] = expandnote(u['note'])
+
     return render_template("exper.html", **env)
 
 
@@ -80,9 +85,11 @@ def expandnote(note):
         else:
             frags = note[k0:].split('\n')
         for j in frags:
-            j = mar
-            n.append((0, j,))
-            
+            lines = textwrap.wrap(j, 80)
+            for lno in range(len(lines)):
+                if lno > 0:
+                    n.append((1, '&nbsp;'*10,))
+                n.append((0, lines[lno],))
         if l:
             ltype = l.split(' ')[2].split('/')[1]
             lid = l.split(' ')[2].split('/')[2]
@@ -140,6 +147,12 @@ def sessions(id, date):
 
     env['restricted'] = CHECKS[env['restricted']]
     env['tested'] = CHECKS[env['tested']]
+
+    env['dtb'] = int(round(env['dtb']))
+    env['dtb_ml'] = int(round(env['dtb_ml']))
+    env['xdtb'] = int(round(env['xdtb']))
+    env['xdtb_ml'] = int(round(env['xdtb_ml']))
+
     env['health_stool'] = CHECKS[env['health_stool']]
     env['health_skin'] = CHECKS[env['health_skin']]
     env['health_urine'] = CHECKS[env['health_urine']]
@@ -165,8 +178,17 @@ def fonts(path):
 
 @app.route('/search', methods=['POST'])
 def search():
-    return 'searching for: %s' % request.form['pattern']
-
+    from flask import redirect, request, url_for
+    db = getdb()
+    rows = db.query("""SELECT * FROM exper WHERE """
+                   """ exper='%s'""" % (request.form['pattern']))
+    if rows:
+        if len(rows) == 1:
+            return redirect('/animals/%s/sessions/%s' % (rows[0]['animal'],rows[0]['date']))
+        else:
+            return 'multiple matches for: %s' % request.form['pattern']
+    else:
+        return 'no match for: %s' % request.form['pattern']
 
 if __name__ == "__main__":
     import logging

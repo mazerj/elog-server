@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+
+{% include "header.html" %}
+
+
+<body>
+
+  {% include "navbar.html" %}
+
+  <div class="container">
+    <div class="well">
+      {% for (name, link) in results %}
+        <a class="btn btn-primary col-md-2" href="{{link}}">{{name}}</a></li>
+      {% endfor %}
+    </div>
+  </div> <!-- /container -->
+
+  <!-- Bootstrap core JavaScript
+  ================================================== -->
+  <!-- Placed at the end of the document so the pages load faster -->
+  <script src="/static/jquery.min.js"></script>
+  <script src="/static/bootstrap.min.js"></script>
+
+</body>
+
+{% include "footer.html" %}
+
+</html>
