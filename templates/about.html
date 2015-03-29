@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  {% include "header.html" %}
+
+  <body>
+
+    {% include "navbar.html" %}
+
+    <div class="panel panel-default">
+      <div class="panel-heading">
+	elog database info
+      </div>
+      <div class="panel-body">
+        <ul class="list-group">
+	  <li class="list-group-item"><strong>host:</strong> {{db['host']}}</li>
+	  <li class="list-group-item"><strong>port:</strong> {{db['port']}}</li>
+	  <li class="list-group-item"><strong>user:</strong> {{db['user']}}</li>
+        </ul>
+      </div>
+    </div>
+
+    {% include "footer.html" %}
+    {% include "js.html" %}
+
+  </body>
+
+</html>

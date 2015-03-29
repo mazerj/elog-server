@@ -164,6 +164,12 @@ def index():
     env['ANIMALS'] = getanimals()
     return render_template("index.html", **env)
 
+@app.route('/about')
+def about():
+    env = baseenv()
+    env['db'] = getdb()
+    return render_template("about.html", **env)
+
 @app.route('/animals/<id>')
 def animals(id):
     env = baseenv(ANIMAL=id)
