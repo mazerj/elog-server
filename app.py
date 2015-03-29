@@ -121,7 +121,8 @@ def findsessions(pattern):
         date = x.group(2)
     rows = db.query("""SELECT * FROM session WHERE """
                     """ animal LIKE '%s' AND """
-                    """ CAST(date AS char) LIKE '%%%s%%' ORDER BY date DESC""" % (animal, date))
+                    """ CAST(date AS char) LIKE '%%%s%%' """
+                    """ ORDER BY date DESC""" % (animal, date))
     if rows:
         return ['/animals/%s/sessions/%s' % (x['animal'], x['date']) for x in rows]
 
@@ -151,14 +152,41 @@ def safeint(x):
         return 'ND'
 
 
-###########################################################################################
+from functools import wraps
+from flask import request, Response
+
+def check_auth(username, password):
+    """This function is called to check if a username /
+    password combination is valid.
+    """
+    return username == 'admin' and password == 'secret'
+
+def authenticate():
+    """Sends a 401 response that enables basic auth"""
+    return Response(
+    'Could not verify your access level for that URL.\n'
+    'You have to login with proper credentials', 401,
+    {'WWW-Authenticate': 'Basic realm="Login Required"'})
+
+def requires_auth(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        auth = request.authorization
+        if not auth or not check_auth(auth.username, auth.password):
+            return authenticate()
+        return f(*args, **kwargs)
+    return decorated
+
+
+########################################################################
 #  Actual server is implmemented starting here
-###########################################################################################
+########################################################################
 
 
 app=Flask(__name__)
 
 @app.route('/')
+@requires_auth
 def index():
     env = baseenv()
     env['ANIMALS'] = getanimals()
@@ -249,16 +277,26 @@ def search():
     elif len(links) >= 1:
         env = baseenv()
         return render_template("searchresult.html",
-                               message="'%s': %d matches." % (request.form['pattern'], len(links),),
+                               message="'%s': %d matches." % \
+                               (request.form['pattern'], len(links),),
                                items=links, **env)
     else:
         env = baseenv()
         return render_template("searchresult.html",
-                               message="'%s': no matches." % (request.form['pattern'],),
+                               message="'%s': no matches." % \
+                               (request.form['pattern'],),
                                items=[], **env)
     
 if __name__ == "__main__":
+    from OpenSSL import SSL
     import logging
+    
+    context = SSL.Context(SSL.SSLv23_METHOD)
+    context.use_privatekey_file('server.key')
+    context.use_certificate_file('server.crt')
+
     log = logging.getLogger('werkzeug')
     #log.setLevel(logging.ERROR)
-	app.run(debug=True)
+    
+	#app.run(debug=True)
+    app.run(debug=True, ssl_context=context)
