@@ -1,6 +1,6 @@
 # -*- Mode: Python; tab-width: 4; py-indent-offset: 4; -*-
 
-import sys, os, types
+import sys, os, types, string
 from flask import Flask, render_template, send_from_directory, url_for
 import re, textwrap
 
@@ -100,6 +100,61 @@ def expandnote(note):
             k0 = k + len(l)
     return n
 
+def findsessions(pattern):
+    """returns list of links to matching sessions"""
+    
+    db = getdb()
+
+    # look for matching exper
+    rows = db.query("""SELECT * FROM exper WHERE """
+                    """ exper LIKE '%%%s%%' ORDER BY date DESC""" % (pattern))
+    if rows:
+        return ['/animals/%s/sessions/%s' % (x['animal'], x['date']) for x in rows]
+
+    # look for matching session
+    x = re.match('(.*)[/ ](.*)', pattern)
+    if x is None or len(x.groups()) < 2:
+        animal = '%'
+        date = pattern
+    else:
+        animal = x.group(1)
+        date = x.group(2)
+    rows = db.query("""SELECT * FROM session WHERE """
+                    """ animal LIKE '%s' AND """
+                    """ CAST(date AS char) LIKE '%%%s%%' ORDER BY date DESC""" % (animal, date))
+    if rows:
+        return ['/animals/%s/sessions/%s' % (x['animal'], x['date']) for x in rows]
+
+    # last resort -- search NOTE fields in session, exper etc..
+    rows = db.query("""SELECT * FROM session WHERE note LIKE '%%%s%%'""" % pattern)
+    if rows:
+        return ['/animals/%s/sessions/%s' % (x['animal'], x['date']) for x in rows]
+    
+    rows = db.query("""SELECT * FROM exper WHERE note LIKE '%%%s%%'""" % pattern)
+    if rows:
+        return ['/animals/%s/sessions/%s' % (x['animal'], x['date']) for x in rows]
+
+    rows = db.query("""SELECT * FROM exper WHERE unit LIKE '%%%s%%'""" % pattern)
+    if rows:
+        return ['/animals/%s/sessions/%s' % (x['animal'], x['date']) for x in rows]
+
+    rows = db.query("""SELECT * FROM exper WHERE dfile LIKE '%%%s%%'""" % pattern)
+    if rows:
+        return ['/animals/%s/sessions/%s' % (x['animal'], x['date']) for x in rows]
+
+    return []
+
+def safeint(x):
+    try:
+        return int(round(x))
+    except TypeError:
+        return 'ND'
+
+
+###########################################################################################
+#  Actual server is implmemented starting here
+###########################################################################################
+
 
 app=Flask(__name__)
 
@@ -148,10 +203,10 @@ def sessions(id, date):
     env['restricted'] = CHECKS[env['restricted']]
     env['tested'] = CHECKS[env['tested']]
 
-    env['dtb'] = int(round(env['dtb']))
-    env['dtb_ml'] = int(round(env['dtb_ml']))
-    env['xdtb'] = int(round(env['xdtb']))
-    env['xdtb_ml'] = int(round(env['xdtb_ml']))
+    env['dtb'] = safeint(env['dtb'])
+    env['dtb_ml'] = safeint(env['dtb_ml'])
+    env['xdtb'] = safeint(env['xdtb'])
+    env['xdtb_ml'] = safeint(env['xdtb_ml'])
 
     env['health_stool'] = CHECKS[env['health_stool']]
     env['health_skin'] = CHECKS[env['health_skin']]
@@ -176,22 +231,28 @@ def fonts(path):
     except Exception, e:
         return str(e)
 
+
 @app.route('/search', methods=['POST'])
 def search():
     from flask import redirect, request, url_for
     db = getdb()
-    rows = db.query("""SELECT * FROM exper WHERE """
-                   """ exper='%s'""" % (request.form['pattern']))
-    if rows:
-        if len(rows) == 1:
-            return redirect('/animals/%s/sessions/%s' % (rows[0]['animal'],rows[0]['date']))
-        else:
-            return 'multiple matches for: %s' % request.form['pattern']
-    else:
-        return 'no match for: %s' % request.form['pattern']
 
+    links = findsessions(request.form['pattern'])
+    if len(links) == 1:
+        return redirect(links[0])
+    elif len(links) >= 1:
+        env = baseenv()
+        return render_template("searchresult.html",
+                               message="'%s': %d matches." % (request.form['pattern'], len(links),),
+                               items=links, **env)
+    else:
+        env = baseenv()
+        return render_template("searchresult.html",
+                               message="'%s': no matches." % (request.form['pattern'],),
+                               items=[], **env)
+    
 if __name__ == "__main__":
     import logging
     log = logging.getLogger('werkzeug')
-    log.setLevel(logging.ERROR)
+    #log.setLevel(logging.ERROR)
 	app.run(debug=True)

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  {% include "header.html" %}
+
+  <body>
+
+    {% include "navbar.html" %}
+
+    <div class="panel panel-warning">
+      <div class="panel panel-heading">
+	{{message}}
+      </div>
+      <div class="panel panel-body">
+	{% for item in items %}
+          <a href="{{item}}" class="list-group-item">
+            {{item}}
+          </a>
+        {% endfor %}
+      </div>
+    </div>
+
+
+    {% include "footer.html" %}
+    {% include "js.html" %}
+
+  </body>
+</html>
