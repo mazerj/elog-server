@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  {% include "header.html" %}
+
+  <body>
+
+    {% include "navbar.html" %}
+
+    <div class="container">
+      {% for animal in animals %}
+        <div class="panel panel-default">
+          <div class="panel panel-heading">
+            <strong>
+	      Monthly Fluid/Health Records -- {{date0}} -- {{animal}}
+	    </strong>
+          </div>
+
+          <div class="panel panel-body">
+            <table class="table table-striped table-bordered">
+              <tr>
+	        {% for e in header %}
+                  <th><strong>{{e|safe}}</strong></th>
+		{% endfor %}
+              </tr>
+	        {% for row in data[animal] %}
+                <tr>
+	          {% for e in row %}
+                    <td>{{e|safe}}</td>
+		  {% endfor %}
+                </tr>
+	      {% endfor %}
+	    </table>
+          </div>
+	</div>
+      {% endfor %}
+    </div>
+
+    {% include "js.html" %}
+    {% include "footer.html" %}
+
+  </body>
+
+</html>
+

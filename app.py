@@ -4,10 +4,7 @@ import sys, os, types, string
 import re, textwrap
 
 from flask import *
-#from flask import Flask, render_template, send_from_directory, url_for
-#from flask import request, Response
 from functools import wraps
-
 
 #sys.path.append('%s/lib/elog' % os.path.dirname(os.path.dirname(sys.argv[0])))
 
@@ -159,7 +156,8 @@ def findsessions(pattern):
     rows = db.query("""SELECT * FROM exper WHERE """
                     """ exper LIKE '%%%s%%' ORDER BY date DESC""" % (pattern))
     if rows:
-        return ['/animals/%s/sessions/%s' % (x['animal'], x['date']) for x in rows]
+        return ['/animals/%s/sessions/%s' % \
+                (x['animal'], x['date']) for x in rows]
 
     # look for matching session
     x = re.match('(.*)[/ ](.*)', pattern)
@@ -174,24 +172,33 @@ def findsessions(pattern):
                     """ CAST(date AS char) LIKE '%%%s%%' """
                     """ ORDER BY date DESC""" % (animal, date))
     if rows:
-        return ['/animals/%s/sessions/%s' % (x['animal'], x['date']) for x in rows]
+        return ['/animals/%s/sessions/%s' % \
+                (x['animal'], x['date']) for x in rows]
 
     # last resort -- search NOTE fields in session, exper etc..
-    rows = db.query("""SELECT * FROM session WHERE note LIKE '%%%s%%'""" % pattern)
+    rows = db.query("""SELECT * FROM session WHERE note LIKE '%%%s%%'""" % \
+                    pattern)
     if rows:
-        return ['/animals/%s/sessions/%s' % (x['animal'], x['date']) for x in rows]
+        return ['/animals/%s/sessions/%s' % (x['animal'], x['date']) \
+                for x in rows]
     
-    rows = db.query("""SELECT * FROM exper WHERE note LIKE '%%%s%%'""" % pattern)
+    rows = db.query("""SELECT * FROM exper WHERE note LIKE '%%%s%%'""" % \
+                    pattern)
     if rows:
-        return ['/animals/%s/sessions/%s' % (x['animal'], x['date']) for x in rows]
+        return ['/animals/%s/sessions/%s' % (x['animal'], x['date']) \
+                for x in rows]
 
-    rows = db.query("""SELECT * FROM exper WHERE unit LIKE '%%%s%%'""" % pattern)
+    rows = db.query("""SELECT * FROM exper WHERE unit LIKE '%%%s%%'""" % \
+                    pattern)
     if rows:
-        return ['/animals/%s/sessions/%s' % (x['animal'], x['date']) for x in rows]
+        return ['/animals/%s/sessions/%s' % (x['animal'], x['date']) \
+                for x in rows]
 
-    rows = db.query("""SELECT * FROM exper WHERE dfile LIKE '%%%s%%'""" % pattern)
+    rows = db.query("""SELECT * FROM exper WHERE dfile LIKE '%%%s%%'""" % \
+                    pattern)
     if rows:
-        return ['/animals/%s/sessions/%s' % (x['animal'], x['date']) for x in rows]
+        return ['/animals/%s/sessions/%s' % (x['animal'], x['date']) \
+                for x in rows]
 
     return []
 
@@ -201,6 +208,7 @@ def check_auth(username, password):
     is valid.
     """
     if username in USERS and USERS[username] == password:
+        session['username'] = username
         return True
     else:
         return False
@@ -239,6 +247,7 @@ def index():
 def about():
     env = baseenv()
     env['db'] = getdb()
+    env['session'] = session
     return render_template("about.html", **env)
 
 @app.route('/animals/<id>')
@@ -333,7 +342,27 @@ def search():
                                message="'%s': no matches." % \
                                (request.form['pattern'],),
                                items=[], **env)
-    
+
+@app.route('/report/fluids/<int:year>-<int:month>')
+def fluids_specific(year, month):
+    from report_fluid import report
+    env = report('%04d-%02d-01' % (year, month))
+    return render_template("report_fluid.html", **env)
+
+@app.route('/report/pick')
+def pick():
+    db = getdb()
+
+    rows = db.query("""SELECT date FROM session WHERE 1""")
+    l = sorted(uniq(['/report/fluids/%s' % d[:7] \
+                     for d in ['%s' % r['date'] for r in rows]]))[::-1]
+    env = baseenv()
+    return render_template("searchresult.html",
+                           message="Monthly logs for ...",
+                           items=l, **env)
+
+app.secret_key = "aslLKJLjkasdf90u8s(&*(&assdfslkjfasLKJdf8"
+
 if __name__ == "__main__":
     if not LOG:
         import logging
