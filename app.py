@@ -1,27 +1,43 @@
 # -*- Mode: Python; tab-width: 4; py-indent-offset: 4; -*-
 
 import sys, os, types, string
-from flask import Flask, render_template, send_from_directory, url_for
 import re, textwrap
+
+from flask import Flask, render_template, send_from_directory, url_for
+from flask import request, Response
+from functools import wraps
+
 
 #sys.path.append('%s/lib/elog' % os.path.dirname(os.path.dirname(sys.argv[0])))
 
 sys.path.append(os.environ['ELOG_DIR'])
 from elogapi import getdb
 
+LOG=True
+SSL=True
 
 CHECKS = { 1:("""<span class="glyphicon glyphicon-check" """ \
                 """aria-hidden="true"></span>"""),
           0:("""<span class="glyphicon glyphicon-unchecked" """
                 """ aria-hidden="true"></span>""") }
-MONTH_NAMES= ( '', 'jan', 'feb', 'mar', 'apr', 'may', 'jun', \
-               'jul', 'aug', 'sept', 'oct', 'nov', 'dec' )
+MONTH_NAMES= ( '', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', \
+               'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec' )
 
+USERS = { 'admin':'f00lish0one',
+          'public':'boring99',
+          'mazer':'the-0ne' }
+
+# Useful helper functions
 
 def uniq(s): return list(set(s))
 
+def safeint(x):
+    try:
+        return int(round(x))
+    except TypeError:
+        return 'ND'
+
 def baseenv(**env):
-    db = getdb()
     return env
 
 def getanimals():
@@ -29,47 +45,62 @@ def getanimals():
     rows = db.query("""SELECT animal FROM session WHERE 1""")
     return sorted(list(set([row['animal'] for row in rows])))
 
-def expandattachment(id):
-    env = baseenv(ANIMAL=id)
-    db = getdb()
-    row = db.query("""SELECT * FROM attachment WHERE"""
-                   """ attachmentID=%s""" % (id,))[0]
-    row['date'] = '%s' % row['date']
-    env.update(row)
-    
-    for k in env.keys():
-        if type(env[k]) is types.StringType and len(env[k]) == 0:
-            env[k] = 'ND'
-
-    env['note'] = expandnote(env['note'])
-    return render_template("attachment.html", **env)
-
-def expandexper(id):
-    env = baseenv(ANIMAL=id)
-    db = getdb()
-    row = db.query("""SELECT * FROM exper WHERE exper='%s'""" % (id,))[0]
-    row['date'] = '%s' % row['date']
-    env.update(row)
-    
-    for k in env.keys():
-        if type(env[k]) is types.StringType and len(env[k]) == 0:
-            env[k] = 'ND'
-
-    env['note'] = expandnote(env['note'])
-
-    rows = db.query("""SELECT * FROM unit WHERE """\
-                    """exper='%s'""" % (env['exper'],))
-    env['units'] = rows
-    for u in env['units']:
-        u['note'] = expandnote(u['note'])
-
-    return render_template("exper.html", **env)
-
-
 def expandnote(note):
-    # this converts the note to a list of lines (0, 'linetext..) and
-    # links (1, '/link/here') can can be parsed inside the jinja
-    # template to generate buttons and text..
+    """
+    Converts a 'note' into a list of tokens of the form:
+      (0, 'linetext..) or (1, '/link/here')
+    can can be easily parsed inside a jinja template. This will
+    recursively expand 'notes' inside notes to handle links to
+    expers and attachments etc..
+    """
+
+    def expandattachment(id):
+        env = baseenv(ANIMAL=id)
+        db = getdb()
+        row = db.query("""SELECT * FROM attachment WHERE"""
+                       """ attachmentID=%s""" % (id,))[0]
+        row['date'] = '%s' % row['date']
+        env.update(row)
+
+        for k in env.keys():
+            if type(env[k]) is types.StringType and len(env[k]) == 0:
+                env[k] = 'ND'
+
+        env['note'] = expandnote(env['note'])
+        return render_template("attachment.html", **env)
+
+    def expandexper(id):
+        env = baseenv(ANIMAL=id)
+        db = getdb()
+        row = db.query("""SELECT * FROM exper WHERE exper='%s'""" % (id,))[0]
+        row['date'] = '%s' % row['date']
+        env.update(row)
+
+        for k in env.keys():
+            if type(env[k]) is types.StringType and len(env[k]) == 0:
+                env[k] = 'ND'
+
+        env['note'] = expandnote(env['note'])
+
+        rows = db.query("""SELECT * FROM unit WHERE """\
+                        """exper='%s'""" % (env['exper'],))
+        env['units'] = rows
+        for u in env['units']:
+            u['note'] = expandnote(u['note'])
+
+        rows = db.query("""SELECT * FROM dfile WHERE """\
+                        """exper='%s'""" % (env['exper'],))
+        env['dfiles'] = rows
+        for d in env['dfiles']:
+            d['note'] = expandnote(d['note'])
+            d['crap'] = CHECKS[d['crap']]
+        for k in d.keys():
+            if type(d[k]) is types.StringType and len(d[k]) == 0:
+                d[k] = 'ND'
+            
+
+        return render_template("exper.html", **env)
+    
     note = re.sub('<elog:exper=(.*)/(.*)>', '< ELOG /expers/\\2 >', note)
     note = re.sub('<elog:attach=(.*)>',     '< ELOG /attachments/\\1 >', note)
 
@@ -101,7 +132,12 @@ def expandnote(note):
     return n
 
 def findsessions(pattern):
-    """returns list of links to matching sessions"""
+    """
+    Search function that tried to find sessions that match the pattern. The
+    pattern could be the session animal/date combination, an exper id or
+    simply a string that occurs inside on of the 'note' fields. Not a full
+    search, but good enough to get most things
+    """
     
     db = getdb()
 
@@ -145,28 +181,21 @@ def findsessions(pattern):
 
     return []
 
-def safeint(x):
-    try:
-        return int(round(x))
-    except TypeError:
-        return 'ND'
-
-
-from functools import wraps
-from flask import request, Response
-
 def check_auth(username, password):
-    """This function is called to check if a username /
-    password combination is valid.
     """
-    return username == 'admin' and password == 'secret'
+    This function is called to check if a username / password combination
+    is valid.
+    """
+    if username in USERS and USERS[username] == password:
+        return True
+    else:
+        return False
 
 def authenticate():
     """Sends a 401 response that enables basic auth"""
-    return Response(
-    'Could not verify your access level for that URL.\n'
-    'You have to login with proper credentials', 401,
-    {'WWW-Authenticate': 'Basic realm="Login Required"'})
+    return Response(("""Could not verify your access level for that URL.\n"""
+                     """You have to login with proper credentials"""),
+                    401, {'WWW-Authenticate':'Basic realm="Login Required"'})
 
 def requires_auth(f):
     @wraps(f)
@@ -199,6 +228,7 @@ def about():
     return render_template("about.html", **env)
 
 @app.route('/animals/<id>')
+@requires_auth
 def animals(id):
     env = baseenv(ANIMAL=id)
     db = getdb()
@@ -222,6 +252,7 @@ def animals(id):
     return render_template("animals_toc.html", **env)
 
 @app.route('/animals/<id>/sessions/<date>')
+@requires_auth
 def sessions(id, date):
     env = baseenv(ANIMAL=id)
     db = getdb()
@@ -267,6 +298,7 @@ def fonts(path):
 
 
 @app.route('/search', methods=['POST'])
+@requires_auth
 def search():
     from flask import redirect, request, url_for
     db = getdb()
@@ -288,15 +320,16 @@ def search():
                                items=[], **env)
     
 if __name__ == "__main__":
-    from OpenSSL import SSL
-    import logging
-    
-    context = SSL.Context(SSL.SSLv23_METHOD)
-    context.use_privatekey_file('server.key')
-    context.use_certificate_file('server.crt')
+    if not LOG:
+        import logging
+        log = logging.getLogger('werkzeug')
+        log.setLevel(logging.ERROR)
 
-    log = logging.getLogger('werkzeug')
-    #log.setLevel(logging.ERROR)
-    
-	#app.run(debug=True)
-    app.run(debug=True, ssl_context=context)
+    if SSL:
+        from OpenSSL import SSL
+        context = SSL.Context(SSL.SSLv23_METHOD)
+        context.use_privatekey_file('server.key')
+        context.use_certificate_file('server.crt')
+        app.run(debug=True, ssl_context=context)
+    else:
+        app.run(debug=True)

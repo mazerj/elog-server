@@ -22,15 +22,15 @@
 	  <div class="col-md-3">
             <table class="table table-striped table-bordered">
               <tr>
-		<td class="text-right">date</td>
+		<td class="text-right"><strong>date</strong></td>
 		<td>{{unit['date']}}</td>
               </tr>
               <tr>
-		<td class="text-right">well</td>
+		<td class="text-right"><strong>well</strong></td>
 		<td>#{{unit['well']}}</td>
               </tr>
 	      <tr>
-		<td class="text-right">wellloc</td>
+		<td class="text-right"><strong>wellloc</strong></td>
 		<td>{{unit['wellloc']}}</td>
 	      </tr>
 	    </table>
@@ -38,15 +38,15 @@
 	  <div class="col-md-3">
             <table class="table table-striped table-bordered">
 	      <tr>
-		<td class="text-right">area</td>
+		<td class="text-right"><strong>area</strong></td>
 		<td>{{unit['area']}}-{{unit['hemi']}}</td>
 	      </tr>
 	      <tr>
-		<td class="text-right">depth</td>
+		<td class="text-right"><strong>depth</strong></td>
 		<td>{{unit['depth']}}um</td>
 	      </tr>
 	      <tr>
-		<td class="text-right">quality</td>
+		<td class="text-right"><strong>quality</strong></td>
 		<td>{{unit['quality']}}/10</td>
 	      </tr>
 	    </table>
@@ -54,20 +54,20 @@
 	  <div class="col-md-4">
             <table class="table table-striped table-bordered">
 	      <tr>
-		<td class="text-right">ori</td>
+		<td class="text-right"><strong>ori</strong></td>
 		<td>{{unit['ori']}}</td>
 	      </tr>
 	      <tr>
-		<td class="text-right">color</td>
+		<td class="text-right"><strong>color</strong></td>
 		<td>{{unit['color']}}</td>
 	      </tr>
 	      <tr>
-		<td class="text-right">rf</td>
+		<td class="text-right"><strong>rf</strong></td>
 		<td>({{unit['rfx']|int}},{{unit['rfy']|int}})
 		  r={{unit['rfr']|int}}px</td>
 	      </tr>
 	      <tr>
-		<td class="text-right">latency</td>
+		<td class="text-right"><strong>lat</strong></td>
 		<td>{{unit['latency']}}ms</td>
 	      </tr>
 	    </table>
@@ -82,6 +82,48 @@
             {{content|safe}}
           {% endif %}
         {% endfor %}
+      </div>
+    {% endfor %}
+
+
+    {% for d in dfiles %}
+      <div class="panel panel-default">
+	<div class="panel panel-heading">
+	  file: {{d['src']}}
+	</div>
+	<div class="panel panel-body">
+	  <div class="col-md-3">
+            <table class="table table-striped table-bordered">
+              <tr>
+		<td class="text-right"><strong>crap</strong></td>
+		<td>{{d['crap']|safe}}</td>
+	      </tr>
+	    </table>
+	  </div>
+	  <div class="col-md-3">
+            <table class="table table-striped table-bordered">
+              <tr>
+		<td class="text-right"><strong>lat</strong></td>
+		<td>{{d['latency']}}ms</td>
+	      </tr>
+	    </table>
+	  </div>
+	  <div class="col-md-3">
+            <table class="table table-striped table-bordered">
+              <tr>
+		<td class="text-right"><strong>winsize</strong></td>
+		<td>{{d['winsize']}}ms</td>
+	      </tr>
+	    </table>
+	  </div>
+          {% for (code, content) in d['note'] %}
+            {% if code == 0 %}
+              <tt>{{content}}</tt><br>
+            {% else %}
+              {{content|safe}}
+            {% endif %}
+	  {% endfor %}
+	</div>
       </div>
     {% endfor %}
   </div>
