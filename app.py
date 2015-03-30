@@ -13,6 +13,7 @@ from elogapi import getdb
 
 LOG=True
 SSL=True
+HOST='0.0.0.0'
 
 CHECKS = { 1:("""<span class="glyphicon glyphicon-check" """ \
                 """aria-hidden="true"></span>"""),
@@ -21,9 +22,11 @@ CHECKS = { 1:("""<span class="glyphicon glyphicon-check" """ \
 MONTH_NAMES= ( '', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', \
                'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec' )
 
-USERS = { 'admin':'f00lish0one',
+USERS = { 'mlab':'mlab',
+          'admin':'f00lish0one',
           'public':'boring99',
-          'mazer':'the-0ne' }
+          'mazer':'the-0ne'
+          }
 
 # Useful helper functions
 
@@ -375,8 +378,8 @@ if __name__ == "__main__":
             context = SSL.Context(SSL.SSLv23_METHOD)
             context.use_privatekey_file('server.key')
             context.use_certificate_file('server.crt')
-            app.run(debug=True, ssl_context=context)
+            app.run(debug=True, ssl_context=context, host=HOST)
         else:
             app.run(debug=True, ssl_context=('server.crt', 'server.key'))
     else:
-        app.run(debug=True)
+        app.run(debug=True, host=HOST)
