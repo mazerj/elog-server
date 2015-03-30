@@ -3,8 +3,9 @@
 import sys, os, types, string
 import re, textwrap
 
-from flask import Flask, render_template, send_from_directory, url_for
-from flask import request, Response
+from flask import *
+#from flask import Flask, render_template, send_from_directory, url_for
+#from flask import request, Response
 from functools import wraps
 
 
@@ -37,11 +38,17 @@ def safeint(x):
     except TypeError:
         return 'ND'
 
+def today(n=0):
+    import datetime
+    return (datetime.datetime.now() -
+            datetime.timedelta(days=n)).strftime("%Y-%m-%d")
+
 def baseenv(**env):
     return env
 
 def getanimals():
     db = getdb()
+    print db
     rows = db.query("""SELECT animal FROM session WHERE 1""")
     return sorted(list(set([row['animal'] for row in rows])))
 
@@ -119,7 +126,7 @@ def expandnote(note):
             lines = textwrap.wrap(j, 80)
             for lno in range(len(lines)):
                 if lno > 0:
-                    n.append((1, '&nbsp;'*10,))
+                    n.append((1, '.. '+'&nbsp;'*8,))
                 n.append((0, lines[lno],))
         if l:
             ltype = l.split(' ')[2].split('/')[1]
@@ -140,6 +147,13 @@ def findsessions(pattern):
     """
     
     db = getdb()
+
+    if pattern.lower() == '=today':
+        pattern = today(0)
+    elif pattern.lower() == '=yesterday':
+        pattern = today(-1)
+
+    print pattern
 
     # look for matching exper
     rows = db.query("""SELECT * FROM exper WHERE """
@@ -304,6 +318,7 @@ def search():
     db = getdb()
 
     links = findsessions(request.form['pattern'])
+    
     if len(links) == 1:
         return redirect(links[0])
     elif len(links) >= 1:
@@ -326,10 +341,13 @@ if __name__ == "__main__":
         log.setLevel(logging.ERROR)
 
     if SSL:
-        from OpenSSL import SSL
-        context = SSL.Context(SSL.SSLv23_METHOD)
-        context.use_privatekey_file('server.key')
-        context.use_certificate_file('server.crt')
-        app.run(debug=True, ssl_context=context)
+        if 0:
+            from OpenSSL import SSL
+            context = SSL.Context(SSL.SSLv23_METHOD)
+            context.use_privatekey_file('server.key')
+            context.use_certificate_file('server.crt')
+            app.run(debug=True, ssl_context=context)
+        else:
+            app.run(debug=True, ssl_context=('server.crt', 'server.key'))
     else:
         app.run(debug=True)

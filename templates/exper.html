@@ -19,7 +19,7 @@
 	  unit: {{exper}}_{{unit['unit']}}
 	</div>
 	<div class="panel panel-body">
-	  <div class="col-md-3">
+	  <div class="col-md-2">
             <table class="table table-striped table-bordered">
               <tr>
 		<td class="text-right"><strong>date</strong></td>
@@ -35,24 +35,28 @@
 	      </tr>
 	    </table>
 	  </div>
-	  <div class="col-md-3">
+	  <div class="col-md-2">
             <table class="table table-striped table-bordered">
 	      <tr>
 		<td class="text-right"><strong>area</strong></td>
-		<td>{{unit['area']}}-{{unit['hemi']}}</td>
+		<td>{{unit['area']}}</td>
+	      </tr>
+	      <tr>
+		<td class="text-right"><strong>hemi</strong></td>
+		<td>{{unit['hemi']}}</td>
 	      </tr>
 	      <tr>
 		<td class="text-right"><strong>depth</strong></td>
 		<td>{{unit['depth']}}um</td>
 	      </tr>
+	    </table>
+	  </div>
+	  <div class="col-md-2">
+            <table class="table table-striped table-bordered">
 	      <tr>
 		<td class="text-right"><strong>quality</strong></td>
 		<td>{{unit['quality']}}/10</td>
 	      </tr>
-	    </table>
-	  </div>
-	  <div class="col-md-4">
-            <table class="table table-striped table-bordered">
 	      <tr>
 		<td class="text-right"><strong>ori</strong></td>
 		<td>{{unit['ori']}}</td>
@@ -61,6 +65,10 @@
 		<td class="text-right"><strong>color</strong></td>
 		<td>{{unit['color']}}</td>
 	      </tr>
+	    </table>
+	  </div>
+	  <div class="col-md-2">
+            <table class="table table-striped table-bordered">
 	      <tr>
 		<td class="text-right"><strong>rf</strong></td>
 		<td>({{unit['rfx']|int}},{{unit['rfy']|int}})
@@ -92,7 +100,7 @@
 	  file: {{d['src']}}
 	</div>
 	<div class="panel panel-body">
-	  <div class="col-md-3">
+	  <div class="col-md-2">
             <table class="table table-striped table-bordered">
               <tr>
 		<td class="text-right"><strong>crap</strong></td>
@@ -100,7 +108,7 @@
 	      </tr>
 	    </table>
 	  </div>
-	  <div class="col-md-3">
+	  <div class="col-md-2">
             <table class="table table-striped table-bordered">
               <tr>
 		<td class="text-right"><strong>lat</strong></td>
@@ -108,7 +116,7 @@
 	      </tr>
 	    </table>
 	  </div>
-	  <div class="col-md-3">
+	  <div class="col-md-2">
             <table class="table table-striped table-bordered">
               <tr>
 		<td class="text-right"><strong>winsize</strong></td>
