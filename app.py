@@ -11,9 +11,12 @@ from functools import wraps
 sys.path.append(os.environ['ELOG_DIR'])
 from elogapi import getdb
 
-LOG=True
-SSL=True
+LOGGING=True
 HOST='0.0.0.0'
+if len(sys.argv) > 1 and sys.argv[1] == "--secure":
+    SECURE=True
+else:
+    SECURE=False
 
 CHECKS = { 1:("""<span class="glyphicon glyphicon-check" """ \
                 """aria-hidden="true"></span>"""),
@@ -48,7 +51,6 @@ def baseenv(**env):
 
 def getanimals():
     db = getdb()
-    print db
     rows = db.query("""SELECT animal FROM session WHERE 1""")
     return sorted(list(set([row['animal'] for row in rows])))
 
@@ -214,6 +216,7 @@ def check_auth(username, password):
         session['username'] = username
         return True
     else:
+        session['username'] = 'not logged in'
         return False
 
 def authenticate():
@@ -222,14 +225,17 @@ def authenticate():
                      """You have to login with proper credentials"""),
                     401, {'WWW-Authenticate':'Basic realm="Login Required"'})
 
-def requires_auth(f):
-    @wraps(f)
-    def decorated(*args, **kwargs):
-        auth = request.authorization
-        if not auth or not check_auth(auth.username, auth.password):
-            return authenticate()
-        return f(*args, **kwargs)
-    return decorated
+if not SECURE:
+    def requires_auth(f): return f
+else:
+    def requires_auth(f):
+        @wraps(f)
+        def decorated(*args, **kwargs):
+            auth = request.authorization
+            if not auth or not check_auth(auth.username, auth.password):
+                return authenticate()
+            return f(*args, **kwargs)
+        return decorated
 
 
 ########################################################################
@@ -308,20 +314,18 @@ def sessions(id, date):
 
     return render_template("session.html", **env)
 
+@app.route('/favicon.ico')
+def favicon():
+    print 'sending icon'
+    return send_from_directory('assets', 'favicon.ico')
+
 @app.route('/assets/<path>')
 def assets(path):
-    try:
-        return send_from_directory('assets', path)
-    except Exception, e:
-        return str(e)
+    return send_from_directory('assets', path)
 
 @app.route('/fonts/<path>')
 def fonts(path):
-    try:
-        return send_from_directory('fonts', path)
-    except Exception, e:
-        return str(e)
-
+    return send_from_directory('fonts', path)
 
 @app.route('/search', methods=['POST'])
 @requires_auth
@@ -364,22 +368,12 @@ def pick():
                            message="Monthly logs for ...",
                            items=l, **env)
 
-app.secret_key = "aslLKJLjkasdf90u8s(&*(&assdfslkjfasLKJdf8"
-
 if __name__ == "__main__":
-    if not LOG:
+    if not LOGGING:
         import logging
         log = logging.getLogger('werkzeug')
         log.setLevel(logging.ERROR)
 
-    if SSL:
-        if 0:
-            from OpenSSL import SSL
-            context = SSL.Context(SSL.SSLv23_METHOD)
-            context.use_privatekey_file('server.key')
-            context.use_certificate_file('server.crt')
-            app.run(debug=True, ssl_context=context, host=HOST)
-        else:
-            app.run(debug=True, ssl_context=('server.crt', 'server.key'))
-    else:
-        app.run(debug=True, host=HOST)
+    app.secret_key = 'aslLKJLjkasdf90u8s(&*(&assdfslkjfasLKJdf8'
+    app.run(debug=True, host=HOST,
+            ssl_context=('server.crt', 'server.key'))

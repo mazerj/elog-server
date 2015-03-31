@@ -6,4 +6,4 @@ if [ "$(domainname)" != "mlab" ]; then
     # on pippin (dev laptop) use local databae
     export ELOG_HOST=localhost ELOG_USER=root ELOG_PASSWD=""
 fi
-python ./app.py
+python ./app.py $*
