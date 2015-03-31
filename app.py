@@ -13,10 +13,11 @@ from elogapi import getdb
 
 HTTPS=True
 LOGGING=True
-#HOST='0.0.0.0'
-HOST='127.0.0.1'
+HOST='0.0.0.0'
+#HOST='127.0.0.1'
 PORT=5000
 
+# require login?
 if len(sys.argv) > 1 and sys.argv[1] == "--secure":
     SECURE=True
 else:
@@ -277,12 +278,12 @@ def animals(id):
         for m in range(1,13):
             rows = db.query("""SELECT date FROM session WHERE """
                             """ animal='%s' AND """
-                            """ YEAR(date)=%d and MONTH(date)=%d """ % \
+                            """ YEAR(date)=%d and MONTH(date)=%d""" % \
                             (id, y, m))
             ml = []
             for r in rows:
                 ml.append('/animals/%s/sessions/%s' % (id, r['date']))
-            yl.append(ml)
+            yl.append(ml[::-1])
         env['toc'][y] = yl
     env['MONTHS'] = MONTH_NAMES
     return render_template("animals_toc.html", **env)
