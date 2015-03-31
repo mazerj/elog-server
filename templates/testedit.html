@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head;
+	 any other head content must come *after* these tags -->
+    <meta name="description" content="flask-based elog intervace">
+    <meta name="author" content="jamie mazer">
+    
+    <title>elog</title>
+    
+    <!-- Bootstrap core CSS -->
+    <link href="/static/bootstrap.min.css" rel="stylesheet">
+    <!-- link href="/static/jquery.min.css" rel="stylesheet" -->
+
+
+    <script type="text/javascript" 
+	    src="/static/tinymce/js/tinymce/tinymce.min.js">
+    </script>
+    <script type="text/javascript">
+      tinymce.init({
+      selector: "textarea"
+      theme : "simple"
+      });
+    </script>
+  </head>
+
+
+  <body>
+
+    {% include "navbar.html" %}
+
+    <div class="panel panel-heading">
+      <h2>
+	Warning:Don't edit pseudo tags {{ "<elog:blah,blah,blah>" }}
+      </h2>
+    </div>
+    <div class="panel panel-warning">
+      <div class="panel panel-body">
+	<form method="post" action="{{action}}">
+	  <textarea name="content" cols="80" rows="20">{{text}}</textarea>
+	  <button type="save" class="btn btn-default">save</button>
+	</form>
+      </div>
+    </div>
+
+    {% include "footer.html" %}
+    {% include "js.html" %}
+
+  </body>
+</html>
+
+

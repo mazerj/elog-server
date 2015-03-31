@@ -9,11 +9,12 @@
 
     <div class="container">
       <div class="panel panel-default">
-
         <div class="panel panel-heading">
-          session: {{date}} {{animal}}
+	  <a href="/animals/{{animal}}/sessions/{{date}}/editnote">
+	    <button type="button" class="btn btn-primary">Edit text</button>
+	  </a>
+          {{date}} {{animal}}
         </div>
-
         <div class="panel panel-body">
           <div class="col-md-2">
             <table class="table table-striped table-bordered">

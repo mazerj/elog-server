@@ -11,8 +11,12 @@ from functools import wraps
 sys.path.append(os.environ['ELOG_DIR'])
 from elogapi import getdb
 
+HTTPS=True
 LOGGING=True
-HOST='0.0.0.0'
+#HOST='0.0.0.0'
+HOST='127.0.0.1'
+PORT=5000
+
 if len(sys.argv) > 1 and sys.argv[1] == "--secure":
     SECURE=True
 else:
@@ -94,18 +98,20 @@ def expandnote(note):
         rows = db.query("""SELECT * FROM unit WHERE """\
                         """exper='%s'""" % (env['exper'],))
         env['units'] = rows
-        for u in env['units']:
-            u['note'] = expandnote(u['note'])
+        if rows:
+            for u in env['units']:
+                u['note'] = expandnote(u['note'])
 
         rows = db.query("""SELECT * FROM dfile WHERE """\
                         """exper='%s'""" % (env['exper'],))
         env['dfiles'] = rows
-        for d in env['dfiles']:
-            d['note'] = expandnote(d['note'])
-            d['crap'] = CHECKS[d['crap']]
-        for k in d.keys():
-            if type(d[k]) is types.StringType and len(d[k]) == 0:
-                d[k] = 'ND'
+        if rows:
+            for d in env['dfiles']:
+                d['note'] = expandnote(d['note'])
+                d['crap'] = CHECKS[d['crap']]
+            for k in d.keys():
+                if type(d[k]) is types.StringType and len(d[k]) == 0:
+                    d[k] = 'ND'
             
 
         return render_template("exper.html", **env)
@@ -154,8 +160,6 @@ def findsessions(pattern):
         pattern = today(0)
     elif pattern.lower() == '=yesterday':
         pattern = today(-1)
-
-    print pattern
 
     # look for matching exper
     rows = db.query("""SELECT * FROM exper WHERE """
@@ -316,7 +320,6 @@ def sessions(id, date):
 
 @app.route('/favicon.ico')
 def favicon():
-    print 'sending icon'
     return send_from_directory('assets', 'favicon.ico')
 
 @app.route('/assets/<path>')
@@ -365,8 +368,84 @@ def pick():
                      for d in ['%s' % r['date'] for r in rows]]))[::-1]
     env = baseenv()
     return render_template("searchresult.html",
-                           message="Monthly logs for ...",
+                           message="Select month",
                            items=l, **env)
+
+@app.route('/expers/<exper>/editnote')
+@requires_auth
+def exper_editnote(exper):
+    db = getdb()
+    rows = db.query("""SELECT * FROM exper WHERE exper='%s'""" % (exper,))
+    if rows:
+        env = baseenv()
+        env['text'] = rows[0]['note']
+        env['action'] = '/expers/%s/setnote' % (exper,)
+        return render_template("testedit.html", **env)
+    else:
+        return "no match."
+
+@app.route('/expers/<exper>/setnote', methods=['POST'])
+@requires_auth
+def exper_setnote(exper):
+    db = getdb()
+    note = request.form['content']
+    db.query("""UPDATE exper SET note='%s' WHERE exper='%s' """ % (note, exper))
+    
+    rows = db.query("""SELECT * FROM exper WHERE exper='%s'""" % (exper,))
+    return redirect('/animals/%s/sessions/%s' % \
+                    (rows[0]['animal'], rows[0]['date']))
+
+
+@app.route('/expers/<exper>/units/<unit>/editnote')
+@requires_auth
+def exper_unit_editnote(exper, unit):
+    db = getdb()
+    print exper, unit
+    rows = db.query("""SELECT * FROM unit WHERE exper='%s' """
+                    """ AND unit='%s' """ % (exper, unit))
+    if rows:
+        env = baseenv()
+        env['text'] = rows[0]['note']
+        env['action'] = '/expers/%s/units/%s/setnote' % (exper, unit,)
+        return render_template("testedit.html", **env)
+    else:
+        return "no match."
+
+@app.route('/expers/<exper>/units/<unit>/setnote', methods=['POST'])
+@requires_auth
+def exper_units_setnote(exper, unit):
+    db = getdb()
+    note = request.form['content']
+    db.query("""UPDATE unit SET note='%s' WHERE exper='%s' AND """ \
+             """ unit='%s' """ % (note, exper, unit))
+    
+    rows = db.query("""SELECT * FROM exper WHERE exper='%s'""" % (exper,))
+    return redirect('/animals/%s/sessions/%s' % \
+                    (rows[0]['animal'], rows[0]['date']))
+
+@app.route('/animals/<animal>/sessions/<date>/editnote')
+@requires_auth
+def session_editnote(animal, date):
+    db = getdb()
+    rows = db.query("""SELECT * FROM session WHERE animal='%s' AND""" \
+                    """ date='%s'""" % (animal, date,))
+    if rows:
+        env = baseenv()
+        env['text'] = rows[0]['note']
+        env['action'] = '/animals/%s/sessions/%s/setnote' % \
+          (animal, date)
+        return render_template("testedit.html", **env)
+    else:
+        return "no match."
+
+@app.route('/animals/<animal>/sessions/<date>/setnote', methods=['POST'])
+@requires_auth
+def session_setnote(animal, date):
+    db = getdb()
+    note = request.form['content']
+    db.query("""UPDATE session SET note='%s' WHERE animal='%s' """
+             """ AND date='%s'""" % (note, animal, date))
+    return redirect('/animals/%s/sessions/%s' % (animal, date))
 
 if __name__ == "__main__":
     if not LOGGING:
@@ -374,6 +453,9 @@ if __name__ == "__main__":
         log = logging.getLogger('werkzeug')
         log.setLevel(logging.ERROR)
 
-    app.secret_key = 'aslLKJLjkasdf90u8s(&*(&assdfslkjfasLKJdf8'
-    app.run(debug=True, host=HOST,
-            ssl_context=('server.crt', 'server.key'))
+    if HTTPS:
+        app.secret_key = 'aslLKJLjkasdf90u8s(&*(&assdfslkjfasLKJdf8'
+        app.run(debug=True, host=HOST, port=PORT,
+                ssl_context=('server.crt', 'server.key'))
+    else:
+        app.run(debug=True, host=HOST)
