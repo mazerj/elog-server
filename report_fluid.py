@@ -4,7 +4,6 @@ import sys, os
 import string
 import types
 import datetime, time
-import numpy as np
 
 from elogapi import getdb
 
