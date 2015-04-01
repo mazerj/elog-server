@@ -1,7 +1,7 @@
 # -*- Mode: Python; tab-width: 4; py-indent-offset: 4; -*-
 
 import sys, os, types, string
-import re, textwrap
+import re, textwrap, datetime
 
 from flask import *
 from functools import wraps
@@ -11,6 +11,8 @@ from functools import wraps
 sys.path.append(os.environ['ELOG_DIR'])
 from elogapi import getdb
 
+from bootstrap_tools import *
+
 HTTPS=True
 LOGGING=True
 HOST='0.0.0.0'
@@ -18,17 +20,14 @@ HOST='0.0.0.0'
 PORT=5000
 
 # require login?
-if len(sys.argv) > 1 and sys.argv[1] == "--secure":
-    SECURE=True
-else:
+if len(sys.argv) > 1 and sys.argv[1] == "--open":
     SECURE=False
-
-CHECKS = { 1:("""<span class="glyphicon glyphicon-check" """ \
-                """aria-hidden="true"></span>"""),
-          0:("""<span class="glyphicon glyphicon-unchecked" """
-                """ aria-hidden="true"></span>""") }
-MONTH_NAMES= ( '', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', \
-               'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec' )
+else:
+    # DEFAULT: non-local addresses require login, but anyone can
+    # access from a local (192.168.1.* or 127.0.0.1) ip (inside
+    # the lab). This basically means that the username is saved,
+    # but the password ignored...
+    SECURE=True
 
 USERS = { 'mlab':'mlab',
           'admin':'f00lish0one',
@@ -39,17 +38,6 @@ USERS = { 'mlab':'mlab',
 # Useful helper functions
 
 def uniq(s): return list(set(s))
-
-def safeint(x):
-    try:
-        return int(round(x))
-    except TypeError:
-        return 'ND'
-
-def today(n=0):
-    import datetime
-    return (datetime.datetime.now() -
-            datetime.timedelta(days=n)).strftime("%Y-%m-%d")
 
 def baseenv(**env):
     return env
@@ -109,7 +97,7 @@ def expandnote(note):
         if rows:
             for d in env['dfiles']:
                 d['note'] = expandnote(d['note'])
-                d['crap'] = CHECKS[d['crap']]
+                d['crap'] = check(d['crap'])
             for k in d.keys():
                 if type(d[k]) is types.StringType and len(d[k]) == 0:
                     d[k] = 'ND'
@@ -212,23 +200,54 @@ def findsessions(pattern):
 
     return []
 
+def columntypes(db):
+    # almost introspection...
+    import MySQLdb.constants.FIELD_TYPE
+    
+    field_type = {}
+    for f in dir(MySQLdb.constants.FIELD_TYPE):
+        print f,getattr(MySQLdb.constants.FIELD_TYPE, f)
+        n = getattr(MySQLdb.constants.FIELD_TYPE, f)
+        print n, type(n)
+        if type(n) is types.IntType:
+            field_type[n] = f
+    x = {}
+    for d in db.cursor.description:
+        x[d[0]] = field_type[d[1]]
+    return x
+
+
 def check_auth(username, password):
     """
     This function is called to check if a username / password combination
     is valid.
     """
-    if username in USERS and USERS[username] == password:
+
+    if request.remote_addr.startswith('127.0.0.1') or \
+      request.remote_addr.startswith("192.168.0."):
         session['username'] = username
+        app.logger.info('allowing local user %s@%s' % \
+                        (session['username'], request.remote_addr))
         return True
     else:
-        session['username'] = 'not logged in'
-        return False
+        if username in USERS and USERS[username] == password:
+            session['username'] = username
+            app.logger.info('allowing validated user %s@%s' % \
+                            (session['username'], request.remote_addr))
+            return True
+        else:
+            app.logger.info('invalid password from %s' % \
+                            (request.remote_addr))
+            session['username'] = 'none'
+            return False
 
 def authenticate():
     """Sends a 401 response that enables basic auth"""
+
     return Response(("""Could not verify your access level for that URL.\n"""
                      """You have to login with proper credentials"""),
-                    401, {'WWW-Authenticate':'Basic realm="Login Required"'})
+                        401, {'WWW-Authenticate':
+                              'Basic realm="Login Required"'})
 
 if not SECURE:
     def requires_auth(f): return f
@@ -285,7 +304,8 @@ def animals(id):
                 ml.append('/animals/%s/sessions/%s' % (id, r['date']))
             yl.append(ml[::-1])
         env['toc'][y] = yl
-    env['MONTHS'] = MONTH_NAMES
+    env['MONTHS'] = [datetime.date(2014,n+1,1).strftime('%B') \
+                     for n in range(12)]
     return render_template("animals_toc.html", **env)
 
 @app.route('/animals/<id>/sessions/<date>')
@@ -302,18 +322,18 @@ def sessions(id, date):
         if type(env[k]) is types.StringType and len(env[k]) == 0:
             env[k] = 'ND'
 
-    env['restricted'] = CHECKS[env['restricted']]
-    env['tested'] = CHECKS[env['tested']]
+    env['restricted'] = check(env['restricted'])
+    env['tested'] = check(env['tested'])
 
     env['dtb'] = safeint(env['dtb'])
     env['dtb_ml'] = safeint(env['dtb_ml'])
     env['xdtb'] = safeint(env['xdtb'])
     env['xdtb_ml'] = safeint(env['xdtb_ml'])
 
-    env['health_stool'] = CHECKS[env['health_stool']]
-    env['health_skin'] = CHECKS[env['health_skin']]
-    env['health_urine'] = CHECKS[env['health_urine']]
-    env['health_pcv'] = CHECKS[env['health_pcv']]
+    env['health_stool'] = check(env['health_stool'])
+    env['health_skin'] = check(env['health_skin'])
+    env['health_urine'] = check(env['health_urine'])
+    env['health_pcv'] = check(env['health_pcv'])
 
     env['note'] = expandnote(env['note'])
 
@@ -444,10 +464,18 @@ def session_setnote(animal, date):
                  """ AND date='%s'""" % (note, animal, date))
     return redirect(request.form['back'])
 
+
 @app.route('/test')
 @requires_auth
 def test():
     return render_template("test.html")
+
+@app.route('/dbtest')
+@requires_auth
+def dbtest():
+    db = getdb()
+    r = db.query("""select * from session limit 1""")
+    return '%s' % columntypes(db)
 
 if __name__ == "__main__":
     if not LOGGING:

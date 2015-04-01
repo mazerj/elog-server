@@ -18,7 +18,7 @@
             {{ANIMAL}} {{year}}
           </div>
           <div class="panel-body">
-            {% for month in range(12,0,-1) %}
+            {% for month in range(12,-1,-1) %}
             {% if toc[year][month]|length > 0 %}
             <div class="panel panel-default">
               <div class="panel-heading">

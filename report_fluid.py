@@ -7,14 +7,7 @@ import datetime, time
 
 from elogapi import getdb
 
-def glyph(name):
-    return """<span class="glyphicon glyphicon-%s" aria-hidden="true"></span> """ % name
-
-def check(bool):
-    if bool:
-        return glyph('check')
-    else:
-        return glyph('unchecked')
+from bootstrap_tools import *
 
 def iget(rows, name):
     if isinstance(rows[0][name], types.StringType):
