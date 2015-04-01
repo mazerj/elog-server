@@ -22,8 +22,10 @@
     </script>
     <script type="text/javascript">
       tinymce.init({
-      selector: "textarea"
-      theme : "simple"
+      mode: "textarea",
+      theme : "simple",
+      plugins: "spellchecker,noneditable",
+      noneditable_regexp: /\[\[[^\]]+\]\]/g
       });
     </script>
   </head>
@@ -33,19 +35,29 @@
 
     {% include "navbar.html" %}
 
-    <div class="panel panel-heading">
-      <h2>
-	Warning:Don't edit pseudo tags {{ "<elog:blah,blah,blah>" }}
-      </h2>
-    </div>
-    <div class="panel panel-warning">
-      <div class="panel panel-body">
-	<form method="post" action="{{action}}">
-	  <textarea name="content" cols="80" rows="20">{{text}}</textarea>
-	  <button type="save" class="btn btn-default">save</button>
-	</form>
+    <form method="post" action="{{action}}">
+
+      <div class="container">
+	<div class="panel panel-default">
+	  <div class="panel panel-heading">
+	    Warning:Don't edit pseudo tags {{ "<elog:blah,blah,blah>" }}
+	  </div>
+	  
+	  <div class="panel panel-body">
+	    <textarea name="content" style="width:100%;" 
+		      rows="20">{{text}}</textarea>
+	  </div>
+
+	  <div class="panel panel-footer">
+	    <button class="btn btn-default" type="submit" 
+		    name="save">Save</button>
+	    <button class="btn btn-default" 
+		    name="cancel">Cancel</button>
+	    <input type="hidden" name="back" value="{{request.referrer}}">
+	  </div>
+	</div>
       </div>
-    </div>
+    </form>
 
     {% include "footer.html" %}
     {% include "js.html" %}

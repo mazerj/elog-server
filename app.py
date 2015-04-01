@@ -390,18 +390,15 @@ def exper_editnote(exper):
 def exper_setnote(exper):
     db = getdb()
     note = request.form['content']
-    db.query("""UPDATE exper SET note='%s' WHERE exper='%s' """ % (note, exper))
-    
-    rows = db.query("""SELECT * FROM exper WHERE exper='%s'""" % (exper,))
-    return redirect('/animals/%s/sessions/%s' % \
-                    (rows[0]['animal'], rows[0]['date']))
+    if 'save' in request.form:
+        db.query("""UPDATE exper SET note='%s' WHERE exper='%s' """ % (note, exper))
+    return redirect(request.form['back'])
 
 
 @app.route('/expers/<exper>/units/<unit>/editnote')
 @requires_auth
 def exper_unit_editnote(exper, unit):
     db = getdb()
-    print exper, unit
     rows = db.query("""SELECT * FROM unit WHERE exper='%s' """
                     """ AND unit='%s' """ % (exper, unit))
     if rows:
@@ -417,12 +414,10 @@ def exper_unit_editnote(exper, unit):
 def exper_units_setnote(exper, unit):
     db = getdb()
     note = request.form['content']
-    db.query("""UPDATE unit SET note='%s' WHERE exper='%s' AND """ \
-             """ unit='%s' """ % (note, exper, unit))
-    
-    rows = db.query("""SELECT * FROM exper WHERE exper='%s'""" % (exper,))
-    return redirect('/animals/%s/sessions/%s' % \
-                    (rows[0]['animal'], rows[0]['date']))
+    if 'save' in request.form:
+        db.query("""UPDATE unit SET note='%s' WHERE exper='%s' AND """ \
+                 """ unit='%s' """ % (note, exper, unit))
+    return redirect(request.form['back'])
 
 @app.route('/animals/<animal>/sessions/<date>/editnote')
 @requires_auth
@@ -444,9 +439,16 @@ def session_editnote(animal, date):
 def session_setnote(animal, date):
     db = getdb()
     note = request.form['content']
-    db.query("""UPDATE session SET note='%s' WHERE animal='%s' """
-             """ AND date='%s'""" % (note, animal, date))
-    return redirect('/animals/%s/sessions/%s' % (animal, date))
+    if 'save' in request.form:
+        db.query("""UPDATE session SET note='%s' WHERE animal='%s' """
+                 """ AND date='%s'""" % (note, animal, date))
+    return redirect(request.form['back'])
+
+@app.route('/foo')
+@requires_auth
+def foo():
+    return render_template("foo.html")
+
 
 if __name__ == "__main__":
     if not LOGGING:
