@@ -224,7 +224,7 @@ def check_auth(username, password):
     """
 
     # not coming through firewall -- require authentication:
-    if not request.remote_addr.startswith('192.168.1.1')
+    if not request.remote_addr.startswith('192.168.1.1'):
         session['username'] = username
         app.logger.info('allowing local user %s@%s' % \
                         (session['username'], request.remote_addr))
