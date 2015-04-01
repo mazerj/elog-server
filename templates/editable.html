@@ -16,20 +16,27 @@
     <link href="/static/bootstrap.min.css" rel="stylesheet">
     <!-- link href="/static/jquery.min.css" rel="stylesheet" -->
 
-
     <script type="text/javascript" 
 	    src="/static/tinymce/js/tinymce/tinymce.min.js">
     </script>
+    {#
     <script type="text/javascript">
       tinymce.init({
-      mode: "textarea",
-      theme : "simple",
-      plugins: "spellchecker,noneditable",
-      noneditable_regexp: /\[\[[^\]]+\]\]/g
+      selector: "textarea",
+      theme: "modern",
+      plugins: [ "insertdatetime,noneditable,spellchecker" ],
+      toolbar1: "undo | redo | insertdatetime",
+      insertdatetime_formats: [ "%Y-%m-%d", "%H%Mh: " ],
+      menubar: false,
+      statusbar: false,
+      noneditable_regexp: /<elog:.*>/g
       });
     </script>
-  </head>
+    #}
 
+    {# tinymce.activeEditor.getContent(); #}
+
+  </head>
 
   <body>
 
@@ -40,7 +47,7 @@
       <div class="container">
 	<div class="panel panel-default">
 	  <div class="panel panel-heading">
-	    Warning:Don't edit pseudo tags {{ "<elog:blah,blah,blah>" }}
+	    <h1>Warning: Don't edit pseudo tags {{ "<elog:blah,blah,blah>" }}</h1>
 	  </div>
 	  
 	  <div class="panel panel-body">

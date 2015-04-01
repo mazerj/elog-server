@@ -381,7 +381,7 @@ def exper_editnote(exper):
         env = baseenv()
         env['text'] = rows[0]['note']
         env['action'] = '/expers/%s/setnote' % (exper,)
-        return render_template("testedit.html", **env)
+        return render_template("editable.html", **env)
     else:
         return "no match."
 
@@ -405,7 +405,7 @@ def exper_unit_editnote(exper, unit):
         env = baseenv()
         env['text'] = rows[0]['note']
         env['action'] = '/expers/%s/units/%s/setnote' % (exper, unit,)
-        return render_template("testedit.html", **env)
+        return render_template("editable.html", **env)
     else:
         return "no match."
 
@@ -430,7 +430,7 @@ def session_editnote(animal, date):
         env['text'] = rows[0]['note']
         env['action'] = '/animals/%s/sessions/%s/setnote' % \
           (animal, date)
-        return render_template("testedit.html", **env)
+        return render_template("editable.html", **env)
     else:
         return "no match."
 
@@ -444,11 +444,10 @@ def session_setnote(animal, date):
                  """ AND date='%s'""" % (note, animal, date))
     return redirect(request.form['back'])
 
-@app.route('/foo')
+@app.route('/test')
 @requires_auth
-def foo():
-    return render_template("foo.html")
-
+def test():
+    return render_template("test.html")
 
 if __name__ == "__main__":
     if not LOGGING:
