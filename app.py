@@ -224,7 +224,7 @@ def check_auth(username, password):
     """
 
     if request.remote_addr.startswith('127.0.0.1') or \
-      request.remote_addr.startswith("192.168.0."):
+      request.remote_addr.startswith("192.168.1."):
         session['username'] = username
         app.logger.info('allowing local user %s@%s' % \
                         (session['username'], request.remote_addr))
