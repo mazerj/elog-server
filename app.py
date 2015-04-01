@@ -29,11 +29,12 @@ else:
     # but the password ignored...
     SECURE=True
 
-USERS = { 'mlab':'mlab',
-          'admin':'f00lish0one',
-          'public':'boring99',
-          'mazer':'the-0ne'
-          }
+try:
+    USERS = {}
+    for l in open('userdata', 'r').readlines():
+        USERS[l[:-1].split(':')[0]] = l[:-1].split(':')[1]
+except:
+    USERS = {}
 
 # Useful helper functions
 
@@ -215,6 +216,7 @@ def columntypes(db):
     for d in db.cursor.description:
         x[d[0]] = field_type[d[1]]
     return x
+
 
 
 def check_auth(username, password):

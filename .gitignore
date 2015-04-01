@@ -1,6 +1,6 @@
-# ignore certificate files
 *.crt
 *.csr
 *.key
-
 *.pyc
+userdata
+
