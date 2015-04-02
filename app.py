@@ -14,7 +14,7 @@ from elogapi import getdb
 from app_tools import *
 
 HTTPS=True
-LOGGING=True
+LOGGING=False
 HOST='0.0.0.0'
 #HOST='127.0.0.1'
 PORT=5000
@@ -181,7 +181,6 @@ def findsessions(pattern):
         pattern = today(0)
     elif pattern.lower() == '=yesterday':
         pattern = today(1)
-        print pattern
 
     # look for matching exper
     rows = db.query("""SELECT * FROM exper WHERE """
@@ -243,9 +242,7 @@ def columntypes(db):
     
     field_type = {}
     for f in dir(MySQLdb.constants.FIELD_TYPE):
-        print f,getattr(MySQLdb.constants.FIELD_TYPE, f)
         n = getattr(MySQLdb.constants.FIELD_TYPE, f)
-        print n, type(n)
         if type(n) is types.IntType:
             field_type[n] = f
     x = {}
@@ -274,16 +271,12 @@ def check_auth(username, password):
         # just password..
         if username:
             session['username'] = username
-            app.logger.info('allowing local user %s@%s without password.' % \
-                            (session['username'], request.remote_addr))
             return True
         else:
             return False
     else:
         if username in USERS and USERS[username] == password:
             session['username'] = username
-            app.logger.info('allowing validated user %s@%s.' % \
-                            (session['username'], request.remote_addr))
             return True
         else:
             app.logger.info('invalid login attempt from %s.' % \
@@ -386,7 +379,6 @@ def search():
     db = getdb()
 
     links = findsessionlinks(request.form['pattern'])
-    print 'foobar', links
     
     if len(links) == 1:
         return redirect(links[0])
@@ -446,7 +438,7 @@ def exper_editnote(exper):
 @requires_auth
 def exper_setnote(exper):
     db = getdb()
-    note = request.form['content']
+    note = request.form['plaintext']
     if 'save' in request.form or 'done' in request.form:
         db.query("""UPDATE exper SET note='%s' WHERE exper='%s' """ % (note, exper))
         if not 'done' in request.form:
@@ -475,7 +467,7 @@ def exper_unit_editnote(exper, unit):
 @requires_auth
 def exper_units_setnote(exper, unit):
     db = getdb()
-    note = request.form['content']
+    note = request.form['plaintext']
     if 'save' in request.form or 'done' in request.form:
         db.query("""UPDATE unit SET note='%s' WHERE exper='%s' AND """ \
                  """ unit='%s' """ % (note, exper, unit))
@@ -505,7 +497,7 @@ def session_editnote(animal, date):
 @requires_auth
 def session_setnote(animal, date):
     db = getdb()
-    note = request.form['content']
+    note = request.form['plaintext'].encode()
     if 'save' in request.form or 'done' in request.form:
         db.query("""UPDATE session SET note='%s' WHERE animal='%s' """
                  """ AND date='%s'""" % (note, animal, date))

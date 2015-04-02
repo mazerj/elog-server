@@ -19,22 +19,29 @@
     <script type="text/javascript" 
 	    src="/static/tinymce/js/tinymce/tinymce.min.js">
     </script>
+
     {#
+
     <script type="text/javascript">
       tinymce.init({
       selector: "textarea",
       theme: "modern",
-      plugins: [ "insertdatetime,noneditable,spellchecker" ],
+      plugins: [ "insertdatetime,noneditable" ],
       toolbar1: "undo | redo | insertdatetime",
       insertdatetime_formats: [ "%Y-%m-%d", "%H%Mh: " ],
       menubar: false,
       statusbar: false,
+      remove_linebreaks: false,
       noneditable_regexp: /<elog:.*>/g
       });
+
+      function grabtext() {
+	var x=tinyMCE.activeEditor.getContent({format:'text'});
+	$("[name='plaintext']").val(x);
+	}
+
     </script>
     #}
-
-    {# tinymce.activeEditor.getContent(); #}
 
   </head>
 
@@ -51,18 +58,21 @@
 	  </div>
 	  
 	  <div class="panel panel-body">
-	    <textarea name="content" style="width:100%;" 
+	    <textarea name="plaintext" style="width:100%;" 
 		      rows="20">{{text}}</textarea>
 	  </div>
 
 	  <div class="panel panel-footer">
-	    <button class="btn btn-default" type="submit" 
+	    <button class="btn btn-default" type="submit"
+		    onclick="grabtext()"
 		    name="done">Done</button>
 	    <button class="btn btn-default" type="submit" 
+		    onclick="grabtext()"
 		    name="save">Save</button>
 	    <button class="btn btn-default" 
 		    name="cancel">Cancel</button>
 	    <input type="hidden" name="back" value="{{request.referrer}}">
+	    {# <input type="hidden" name="plaintext" value="unset"> #}
 	  </div>
 	</div>
       </div>
