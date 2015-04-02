@@ -447,8 +447,10 @@ def exper_editnote(exper):
 def exper_setnote(exper):
     db = getdb()
     note = request.form['content']
-    if 'save' in request.form:
+    if 'save' in request.form or 'done' in request.form:
         db.query("""UPDATE exper SET note='%s' WHERE exper='%s' """ % (note, exper))
+        if not 'done' in request.form:
+            return ('', 204)
     return redirect(request.form['back'])
 
 
@@ -474,9 +476,11 @@ def exper_unit_editnote(exper, unit):
 def exper_units_setnote(exper, unit):
     db = getdb()
     note = request.form['content']
-    if 'save' in request.form:
+    if 'save' in request.form or 'done' in request.form:
         db.query("""UPDATE unit SET note='%s' WHERE exper='%s' AND """ \
                  """ unit='%s' """ % (note, exper, unit))
+        if not 'done' in request.form:
+            return ('', 204)
     return redirect(request.form['back'])
 
 @app.route('/animals/<animal>/sessions/<date>/editnote')
@@ -502,9 +506,11 @@ def session_editnote(animal, date):
 def session_setnote(animal, date):
     db = getdb()
     note = request.form['content']
-    if 'save' in request.form:
+    if 'save' in request.form or 'done' in request.form:
         db.query("""UPDATE session SET note='%s' WHERE animal='%s' """
                  """ AND date='%s'""" % (note, animal, date))
+        if not 'done' in request.form:
+            return ('', 204)
     return redirect(request.form['back'])
 
 
