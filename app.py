@@ -18,29 +18,31 @@ LOGGING=True
 HOST='0.0.0.0'
 #HOST='127.0.0.1'
 PORT=5000
-
-# require login?
-if len(sys.argv) > 1 and sys.argv[1] == "--open":
-    SECURE=False
-else:
-    # DEFAULT: non-local addresses require login, but anyone can
-    # access from a local (192.168.1.* or 127.0.0.1) ip (inside
-    # the lab). This basically means that the username is saved,
-    # but the password ignored...
-    SECURE=True
+LOCAL='192.168.1.1'
 
 try:
     USERS = {}
+    USERS_RW = {}
     for l in open('userdata', 'r').readlines():
-        USERS[l[:-1].split(':')[0]] = l[:-1].split(':')[1]
+        l = l[:-1].split(':')
+        if len(l) == 3:
+            USERS[l[0]] = l[1]
+            USERS_RW[l[0]] = (l[2].lower() == 'rw')
 except:
-    USERS = {}
+    sys.stderr.write("""bad/missing 'userdata' file.\n""")
+    sys.exit(1)
 
 # Useful helper functions
 
-def uniq(s): return list(set(s))
+def writeaccess():
+    try:
+        return USERS_RW[session['username']]
+    except KeyError:
+        # if you're not in the userdata file, you get readonly access
+        return False
 
 def baseenv(**env):
+    env['RW'] = writeaccess()
     return env
 
 def getanimals():
@@ -218,6 +220,14 @@ def columntypes(db):
     return x
 
 
+def islocalconnection(addr):
+    # If LOCAL is not None, then anything not matching the
+    # local definition is non-local. If LOCAL is none, then
+    # everything is non-local!
+    if LOCAL:
+        return not request.remote_addr.startswith(LOCAL)
+    else:
+        return False
 
 def check_auth(username, password):
     """
@@ -225,20 +235,24 @@ def check_auth(username, password):
     is valid.
     """
 
-    # not coming through firewall -- require authentication:
-    if not request.remote_addr.startswith('192.168.1.1'):
-        session['username'] = username
-        app.logger.info('allowing local user %s@%s' % \
-                        (session['username'], request.remote_addr))
-        return True
-    else:
-        if username in USERS and USERS[username] == password:
+    if islocalconnection(request.remote_addr):
+        # local source (not through firewall), don't require password,
+        # just password..
+        if username:
             session['username'] = username
-            app.logger.info('allowing validated user %s@%s' % \
+            app.logger.info('allowing local user %s@%s without password.' % \
                             (session['username'], request.remote_addr))
             return True
         else:
-            app.logger.info('invalid password from %s' % \
+            return False
+    else:
+        if username in USERS and USERS[username] == password:
+            session['username'] = username
+            app.logger.info('allowing validated user %s@%s.' % \
+                            (session['username'], request.remote_addr))
+            return True
+        else:
+            app.logger.info('invalid login attempt from %s.' % \
                             (request.remote_addr))
             session['username'] = 'none'
             return False
@@ -246,22 +260,24 @@ def check_auth(username, password):
 def authenticate():
     """Sends a 401 response that enables basic auth"""
 
+    if islocalconnection(request.remote_addr):
+        msg = "Username required"
+    else:
+        msg = "Username and password required"
+
     return Response(("""Could not verify your access level for that URL.\n"""
                      """You have to login with proper credentials"""),
                         401, {'WWW-Authenticate':
-                              'Basic realm="Login Required"'})
+                              'Basic realm="%s"' % msg})
 
-if not SECURE:
-    def requires_auth(f): return f
-else:
-    def requires_auth(f):
-        @wraps(f)
-        def decorated(*args, **kwargs):
-            auth = request.authorization
-            if not auth or not check_auth(auth.username, auth.password):
-                return authenticate()
-            return f(*args, **kwargs)
-        return decorated
+def requires_auth(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        auth = request.authorization
+        if not auth or not check_auth(auth.username, auth.password):
+            return authenticate()
+        return f(*args, **kwargs)
+    return decorated
 
 
 ########################################################################
@@ -269,7 +285,7 @@ else:
 ########################################################################
 
 
-app=Flask(__name__)
+app = Flask(__name__)
 
 @app.route('/')
 @requires_auth
@@ -397,6 +413,9 @@ def pick():
 @app.route('/expers/<exper>/editnote')
 @requires_auth
 def exper_editnote(exper):
+    if not writeaccess():
+        return render_template("message.html", message="No write access!")
+    
     db = getdb()
     rows = db.query("""SELECT * FROM exper WHERE exper='%s'""" % (exper,))
     if rows:
@@ -420,6 +439,9 @@ def exper_setnote(exper):
 @app.route('/expers/<exper>/units/<unit>/editnote')
 @requires_auth
 def exper_unit_editnote(exper, unit):
+    if not writeaccess():
+        return render_template("message.html", message="No write access!")
+    
     db = getdb()
     rows = db.query("""SELECT * FROM unit WHERE exper='%s' """
                     """ AND unit='%s' """ % (exper, unit))
@@ -444,6 +466,9 @@ def exper_units_setnote(exper, unit):
 @app.route('/animals/<animal>/sessions/<date>/editnote')
 @requires_auth
 def session_editnote(animal, date):
+    if not writeaccess():
+        return render_template("message.html", message="No write access!")
+    
     db = getdb()
     rows = db.query("""SELECT * FROM session WHERE animal='%s' AND""" \
                     """ date='%s'""" % (animal, date,))
@@ -484,7 +509,7 @@ if __name__ == "__main__":
         import logging
         log = logging.getLogger('werkzeug')
         log.setLevel(logging.ERROR)
-
+        
     if HTTPS:
         app.secret_key = 'aslLKJLjkasdf90u8s(&*(&assdfslkjfasLKJdf8'
         app.run(debug=True, host=HOST, port=PORT,

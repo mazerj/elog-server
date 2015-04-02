@@ -10,9 +10,11 @@
     <div class="container">
       <div class="panel panel-default">
         <div class="panel panel-heading">
-	  <a href="/animals/{{animal}}/sessions/{{date}}/editnote">
-	    <button type="button" class="btn btn-primary">Edit text</button>
-	  </a>
+	  {% if RW %}
+	    <a href="/animals/{{animal}}/sessions/{{date}}/editnote">
+	      <button type="button" class="btn btn-primary">Edit text</button>
+	    </a>
+	  {% endif %}
           {{date}} {{animal}}
         </div>
         <div class="panel panel-body">

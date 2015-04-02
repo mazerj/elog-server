@@ -1,8 +1,10 @@
 <div class="panel panel-default">
   <div class="panel panel-heading">
-    <a href="/expers/{{exper}}/editnote">
-      <button type="button" class="btn btn-primary">Edit text</button>
-    </a>
+    {% if RW %}
+      <a href="/expers/{{exper}}/editnote">
+        <button type="button" class="btn btn-primary">Edit text</button>
+      </a>
+    {% endif %}
     {{exper}}
   </div>
   <div class="panel panel-body">
@@ -19,9 +21,11 @@
     {% for unit in units %}
       <div class="panel panel-default">
 	<div class="panel panel-heading">
-	  <a href="/expers/{{exper}}/units/{{unit['unit']}}/editnote">
-	    <button type="button" class="btn btn-primary">Edit text</button>
-	  </a>
+	  {% if RW %}
+	    <a href="/expers/{{exper}}/units/{{unit['unit']}}/editnote">
+	      <button type="button" class="btn btn-primary">Edit text</button>
+	    </a>
+	  {% endif %}
 	  {{exper}}_{{unit['unit']}}
 	</div>
 	<div class="panel panel-body">
@@ -103,9 +107,11 @@
     {% for d in dfiles %}
       <div class="panel panel-default">
 	<div class="panel panel-heading">
-	  <a href="/dfile/{{d['src']}}/editnote">
-	    <button type="button" class="btn btn-primary">Edit text</button>
-	  </a>
+	  {% if RW %}
+	    <a href="/dfile/{{d['src']}}/editnote">
+	      <button type="button" class="btn btn-primary">Edit text</button>
+	    </a>
+	  {% endif %}
 	  file: {{d['src']}}
 	</div>
 	<div class="panel panel-body">

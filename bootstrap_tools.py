@@ -20,3 +20,5 @@ def safeint(x):
     except TypeError:
         return 'ND'
 
+def uniq(s): return list(set(s))
+
