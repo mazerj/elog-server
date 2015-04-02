@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  {% include "header.html" %}
+
+  <body>
+
+    {% include "navbar.html" %}
+
+    <div class="well">
+      Showing {{sessions|length}}
+        {% if sessions|length > 1 %}
+          sessions.
+        {% else %}
+          session.
+        {% endif %}
+    </div>
+
+    <div class="container">
+      {% for session in sessions %}
+        {{session|safe}}
+      {% endfor %}
+    </div>
+
+    {% include "js.html" %}
+    {% include "footer.html" %}
+
+  </body>
+
+</html>
+

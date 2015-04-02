@@ -11,7 +11,7 @@ from functools import wraps
 sys.path.append(os.environ['ELOG_DIR'])
 from elogapi import getdb
 
-from bootstrap_tools import *
+from app_tools import *
 
 HTTPS=True
 LOGGING=True
@@ -50,6 +50,84 @@ def getanimals():
     rows = db.query("""SELECT animal FROM session WHERE 1""")
     return sorted(list(set([row['animal'] for row in rows])))
 
+def expandattachment(id):
+    env = baseenv(ANIMAL=id)
+    db = getdb()
+    row = db.query("""SELECT * FROM attachment WHERE"""
+                   """ attachmentID=%s""" % (id,))[0]
+    row['date'] = '%s' % row['date']
+    env.update(row)
+
+    for k in env.keys():
+        if type(env[k]) is types.StringType and len(env[k]) == 0:
+            env[k] = 'ND'
+
+    env['note'] = expandnote(env['note'])
+    return render_template("attachment.html", **env)
+
+def expandexper(id):
+    env = baseenv(ANIMAL=id)
+    db = getdb()
+    row = db.query("""SELECT * FROM exper WHERE exper='%s'""" % (id,))[0]
+    row['date'] = '%s' % row['date']
+    env.update(row)
+
+    for k in env.keys():
+        if type(env[k]) is types.StringType and len(env[k]) == 0:
+            env[k] = 'ND'
+
+    env['note'] = expandnote(env['note'])
+
+    rows = db.query("""SELECT * FROM unit WHERE """\
+                    """exper='%s'""" % (env['exper'],))
+    env['units'] = rows
+    if rows:
+        for u in env['units']:
+            u['note'] = expandnote(u['note'])
+
+    rows = db.query("""SELECT * FROM dfile WHERE """\
+                    """exper='%s'""" % (env['exper'],))
+    env['dfiles'] = rows
+    if rows:
+        for d in env['dfiles']:
+            d['note'] = expandnote(d['note'])
+            d['crap'] = check(d['crap'])
+        for k in d.keys():
+            if type(d[k]) is types.StringType and len(d[k]) == 0:
+                d[k] = 'ND'
+
+
+    return render_template("exper.html", **env)
+
+def expandsession(animal, date):
+    env = baseenv(ANIMAL=animal)
+    db = getdb()
+    # should be exactly one row:
+    row = db.query("""SELECT * FROM session WHERE """
+                   """ animal='%s' and date='%s'""" % (animal, date))[0]
+    row['date'] = '%s' % row['date']
+    env.update(row)
+    for k in env.keys():
+        if type(env[k]) is types.StringType and len(env[k]) == 0:
+            env[k] = 'ND'
+
+    env['restricted'] = check(env['restricted'])
+    env['tested'] = check(env['tested'])
+
+    env['dtb'] = safeint(env['dtb'])
+    env['dtb_ml'] = safeint(env['dtb_ml'])
+    env['xdtb'] = safeint(env['xdtb'])
+    env['xdtb_ml'] = safeint(env['xdtb_ml'])
+
+    env['health_stool'] = check(env['health_stool'])
+    env['health_skin'] = check(env['health_skin'])
+    env['health_urine'] = check(env['health_urine'])
+    env['health_pcv'] = check(env['health_pcv'])
+
+    env['note'] = expandnote(env['note'])
+
+    return render_template("session.html", **env)
+    
 def expandnote(note):
     """
     Converts a 'note' into a list of tokens of the form:
@@ -59,55 +137,6 @@ def expandnote(note):
     expers and attachments etc..
     """
 
-    def expandattachment(id):
-        env = baseenv(ANIMAL=id)
-        db = getdb()
-        row = db.query("""SELECT * FROM attachment WHERE"""
-                       """ attachmentID=%s""" % (id,))[0]
-        row['date'] = '%s' % row['date']
-        env.update(row)
-
-        for k in env.keys():
-            if type(env[k]) is types.StringType and len(env[k]) == 0:
-                env[k] = 'ND'
-
-        env['note'] = expandnote(env['note'])
-        return render_template("attachment.html", **env)
-
-    def expandexper(id):
-        env = baseenv(ANIMAL=id)
-        db = getdb()
-        row = db.query("""SELECT * FROM exper WHERE exper='%s'""" % (id,))[0]
-        row['date'] = '%s' % row['date']
-        env.update(row)
-
-        for k in env.keys():
-            if type(env[k]) is types.StringType and len(env[k]) == 0:
-                env[k] = 'ND'
-
-        env['note'] = expandnote(env['note'])
-
-        rows = db.query("""SELECT * FROM unit WHERE """\
-                        """exper='%s'""" % (env['exper'],))
-        env['units'] = rows
-        if rows:
-            for u in env['units']:
-                u['note'] = expandnote(u['note'])
-
-        rows = db.query("""SELECT * FROM dfile WHERE """\
-                        """exper='%s'""" % (env['exper'],))
-        env['dfiles'] = rows
-        if rows:
-            for d in env['dfiles']:
-                d['note'] = expandnote(d['note'])
-                d['crap'] = check(d['crap'])
-            for k in d.keys():
-                if type(d[k]) is types.StringType and len(d[k]) == 0:
-                    d[k] = 'ND'
-            
-
-        return render_template("exper.html", **env)
-    
     note = re.sub('<elog:exper=(.*)/(.*)>', '< ELOG /expers/\\2 >', note)
     note = re.sub('<elog:attach=(.*)>',     '< ELOG /attachments/\\1 >', note)
 
@@ -151,14 +180,14 @@ def findsessions(pattern):
     if pattern.lower() == '=today':
         pattern = today(0)
     elif pattern.lower() == '=yesterday':
-        pattern = today(-1)
+        pattern = today(1)
+        print pattern
 
     # look for matching exper
     rows = db.query("""SELECT * FROM exper WHERE """
                     """ exper LIKE '%%%s%%' ORDER BY date DESC""" % (pattern))
     if rows:
-        return ['/animals/%s/sessions/%s' % \
-                (x['animal'], x['date']) for x in rows]
+        return [(x['animal'], x['date']) for x in rows]
 
     # look for matching session
     x = re.match('(.*)[/ ](.*)', pattern)
@@ -173,35 +202,40 @@ def findsessions(pattern):
                     """ CAST(date AS char) LIKE '%%%s%%' """
                     """ ORDER BY date DESC""" % (animal, date))
     if rows:
-        return ['/animals/%s/sessions/%s' % \
-                (x['animal'], x['date']) for x in rows]
+        return [(x['animal'], x['date']) for x in rows]
 
     # last resort -- search NOTE fields in session, exper etc..
     rows = db.query("""SELECT * FROM session WHERE note LIKE '%%%s%%'""" % \
                     pattern)
     if rows:
-        return ['/animals/%s/sessions/%s' % (x['animal'], x['date']) \
-                for x in rows]
+        return [(x['animal'], x['date']) for x in rows]
     
     rows = db.query("""SELECT * FROM exper WHERE note LIKE '%%%s%%'""" % \
                     pattern)
     if rows:
-        return ['/animals/%s/sessions/%s' % (x['animal'], x['date']) \
-                for x in rows]
+        return [(x['animal'], x['date']) for x in rows]
 
     rows = db.query("""SELECT * FROM exper WHERE unit LIKE '%%%s%%'""" % \
                     pattern)
     if rows:
-        return ['/animals/%s/sessions/%s' % (x['animal'], x['date']) \
-                for x in rows]
+        return [(x['animal'], x['date']) for x in rows]
 
     rows = db.query("""SELECT * FROM exper WHERE dfile LIKE '%%%s%%'""" % \
                     pattern)
     if rows:
-        return ['/animals/%s/sessions/%s' % (x['animal'], x['date']) \
-                for x in rows]
+        return [(x['animal'], x['date']) for x in rows]
 
     return []
+
+def findsessionlinks(pattern):
+    l = findsessions(pattern)
+    return ['/animals/%s/sessions/%s' % x for x in l]
+
+def expandsessions(pattern):
+    sessions = []
+    for animal, date in findsessions(pattern):
+        sessions.append(expandsession(animal, date))
+    return sessions
 
 def columntypes(db):
     # almost introspection...
@@ -326,36 +360,12 @@ def animals(id):
                      for n in range(12)]
     return render_template("animals_toc.html", **env)
 
-@app.route('/animals/<id>/sessions/<date>')
+@app.route('/animals/<animal>/sessions/<date>')
 @requires_auth
-def sessions(id, date):
-    env = baseenv(ANIMAL=id)
-    db = getdb()
-    # should be exactly one row:
-    row = db.query("""SELECT * FROM session WHERE """
-                   """ animal='%s' and date='%s'""" % (id, date))[0]
-    row['date'] = '%s' % row['date']
-    env.update(row)
-    for k in env.keys():
-        if type(env[k]) is types.StringType and len(env[k]) == 0:
-            env[k] = 'ND'
-
-    env['restricted'] = check(env['restricted'])
-    env['tested'] = check(env['tested'])
-
-    env['dtb'] = safeint(env['dtb'])
-    env['dtb_ml'] = safeint(env['dtb_ml'])
-    env['xdtb'] = safeint(env['xdtb'])
-    env['xdtb_ml'] = safeint(env['xdtb_ml'])
-
-    env['health_stool'] = check(env['health_stool'])
-    env['health_skin'] = check(env['health_skin'])
-    env['health_urine'] = check(env['health_urine'])
-    env['health_pcv'] = check(env['health_pcv'])
-
-    env['note'] = expandnote(env['note'])
-
-    return render_template("session.html", **env)
+def sessions(animal, date):
+    env = baseenv(ANIMAL=animal)
+    env['sessions'] = [expandsession(animal, date)]
+    return render_template("sessions.html", **env)
 
 @app.route('/favicon.ico')
 def favicon():
@@ -375,16 +385,22 @@ def search():
     from flask import redirect, request, url_for
     db = getdb()
 
-    links = findsessions(request.form['pattern'])
+    links = findsessionlinks(request.form['pattern'])
+    print 'foobar', links
     
     if len(links) == 1:
         return redirect(links[0])
-    elif len(links) >= 1:
+    elif len(links) > 30:
+        # show max of 30 sessions at a time
         env = baseenv()
         return render_template("searchresult.html",
                                message="'%s': %d matches." % \
                                (request.form['pattern'], len(links),),
                                items=links, **env)
+    elif len(links) > 0:
+        env = baseenv()
+        env['sessions'] = expandsessions(request.form['pattern'])
+        return render_template("sessions.html", **env)
     else:
         env = baseenv()
         return render_template("searchresult.html",

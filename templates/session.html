@@ -1,120 +1,103 @@
-<!DOCTYPE html>
-<html lang="en">
-
-  {% include "header.html" %}
-
-  <body>
-
-    {% include "navbar.html" %}
-
-    <div class="container">
-      <div class="panel panel-default">
-        <div class="panel panel-heading">
-	  {% if RW %}
-	    <a href="/animals/{{animal}}/sessions/{{date}}/editnote">
-	      <button type="button" class="btn btn-primary">Edit text</button>
-	    </a>
-	  {% endif %}
-          {{date}} {{animal}}
-        </div>
-        <div class="panel panel-body">
-          <div class="col-md-2">
-            <table class="table table-striped table-bordered">
-              <tr>
-                <td class="text-right"><strong>animal</strong></td>
-                <td>{{animal}}</td>
-              </tr>
-              <tr>
-                <td class="text-right"><strong>date</strong></td>
-                <td>{{date}}</td>
-              </tr>
-              <tr>
-                <td class="text-right"><strong>user</strong></td>
-                <td>{{user}}@{{computer}}</td>
-              </tr>
-              <tr>
-                <td class="text-right"><strong>rest,tested</strong></td>
-                <td>{{restricted|safe}} {{tested|safe}}</td>
-              </tr>
-            </table>
-          </div>
-          <div class="col-md-2">
-            <table class="table table-striped table-bordered">
-              <tr>
-                <td class="text-right"><strong>ncorr</strong></td>
-                <td>{{ncorrect}}</td>
-              </tr>
-              <tr>
-                <td class="text-right"><strong>ntrials</strong></td>
-                <td>{{ntrials}}</td>
-              </tr>
-              <tr>
-                <td class="text-right"><strong>water</strong></td>
-                <td>{{water_work}}+{{water_sup}}+{{fruit_ml}}ml</td>
-              </tr>
-              <tr>
-                <td class="text-right"><strong>fruit</strong></td>
-                <td>{{fruit}}</td>
-              </tr>
-            </table>
-          </div>
-          <div class="col-md-2">
-            <table class="table table-striped table-bordered">
-              <tr>
-                <td class="text-right"><strong>weight</strong></td>
-                <td>{{weight}}kg</td>
-              </tr>
-              <tr>
-                <td class="text-right"><strong>thweight</strong></td>
-                <td>{{thweight}}kg</td>
-              </tr>
-              <tr>
-                <td class="text-right"><strong>food</strong></td>
-                <td>{{food}}bisc</td>
-              </tr>
-              <tr>
-                <td class="text-right"><strong>totalfluid</strong></td>
-                <td>{{totalfluid}}</td>
-              </tr>
-            </table>
-          </div>
-          <div class="col-md-3">
-            <table class="table table-striped table-bordered">
-              <tr>
-                <td class="text-right"><strong>dtb</strong></td>
-                <td>{{dtb_ml}}ml [{{dtb}}ml/kg]</td>
-              </tr>
-              <tr>
-                <td class="text-right"><strong>xdtb</strong></td>
-                <td>{{xdtb}}ml [{{xdtb}}ml/kg]</td>
-              </tr>
-              <tr>
-                <td class="text-right"><strong>st/ur/sk/pcv</strong></td>
-                <td>
-		  {{health_stool|safe}}
-		  {{health_urine|safe}}
-		  {{health_skin|safe}}
-		  {{health_pcv|safe}}
-		</td>
-              </tr>
-            </table>
-          </div>
-        </div>
-
-        {% for (code, content) in note %}
-          {% if code == 0 %}
-            <tt>{{content}}</tt><br>
-          {% else %}
-            {{content|safe}}
-          {% endif %}
-        {% endfor %}
+<div class="container">
+  <div class="panel panel-info">
+    <div class="panel panel-heading">
+      {% if RW %}
+      <a class="hidden-print" href="/animals/{{animal}}/sessions/{{date}}/editnote">
+	<button type="button" class="btn btn-primary">Edit text</button>
+      </a>
+      {% endif %}
+      {{date}} {{animal}}
+    </div>
+    <div class="panel panel-body">
+      <div class="col-md-2">
+        <table class="table table-striped table-bordered">
+          <tr>
+            <td class="text-right"><strong>animal</strong></td>
+            <td>{{animal}}</td>
+          </tr>
+          <tr>
+            <td class="text-right"><strong>date</strong></td>
+            <td>{{date}}</td>
+          </tr>
+          <tr>
+            <td class="text-right"><strong>user</strong></td>
+            <td>{{user}}@{{computer}}</td>
+          </tr>
+          <tr>
+            <td class="text-right"><strong>rest,tested</strong></td>
+            <td>{{restricted|safe}} {{tested|safe}}</td>
+          </tr>
+        </table>
+      </div>
+      <div class="col-md-2">
+        <table class="table table-striped table-bordered">
+          <tr>
+            <td class="text-right"><strong>ncorr</strong></td>
+            <td>{{ncorrect}}</td>
+          </tr>
+          <tr>
+            <td class="text-right"><strong>ntrials</strong></td>
+            <td>{{ntrials}}</td>
+          </tr>
+          <tr>
+            <td class="text-right"><strong>water</strong></td>
+            <td>{{water_work}}+{{water_sup}}+{{fruit_ml}}ml</td>
+          </tr>
+          <tr>
+            <td class="text-right"><strong>fruit</strong></td>
+            <td>{{fruit}}</td>
+          </tr>
+        </table>
+      </div>
+      <div class="col-md-2">
+        <table class="table table-striped table-bordered">
+          <tr>
+            <td class="text-right"><strong>weight</strong></td>
+            <td>{{weight}}kg</td>
+          </tr>
+          <tr>
+            <td class="text-right"><strong>thweight</strong></td>
+            <td>{{thweight}}kg</td>
+          </tr>
+          <tr>
+            <td class="text-right"><strong>food</strong></td>
+            <td>{{food}}bisc</td>
+          </tr>
+          <tr>
+            <td class="text-right"><strong>totalfluid</strong></td>
+            <td>{{totalfluid}}</td>
+          </tr>
+        </table>
+      </div>
+      <div class="col-md-3">
+        <table class="table table-striped table-bordered">
+          <tr>
+            <td class="text-right"><strong>dtb</strong></td>
+            <td>{{dtb_ml}}ml [{{dtb}}ml/kg]</td>
+          </tr>
+          <tr>
+            <td class="text-right"><strong>xdtb</strong></td>
+            <td>{{xdtb}}ml [{{xdtb}}ml/kg]</td>
+          </tr>
+          <tr>
+            <td class="text-right"><strong>st/ur/sk/pcv</strong></td>
+            <td>
+	      {{health_stool|safe}}
+	      {{health_urine|safe}}
+	      {{health_skin|safe}}
+	      {{health_pcv|safe}}
+	    </td>
+          </tr>
+        </table>
       </div>
     </div>
 
-    {% include "js.html" %}
-    {% include "footer.html" %}
-
-  </body>
-
-</html>
-
+    {% for (code, content) in note %}
+    {% if code == 0 %}
+    <tt>{{content}}</tt><br>
+    {% else %}
+    {{content|safe}}
+    {% endif %}
+    {% endfor %}
+  </div>
+</div>

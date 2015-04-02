@@ -7,7 +7,7 @@ import datetime, time
 
 from elogapi import getdb
 
-from bootstrap_tools import *
+from app_tools import *
 
 def iget(rows, name):
     if isinstance(rows[0][name], types.StringType):
