@@ -371,6 +371,11 @@ def favicon():
 def assets(path):
     return send_from_directory('assets', path)
 
+@app.route('/images/<path>')
+@requires_auth
+def images(path):
+    return send_from_directory('assets', path)
+
 @app.route('/fonts/<path>')
 @requires_auth
 def fonts(path):
@@ -429,13 +434,11 @@ def pick():
 def exper_editnote(exper):
     if not writeaccess():
         return render_template("message.html", message="No write access!")
-    
     db = getdb()
     rows = db.query("""SELECT * FROM exper WHERE exper='%s'""" % (exper,))
     if rows:
         env = baseenv()
         env['row'] = rows[0]
-        env['text'] = rows[0]['note']
         env['action'] = '/expers/%s/setnote' % (exper,)
         return render_template("edit_exper.html", **env)
     else:
@@ -445,7 +448,7 @@ def exper_editnote(exper):
 @requires_auth
 def exper_setnote(exper):
     db = getdb()
-    note = request.form['plaintext']
+    note = request.form['note']
     if 'save' in request.form or 'done' in request.form:
         db.query("""UPDATE exper SET note='%s' WHERE exper='%s' """ % (note, exper))
         if not 'done' in request.form:
@@ -465,7 +468,6 @@ def exper_unit_editnote(exper, unit):
     if rows:
         env = baseenv()
         env['row'] = rows[0]
-        env['text'] = rows[0]['note']
         env['action'] = '/expers/%s/units/%s/setnote' % (exper, unit,)
         return render_template("edit_unit.html", **env)
     else:
@@ -475,10 +477,33 @@ def exper_unit_editnote(exper, unit):
 @requires_auth
 def exper_units_setnote(exper, unit):
     db = getdb()
-    note = request.form['plaintext']
+    r = request.form.copy()
+ 
+    r['depth'] = int(r['depth'])
+    r['qual'] = float(r['qual'])
+    r['rfx'] = float(r['rfx'])
+    r['rfy'] = float(r['rfy'])
+    r['rfr'] = float(r['rfr'])
+    r['latency'] = float(r['latency'])
+
+    print r
+ 
     if 'save' in request.form or 'done' in request.form:
-        db.query("""UPDATE unit SET note='%s' WHERE exper='%s' AND """ \
-                 """ unit='%s' """ % (note, exper, unit))
+        db.query("""UPDATE unit SET """
+                 """   note='%(note)s', """
+                 """   well='%(well)s', """
+                 """   wellloc='%(wellloc)s', """
+                 """   note='%(area)s', """
+                 """   hemi='%(hemi)s', """
+                 """   depth=%(depth)d, """
+                 """   qual=%(qual)f, """
+                 """   ori='%(ori)s', """
+                 """   color='%(color)s', """
+                 """   rfx=%(rfx)f, """
+                 """   rfy=%(rfy)f, """
+                 """   rfr=%(rfr)f, """
+                 """   latency=%(latency)f """
+                 """ WHERE exper='%(exper)s' AND unit='%(unit)s' """ % r)
         if not 'done' in request.form:
             return ('', 204)
     return redirect(request.form['_back'])
@@ -495,7 +520,6 @@ def session_editnote(animal, date):
     if rows:
         env = baseenv()
         env['row'] = rows[0]
-        env['text'] = rows[0]['note']
         env['action'] = '/animals/%s/sessions/%s/setnote' % \
           (animal, date)
         return render_template("edit_session.html", **env)
@@ -507,7 +531,6 @@ def session_editnote(animal, date):
 def session_setnote(animal, date):
     db = getdb()
     r = request.form.copy()
-    print r
 
     r['restricted'] = int('restricted' in r)
     r['tested'] = int('tested' in r)
@@ -523,7 +546,7 @@ def session_setnote(animal, date):
 
     if 'save' in r or 'done' in r:
         db.query("""UPDATE session SET """
-                 """   note='%(plaintext)s', """
+                 """   note='%(note)s', """
                  """   restricted=%(restricted)d, """
                  """   tested=%(tested)d, """
                  """   health_stool=%(health_stool)d, """

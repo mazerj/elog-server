@@ -7,9 +7,11 @@
     <script src="/static/jquery.min.js"></script>
     <script src="/static/jquery.validate.min.js"></script>
     <script src="/static/additional-methods.min.js"></script>
-
-    <style> #editForm label { width: 100px; } </style>
-
+    <link rel="stylesheet" media="screen" href="/static/screen.css">
+    <style>
+      #editForm { width: 100%; }
+      #editForm label { text-align: right; }
+    </style>
   </head>
 
   <body>
@@ -17,90 +19,92 @@
     {% include "navbar.html" %}
 
     <div class="container">
-      <div class="panel panel-default">
-	<div class="panel panel-heading">
-	  Warning: Don't edit pseudo tags {{ "<elog:blah,blah,blah>" }}
+
+    <form class="cmxform" id="editForm" method="post" action="{{action}}">
+      <input type="hidden" name="animal" value="{{row['animal']}}">
+      <input type="hidden" name="date" value="{{row['date']}}">
+      <fieldset>
+	<legend>Source</legend>
+	<p>
+	  <label for="animal">animal</label><input disabled id="animal" name="animal" value="{{row['animal']}}">
+	</p>
+	<p>
+	  <label for="date">date</label><input disabled id="date" name="date" value="{{row['date']}}">
+	</p>
+	<legend>Fluid</legend>
+	<label for="restricted">restricted</label>
+	<input id="restricted" type="checkbox"
+	       name="restricted" {{ 'checked' if row['restricted'] }}>
+	<label for="tested">tested</label>
+	<input id="tested" type="checkbox"
+	       name="tested" {{ 'checked' if row['tested'] }}>
+	<legend>Health</legend>
+	<label for="health_stool">stool</label>
+	<input id="health_stool" type="checkbox"
+	       name="health_stool" {{ 'checked' if row['health_stool'] }}>
+	<label for="health_urine">urine</label>
+	<input id="health_urine" type="checkbox"
+	       name="health_urine" {{ 'checked' if row['health_urine'] }}>
+	<label for="health_skin">skin</label>
+	<input id="health_skin" type="checkbox"
+	       name="health_skin" {{ 'checked' if row['health_skin'] }}>
+	<label for="health_pcv">pcv</label>
+	<input id="health_pcv" type="checkbox"
+	       name="health_pcv" {{ 'checked' if row['health_pcv'] }}>
+      </fieldset>
+      <fieldset>
+	<div>
+	  <legend>Data</legend>
+	  <p>
+	    <label for="weight">weight</label>
+	    <input id="weight" type="number"
+		   name="weight" value="{{row['weight']}}">
+	    <label for="weight"  style="text-align: left;">kg</label>
+	  </p>
+	  <p>
+	    <label for="water_work">water_work</label>
+	    <input id="water_work" type="digits"
+		   name="water_work" value="{{row['water_work']}}">
+	    <label for="weight"  style="text-align: left;">ml</label>
+	  </p>
+	  <p>
+	    <label for="water_sup">water_sup</label>
+	    <input id="water_sup" type="digits"
+		   name="water_sup" value="{{row['water_sup']}}">
+	    <label for="weight"  style="text-align: left;">ml</label>
+	  </p>
+	  <p>
+	    <label for="fruit">fruit_ml</label>
+	    <input id="fruit_ml" type="digits"
+		   name="fruit_ml" value="{{row['fruit_ml']}}">
+	    <label for="weight"  style="text-align: left;">ml</label>
+	  </p>
+	  <p>
+	    <label for="food">food</label>
+	    <input id="food" type="digits"
+		   name="food" value="{{row['food']}}">
+	    <label for="weight"  style="text-align: left;"># bisc</label>
+	  </p>
 	</div>
-	<div class="panel panel-body">
-	  <form class="cmxform" id="editForm" method="post" action="{{action}}">
-	    <fieldset>
-	      <input type="hidden" name="animal" value="{{row['animal']}}">
-	      <input type="hidden" name="date" value="{{row['date']}}">
+      </fieldset>
+      <fieldset>
+	<legend>Notes: Don't change pseudo links!</legend>
+	<textarea style="width:100%;" rows="20"
+		  name="note">{{row['note']}}</textarea>
+      </fieldset>
 
-	      <p>
-		<label for="restricted">restricted:</label>
-		<input id="restricted" type="checkbox"
-		       name="restricted" {{ 'checked' if row['restricted'] }}>
-	      </p>
-	      <p>
-		<label for="tested">tested:</label>
-		<input id="tested" type="checkbox"
-		       name="tested" {{ 'checked' if row['tested'] }}>
-	      </p>
-	      <p>
-		<label for="health_stool">stool:</label>
-		<input id="health_stool" type="checkbox"
-		       name="health_stool" {{ 'checked' if row['health_stool'] }}>
-	      </p>
-	      <p>
-		<label for="health_urine">urine:</label>
-		<input id="health_urine" type="checkbox"
-		       name="health_urine" {{ 'checked' if row['health_urine'] }}>
-	      </p>
-	      <p>
-		<label for="health_skin">skin:</label>
-		<input id="health_skin" type="checkbox"
-		       name="health_skin" {{ 'checked' if row['health_skin'] }}>
-	      </p>
-	      <p>
-		<label for="health_pcv">pcv:</label>
-		<input id="health_pcv" type="checkbox"
-		       name="health_pcv" {{ 'checked' if row['health_pcv'] }}>
-	      </p>
-
-	      <p>
-		<label for="weight">weight</label>
-		<input id="weight" type="number"
-		       name="weight" value="{{row['weight']}}">
-	      </p>
-
-	      <p>
-		<label for="water_work">water_work</label>
-		<input id="water_work" type="number"
-		       name="water_work" value="{{row['water_work']}}">
-	      </p>
-	      <p>
-		<label for="water_sup">water_sup</label>
-		<input id="water_sup" type="digits"
-		       name="water_sup" value="{{row['water_sup']}}">
-	      </p>
-	      <p>
-		<label for="food">food</label>
-		<input id="food" type="number"
-		       name="food" value="{{row['food']}}">
-	      </p>
-	      <p>
-		<label for="fruit_ml">fruit_ml</label>
-		<input id="fruit_ml" type="number"
-		       name="fruit_ml" value="{{row['fruit_ml']}}">
-	      </p>
-	      <textarea style="width:100%;" rows="20"
-			name="plaintext">{{text}}</textarea>
-	    </fieldset>
-	  </div>
-
-	  <div class="panel panel-footer">
-	    <button class="btn btn-default" type="submit"
-		    name="done">Done</button>
-	    <button class="btn btn-default" type="submit" 
-		    name="save">Save</button>
-	    <button class="btn btn-default" 
-		    name="cancel">Cancel</button>
-	    <input type="hidden" name="_back" value="{{request.referrer}}">
-	  </div>
-	</div>
+      <div class="well">
+	<button class="btn btn-default" type="submit"
+		name="done">Done</button>
+	<button class="btn btn-default" type="submit" 
+		name="save">Save</button>
+	<button class="btn btn-default" 
+		name="cancel">Cancel</button>
+	<input type="hidden" name="_back" value="{{request.referrer}}">
       </div>
     </form>
+    </div>
+
     <script>
       $("#editForm").validate();
     </script>
