@@ -20,5 +20,11 @@ def safeint(x):
     except TypeError:
         return 'ND'
 
+def safeint2(x):
+    try:
+        return '%d' % int(round(x))
+    except TypeError:
+        return '0'
+    
 def uniq(s): return list(set(s))
 

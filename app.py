@@ -14,7 +14,7 @@ from elogapi import getdb
 from app_tools import *
 
 HTTPS=True
-LOGGING=False
+LOGGING=True
 HOST='0.0.0.0'
 #HOST='127.0.0.1'
 PORT=5000
@@ -60,7 +60,7 @@ def expandattachment(id):
 
     for k in env.keys():
         if type(env[k]) is types.StringType and len(env[k]) == 0:
-            env[k] = 'ND'
+            env[k] = 'N/A'
 
     env['note'] = expandnote(env['note'])
     return render_template("attachment.html", **env)
@@ -74,7 +74,7 @@ def expandexper(id):
 
     for k in env.keys():
         if type(env[k]) is types.StringType and len(env[k]) == 0:
-            env[k] = 'ND'
+            env[k] = 'N/A'
 
     env['note'] = expandnote(env['note'])
 
@@ -94,7 +94,7 @@ def expandexper(id):
             d['crap'] = check(d['crap'])
         for k in d.keys():
             if type(d[k]) is types.StringType and len(d[k]) == 0:
-                d[k] = 'ND'
+                d[k] = 'N/A'
 
 
     return render_template("exper.html", **env)
@@ -109,7 +109,7 @@ def expandsession(animal, date):
     env.update(row)
     for k in env.keys():
         if type(env[k]) is types.StringType and len(env[k]) == 0:
-            env[k] = 'ND'
+            env[k] = 'N/A'
 
     env['restricted'] = check(env['restricted'])
     env['tested'] = check(env['tested'])
@@ -322,6 +322,7 @@ def index():
     return render_template("index.html", **env)
 
 @app.route('/about')
+@requires_auth
 def about():
     env = baseenv()
     env['db'] = getdb()
@@ -361,14 +362,17 @@ def sessions(animal, date):
     return render_template("sessions.html", **env)
 
 @app.route('/favicon.ico')
+@requires_auth
 def favicon():
     return send_from_directory('assets', 'favicon.ico')
 
 @app.route('/assets/<path>')
+@requires_auth
 def assets(path):
     return send_from_directory('assets', path)
 
 @app.route('/fonts/<path>')
+@requires_auth
 def fonts(path):
     return send_from_directory('fonts', path)
 
@@ -401,12 +405,14 @@ def search():
                                items=[], **env)
 
 @app.route('/report/fluids/<int:year>-<int:month>')
+@requires_auth
 def fluids_specific(year, month):
     from report_fluid import report
     env = report('%04d-%02d-01' % (year, month))
     return render_template("report_fluid.html", **env)
 
 @app.route('/report/pick')
+@requires_auth
 def pick():
     db = getdb()
 
@@ -428,9 +434,10 @@ def exper_editnote(exper):
     rows = db.query("""SELECT * FROM exper WHERE exper='%s'""" % (exper,))
     if rows:
         env = baseenv()
+        env['row'] = rows[0]
         env['text'] = rows[0]['note']
         env['action'] = '/expers/%s/setnote' % (exper,)
-        return render_template("editable.html", **env)
+        return render_template("edit_exper.html", **env)
     else:
         return "no match."
 
@@ -443,7 +450,7 @@ def exper_setnote(exper):
         db.query("""UPDATE exper SET note='%s' WHERE exper='%s' """ % (note, exper))
         if not 'done' in request.form:
             return ('', 204)
-    return redirect(request.form['back'])
+    return redirect(request.form['_back'])
 
 
 @app.route('/expers/<exper>/units/<unit>/editnote')
@@ -457,9 +464,10 @@ def exper_unit_editnote(exper, unit):
                     """ AND unit='%s' """ % (exper, unit))
     if rows:
         env = baseenv()
+        env['row'] = rows[0]
         env['text'] = rows[0]['note']
         env['action'] = '/expers/%s/units/%s/setnote' % (exper, unit,)
-        return render_template("editable.html", **env)
+        return render_template("edit_unit.html", **env)
     else:
         return "no match."
 
@@ -473,7 +481,7 @@ def exper_units_setnote(exper, unit):
                  """ unit='%s' """ % (note, exper, unit))
         if not 'done' in request.form:
             return ('', 204)
-    return redirect(request.form['back'])
+    return redirect(request.form['_back'])
 
 @app.route('/animals/<animal>/sessions/<date>/editnote')
 @requires_auth
@@ -486,10 +494,11 @@ def session_editnote(animal, date):
                     """ date='%s'""" % (animal, date,))
     if rows:
         env = baseenv()
+        env['row'] = rows[0]
         env['text'] = rows[0]['note']
         env['action'] = '/animals/%s/sessions/%s/setnote' % \
           (animal, date)
-        return render_template("editable.html", **env)
+        return render_template("edit_session.html", **env)
     else:
         return "no match."
 
@@ -497,13 +506,40 @@ def session_editnote(animal, date):
 @requires_auth
 def session_setnote(animal, date):
     db = getdb()
-    note = request.form['plaintext'].encode()
-    if 'save' in request.form or 'done' in request.form:
-        db.query("""UPDATE session SET note='%s' WHERE animal='%s' """
-                 """ AND date='%s'""" % (note, animal, date))
+    r = request.form.copy()
+    print r
+
+    r['restricted'] = int('restricted' in r)
+    r['tested'] = int('tested' in r)
+    r['health_stool'] = int('health_stool' in r)
+    r['health_urine'] = int('health_urine' in r)
+    r['health_skin'] = int('health_skin' in r)
+    r['health_pcv'] = int('health_pcv' in r)
+    r['water_work'] = int(r['water_work'])
+    r['water_sup'] = int(r['water_sup'])
+    r['fruit_ml'] = int(r['fruit_ml'])
+    r['food'] = int(r['food'])
+    r['weight'] = float(r['weight'])
+
+    if 'save' in r or 'done' in r:
+        db.query("""UPDATE session SET """
+                 """   note='%(plaintext)s', """
+                 """   restricted=%(restricted)d, """
+                 """   tested=%(tested)d, """
+                 """   health_stool=%(health_stool)d, """
+                 """   health_skin=%(health_skin)d, """
+                 """   health_urine=%(health_urine)d, """
+                 """   health_pcv=%(health_pcv)d, """
+                 """   water_work=%(water_work)d, """
+                 """   water_sup=%(water_sup)d, """
+                 """   fruit_ml=%(fruit_ml)d, """
+                 """   food=%(food)d, """
+                 """   weight=%(weight)f """
+                 """ WHERE animal='%(animal)s' """
+                 """ AND date='%(date)s'""" % r)
         if not 'done' in request.form:
             return ('', 204)
-    return redirect(request.form['back'])
+    return redirect(request.form['_back'])
 
 
 @app.route('/test')
