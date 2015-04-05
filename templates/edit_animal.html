@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    {% include "header2.html" %}
+
+    <script src="/static/jquery.min.js"></script>
+    <script src="/static/jquery.validate.min.js"></script>
+    {# <script src="/static/additional-methods.min.js"></script>  #}
+    <link rel="stylesheet" media="screen" href="/static/screen.css">
+    <style>
+      #editForm { width: 100%; }
+      #editForm label { text-align: right; }
+    </style>
+  </head>
+
+  <body>
+
+    {% include "navbar.html" %}
+
+    <div class="container">
+
+    <form class="cmxform" id="editForm" method="post" action="{{action}}">
+      <fieldset>
+	<label for="animal">animal </label><input id="animal" name="animal" value="{{row['animal']}}">
+	<label for="date">date </label><input id="date" name="date" value="{{row['date']}}">
+	<label for="idno">idno </label><input id="idno" name="idno" value="{{row['idno']}}">
+	<label for="user">user </label><input id="user" name="user" value="{{row['user']}}">
+      </fieldset>
+      <fieldset>
+	<legend>Notes: Don't change pseudo links!</legend>
+	<textarea style="width:100%;" rows="20"
+		  name="note">{{row['note']}}</textarea>
+      </fieldset>
+      <div class="well">
+	<button class="btn btn-default" type="submit"
+		name="done">Done</button>
+	<button class="btn btn-default" type="submit" 
+		name="save">Save</button>
+	<button class="btn btn-default" 
+		name="cancel">Cancel</button>
+	<input type="hidden" name="_back" value="{{request.referrer}}">
+      </div>
+    </form>
+    </div>
+
+    <script>
+      $("#editForm").validate();
+    </script>
+
+
+    {% include "footer.html" %}
+    {% include "js.html" %}
+
+  </body>
+</html>
+
+

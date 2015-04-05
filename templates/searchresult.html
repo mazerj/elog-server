@@ -7,21 +7,21 @@
 
     {% include "navbar.html" %}
 
-    <div class="panel panel-warning">
-      <div class="panel panel-heading">
-	{{message}}
-      </div>
-      <div class="panel panel-body">
-	{% for item in items %}
+    <div class="container">
+      <div class="panel panel-warning">
+	<div class="panel panel-heading">
+	  {{message}}
+	</div>
+	<div class="panel panel-body">
+	  {% for item in items %}
           <a href="{{item}}" class="list-group-item">
             {{item}}
-	    <span class="glyphicon glyphicon-arrow-right"
-		  aria-hidden="true"></span> 
+	    <span class="glyphicon glyphicon-arrow-right"></span>
           </a>
-        {% endfor %}
+          {% endfor %}
+	</div>
       </div>
     </div>
-
 
     {% include "footer.html" %}
     {% include "js.html" %}

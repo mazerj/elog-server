@@ -7,18 +7,32 @@
 
     {% include "navbar.html" %}
 
-    <div class="panel panel-default">
-      <div class="panel panel-heading">
-	Available Animals
+    <div class="container">
+      <div class="panel panel-default">
+	<div class="panel panel-heading">
+	  Animals in database
+	</div>
+	<div class="panel panel-body">
+	  <ul class="list-group">
+	    {% for a in ANIMALS %}
+            <li class="list-group-item">
+	      <div class="btn-group" role="group">
+		<a href="/animals/{{a}}">
+		  <button type="button" class="btn btn-primary">Go</button>
+		</a>
+		<a href="/animals/{{a}}/edit">
+		  <button type="button" class="btn btn-primary">Edit</button>
+		</a>
+		<a href="/animals/{{a}}/delete">
+		  <button type="button" class="btn btn-danger">Delete!</button>
+		</a>
+	      </div>
+	      {{a}}
+	    </li>
+	    {% endfor %}
+	</div>
       </div>
-      <div class="panel panel-body">
-	<ul class="list-group">
-	  {% for a in ANIMALS %}
-          <li class="list-group-item"><a href="/animals/{{a}}">{{a}}</a></li>
-	  {% endfor %}
-      </div>
-    </div>
-
+    <div>
 
     {% include "footer.html" %}
     {% include "js.html" %}

@@ -307,6 +307,11 @@ def requires_auth(f):
     return decorated
 
 
+def Error(msg):
+    return render_template("message.html", header="Error", message=msg)
+    
+
+
 ########################################################################
 #  Actual server is implmemented starting here
 ########################################################################
@@ -353,48 +358,62 @@ def animals(animal):
         env['toc'][y] = yl
     env['MONTHS'] = [datetime.date(2014,n+1,1).strftime('%B') \
                      for n in range(12)]
-    return render_template("animals_toc.html", **env)
+    return render_template("sessionlist.html", **env)
 
 @app.route('/animals/new')
 @requires_auth
-def animalnew():
-    r = { 'animal':'', 'date':today(), 'user':session['username'] }
-    x = db.query("""INSERT INTO animal (%s) VALUES %s""" % \
-                 (string.join(r.keys(), ','), tuple([r[k] for k in r.keys()]),))
-    if x is None:
-        return render_template("message.html",
-                               header="Error",
-                               message="Can't insert %s/%s" % (animal, date))
-    
-    return redirect("/animals/%s/edit" % (animal,))
+def animal_new():
+    db = getdb()
+    r = { 'animal':'CHANGE-ME', 'date':today(), 'user':session['username'] }
+    db.query("""INSERT INTO animal (%s) VALUES %s""" % \
+             (string.join(r.keys(), ','), tuple([r[k] for k in r.keys()]),))
+    return redirect("/animals/%s/edit" % (r['animal'],))
 
 @app.route('/animals/<animal>/edit')
 @requires_auth
-def animaledit(animal):
-    r = { 'animal':'', 'date':today(), 'user':session['username'] }
-    x = db.query("""INSERT INTO animal (%s) VALUES %s""" % \
-                 (string.join(r.keys(), ','), tuple([r[k] for k in r.keys()]),))
+def animal_edit(animal):
+    db = getdb()
+    x = db.query("""SELECT * FROM animal WHERE animal='%s'""" % animal)
     if x is None:
-        return render_template("message.html",
-                               header="Error",
-                               message="Can't insert %s/%s" % (animal, date))
-    
-    return redirect("/animals/%s/edit" % (animal,))
-
-@app.route('/animals/<animal>/sessions/<date>')
-@requires_auth
-def sessions(animal, date):
-    animal = animal.encode()
-    date = date.encode()
-    
+        return Error("Can't edit %s" % (animal,))
     env = baseenv(ANIMAL=animal)
-    env['sessions'] = [expandsession(animal, date)]
-    return render_template("sessions.html", **env)
+    env['row'] = x[0]
+    env['action'] = '/animals/%s/set' % (animal,)
+    return render_template("edit_animal.html", **env)
 
+@app.route('/animals/<animal>/delete')
+@requires_auth
+def animal_delete(animal):
+    db = getdb()
+    rows = db.query("""SELECT * FROM animal WHERE animal='%s'""" % animal)
+    if rows is None or len(rows) > 1:
+        return Error("""Can't delete %s""" % animal)
+    else:
+        db.query("""DELETE FROM animal WHERE animal='%s'""" % animal)
+
+    print 'deleted -- redirecting'
+    return redirect("/")
+
+
+@app.route('/animals/<animal>/set', methods=['POST'])
+@requires_auth
+def animal_set(animal):
+    db = getdb()
+    form = getform()
+
+    if 'save' in form or 'done' in form:
+        db.query("""UPDATE animal SET animal='%s', date='%s', user='%s', idno='%s', note='%s'"""
+                 """ WHERE animal='%s'""" % (form['animal'], form['date'],
+                                             form['user'], form['idno'], form['note'],
+                                             animal))
+        if not 'done' in form:
+            return ('', 204)
+    return redirect(form['_back'])
 
 @app.route('/animals/<animal>/sessions/<date>/new')
 @requires_auth
-def newsession(animal, date):
+def session_new(animal, date):
+    print 'session_new:', animal, date
     animal = animal.encode()
     date = date.encode()
     
@@ -402,9 +421,8 @@ def newsession(animal, date):
     rows = db.query("""SELECT date FROM session WHERE """
                     """ animal='%s' AND date='%s' """ % (animal, date))
     if len(rows):
-        return render_template("message.html",
-                               header="Error",
-                               message="%s/%s exists." % (animal, date))
+        return Error("%s/%s exists." % (animal, date))
+
                                
 
     # get most recent session for this animal
@@ -427,9 +445,7 @@ def newsession(animal, date):
     x = db.query("""INSERT INTO session (%s) VALUES %s""" % \
                  (string.join(r.keys(), ','), tuple([r[k] for k in r.keys()]),))
     if x is None:
-        return render_template("message.html",
-                               header="Error",
-                               message="Can't insert %s/%s" % (animal, date))
+        return Error("Can't insert %s/%s" % (animal, date))
     
     return redirect("/animals/%s/sessions/%s" % (animal, date))
 
@@ -445,15 +461,22 @@ def getform(r=None):
     
 @app.route('/animals/<animal>/sessions/new', methods=['POST'])
 @requires_auth
-def newsession_today(animal):
+def session_new_today(animal):
+    print '\n\nXXX', animal, '\n'
     animal = animal.encode()
-    
     form = getform()
     if len(form['date']) < 10:
         date = today()
     else:
         date = form['date']
-    return newsession(animal, date)
+    return session_new(animal, date)
+
+@app.route('/animals/<animal>/sessions/<date>')
+@requires_auth
+def sessions(animal, date):
+    env = baseenv(ANIMAL=animal)
+    env['sessions'] = [expandsession(animal, date)]
+    return render_template("sessions.html", **env)
 
 @app.route('/favicon.ico')
 @requires_auth
@@ -493,11 +516,7 @@ def search():
         env['sessions'] = expandsessions(form['pattern'])
         return render_template("sessions.html", **env)
     else:
-        env = baseenv()
-        return render_template("searchresult.html",
-                               message="'%s': no matches." % \
-                               (form['pattern'],),
-                               items=[], **env)
+        return Error("%s: no matches." % form['pattern'])
 
 @app.route('/report/fluids/<int:year>-<int:month>')
 @requires_auth
@@ -523,9 +542,7 @@ def pick():
 @requires_auth
 def exper_edit(exper):
     if not writeaccess():
-        return render_template("message.html",
-                               header="Error",
-                               message="No write access!")
+        return Error("No write access!")
     db = getdb()
     rows = db.query("""SELECT * FROM exper WHERE exper='%s'""" % (exper,))
     if rows:
@@ -534,7 +551,7 @@ def exper_edit(exper):
         env['action'] = '/expers/%s/set' % (exper,)
         return render_template("edit_exper.html", **env)
     else:
-        return "no match."
+        return Error("%s: no matches." % exper)
 
 @app.route('/expers/<exper>/set', methods=['POST'])
 @requires_auth
@@ -553,9 +570,7 @@ def exper_set(exper):
 @requires_auth
 def exper_unit_edit(exper, unit):
     if not writeaccess():
-        return render_template("message.html",
-                               header="Error",
-                               message="No write access!")
+        return Error("No write access!")
     
     db = getdb()
     rows = db.query("""SELECT * FROM unit WHERE exper='%s' """
@@ -566,7 +581,7 @@ def exper_unit_edit(exper, unit):
         env['action'] = '/expers/%s/units/%s/set' % (exper, unit,)
         return render_template("edit_unit.html", **env)
     else:
-        return "no match."
+        return Error("%s/%s: no matches." % (exper, unit,))
 
 @app.route('/expers/<exper>/units/<unit>/set', methods=['POST'])
 @requires_auth
@@ -604,9 +619,7 @@ def exper_units_set(exper, unit):
 @requires_auth
 def session_edit(animal, date):
     if not writeaccess():
-        return render_template("message.html",
-                               header="Error",
-                               message="No write access!")
+        return Error("No write access!")
     
     db = getdb()
     rows = db.query("""SELECT * FROM session WHERE animal='%s' AND""" \
@@ -618,7 +631,7 @@ def session_edit(animal, date):
           (animal, date)
         return render_template("edit_session.html", **env)
     else:
-        return "no match."
+        return Error("%s/%s: no matches." % (animal, date,))
 
 @app.route('/animals/<animal>/sessions/<date>/set', methods=['POST'])
 @requires_auth
