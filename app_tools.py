@@ -14,17 +14,23 @@ def today(n=0):
     return (datetime.datetime.now() -
             datetime.timedelta(days=n)).strftime("%Y-%m-%d")
 
-def safeint(x):
+def safeint(x, default=0):
     try:
         return int(round(x))
     except TypeError:
-        return 'ND'
+        return default
 
-def safeint2(x):
+def safefloat(x, default=0.0):
     try:
-        return '%d' % int(round(x))
-    except TypeError:
-        return '0'
+        return float(x)
+    except (TypeError, ValueError):
+        return default
+
+def str2num(s, fn=int, default=0):
+    try:
+        return fn(s)
+    except:
+        return default
     
 def uniq(s): return list(set(s))
 

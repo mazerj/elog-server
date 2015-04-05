@@ -6,7 +6,7 @@
 
     <script src="/static/jquery.min.js"></script>
     <script src="/static/jquery.validate.min.js"></script>
-    <script src="/static/additional-methods.min.js"></script>
+    {# <script src="/static/additional-methods.min.js"></script>  #}
     <link rel="stylesheet" media="screen" href="/static/screen.css">
     <style>
       #editForm { width: 100%; }
@@ -20,86 +20,18 @@
 
     <div class="container">
 
-      {{row}}
-
     <form class="cmxform" id="editForm" method="post" action="{{action}}">
-      <input type="hidden" name="animal" value="{{row['animal']}}">
-      <input type="hidden" name="date" value="{{row['date']}}">
-      <input type="hidden" name="exper" value="{{row['date']}}">
+      <input type="hidden" name="exper" value="{{row['exper']}}">
       <fieldset>
 	<div>
-	  <legend>Data</legend>
 	  <p>
-	    <label for="well">well</label>
-	    <input id="well" type=""
-		   name="well" value="{{row['well']}}">
-	  </p>
-	  <p>
-	    <label for="wellloc">wellloc</label>
-	    <input id="wellloc" type=""
-		   name="" vwelllocalue="{{row['wellloc']}}">
-	  </p>
-	  <p>
-	    <label for="area">area</label>
-	    <input id="area" type=""
-		   name="area" value="{{row['area']}}">
-	  </p>
-	  <p>
-	    <label for="hemi">hemi</label>
-	    <input id="hemi" type=""
-		   name="hemi" value="{{row['hemi']}}">
-	  </p>
-	  <p>
-	    <label for="depth">depth</label>
-	    <input id="depth" type="number"
-		   name="depth" value="{{row['depth']}}">
-	    <label for="depth"  style="text-align: left;">um</label>
-	  </p>
-	  <p>
-	    <label for="quality">quality</label>
-	    <input id="quality" type=""
-		   name="" vqualityalue="{{row['quality']}}">
-	    <label for="depth"  style="text-align: left;">/10</label>
-	  </p>
-	  <p>
-	    <label for="ori">ori</label>
-	    <input id="ori" type=""
-		   name=ori"" value="{{row['ori']}}">
-	  </p>
-	  <p>
-	    <label for="color">color</label>
-	    <input id="color" type=""
-		   name=""color value="{{row['color']}}">
-	  </p>
-	  <p>
-	    <label for="rfx">rfx</label>
-	    <input id="rfx" type=""
-		   name=rfx"" value="{{row['rfx']}}">
-	    <label for="depth"  style="text-align: left;">px</label>
-	  </p>
-	  <p>
-	    <label for="rfy">rfy</label>
-	    <input id="rfy" type=""
-		   name=rfy"" value="{{row['rfy']}}">
-	    <label for="depth"  style="text-align: left;">px</label>
-	  </p>
-	  <p>
-	    <label for="rfr">rfr</label>
-	    <input id="rfr" type=""
-		   name=rfr"" value="{{row['rfr']}}">
-	    <label for="depth"  style="text-align: left;">px</label>
-	  </p>
-	  <p>
-	    <label for="latency">lat</label>
-	    <input id="latency" type=""
-		   name="latency" value="{{row['lat']}}">
-	    <label for="latency"  style="text-align: left;">ms</label>
+	    <label for="exper">exper </label><input disabled id="exper" name="exper" value="{{row['exper']}}">
 	  </p>
 	</div>
       </fieldset>
       <fieldset>
 	<legend>Notes: Don't change pseudo links!</legend>
-	<textarea style="width:100%;" rows="20"
+	<textarea style="width:100%;" rows="7"
 		  name="note">{{row['note']}}</textarea>
       </fieldset>
 

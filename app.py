@@ -47,11 +47,11 @@ def baseenv(**env):
 
 def getanimals():
     db = getdb()
-    rows = db.query("""SELECT animal FROM session WHERE 1""")
+    rows = db.query("""SELECT animal FROM animal WHERE 1""")
     return sorted(list(set([row['animal'] for row in rows])))
 
 def expandattachment(id):
-    env = baseenv(ANIMAL=id)
+    env = baseenv()
     db = getdb()
     row = db.query("""SELECT * FROM attachment WHERE"""
                    """ attachmentID=%s""" % (id,))[0]
@@ -65,10 +65,10 @@ def expandattachment(id):
     env['note'] = expandnote(env['note'])
     return render_template("attachment.html", **env)
 
-def expandexper(id):
-    env = baseenv(ANIMAL=id)
+def expandexper(exper):
+    env = baseenv()
     db = getdb()
-    row = db.query("""SELECT * FROM exper WHERE exper='%s'""" % (id,))[0]
+    row = db.query("""SELECT * FROM exper WHERE exper='%s'""" % (exper,))[0]
     row['date'] = '%s' % row['date']
     env.update(row)
 
@@ -329,12 +329,13 @@ def about():
     env['session'] = session
     return render_template("about.html", **env)
 
-@app.route('/animals/<id>')
+@app.route('/animals/<animal>')
 @requires_auth
-def animals(id):
-    env = baseenv(ANIMAL=id)
+def animals(animal):
+    animal = animal.encode()
+    env = baseenv(ANIMAL=animal)
     db = getdb()
-    rows = db.query("""SELECT date FROM session WHERE animal='%s'""" % id)
+    rows = db.query("""SELECT date FROM session WHERE animal='%s'""" % animal)
 
     env['toc'] = {}
     env['years'] = sorted(uniq([r['date'].year for r in rows]))[::-1]
@@ -344,22 +345,115 @@ def animals(id):
             rows = db.query("""SELECT date FROM session WHERE """
                             """ animal='%s' AND """
                             """ YEAR(date)=%d and MONTH(date)=%d""" % \
-                            (id, y, m))
+                            (animal, y, m))
             ml = []
             for r in rows:
-                ml.append('/animals/%s/sessions/%s' % (id, r['date']))
+                ml.append('/animals/%s/sessions/%s' % (animal, r['date']))
             yl.append(ml[::-1])
         env['toc'][y] = yl
     env['MONTHS'] = [datetime.date(2014,n+1,1).strftime('%B') \
                      for n in range(12)]
     return render_template("animals_toc.html", **env)
 
+@app.route('/animals/new')
+@requires_auth
+def animalnew():
+    r = { 'animal':'', 'date':today(), 'user':session['username'] }
+    x = db.query("""INSERT INTO animal (%s) VALUES %s""" % \
+                 (string.join(r.keys(), ','), tuple([r[k] for k in r.keys()]),))
+    if x is None:
+        return render_template("message.html",
+                               header="Error",
+                               message="Can't insert %s/%s" % (animal, date))
+    
+    return redirect("/animals/%s/edit" % (animal,))
+
+@app.route('/animals/<animal>/edit')
+@requires_auth
+def animaledit(animal):
+    r = { 'animal':'', 'date':today(), 'user':session['username'] }
+    x = db.query("""INSERT INTO animal (%s) VALUES %s""" % \
+                 (string.join(r.keys(), ','), tuple([r[k] for k in r.keys()]),))
+    if x is None:
+        return render_template("message.html",
+                               header="Error",
+                               message="Can't insert %s/%s" % (animal, date))
+    
+    return redirect("/animals/%s/edit" % (animal,))
+
 @app.route('/animals/<animal>/sessions/<date>')
 @requires_auth
 def sessions(animal, date):
+    animal = animal.encode()
+    date = date.encode()
+    
     env = baseenv(ANIMAL=animal)
     env['sessions'] = [expandsession(animal, date)]
     return render_template("sessions.html", **env)
+
+
+@app.route('/animals/<animal>/sessions/<date>/new')
+@requires_auth
+def newsession(animal, date):
+    animal = animal.encode()
+    date = date.encode()
+    
+    db = getdb(quiet=False)
+    rows = db.query("""SELECT date FROM session WHERE """
+                    """ animal='%s' AND date='%s' """ % (animal, date))
+    if len(rows):
+        return render_template("message.html",
+                               header="Error",
+                               message="%s/%s exists." % (animal, date))
+                               
+
+    # get most recent session for this animal
+    rows = db.query("""SELECT * FROM session WHERE """
+                    """ animal='%s' ORDER BY date DESC LIMIT 1""" % (animal,))
+    
+    r = { 'computer':'http',
+          'animal':animal, 'date':date, 'user':session['username'] }
+    if len(rows):
+        # propagate these values from last entry..
+        r['restricted'] = int(rows[0]['restricted'])
+        r['tested'] = int(rows[0]['tested'])
+        r['thweight'] = safefloat(rows[0]['thweight'])
+        r['food'] = safeint(rows[0]['food'], 20)
+        r['health_stool'] = safeint(rows[0]['health_stool'])
+        r['health_skin'] = safeint(rows[0]['health_skin'])
+        r['health_urine'] = safeint(rows[0]['health_urine'])
+        r['health_pcv'] = safeint(rows[0]['health_pcv'])
+
+    x = db.query("""INSERT INTO session (%s) VALUES %s""" % \
+                 (string.join(r.keys(), ','), tuple([r[k] for k in r.keys()]),))
+    if x is None:
+        return render_template("message.html",
+                               header="Error",
+                               message="Can't insert %s/%s" % (animal, date))
+    
+    return redirect("/animals/%s/sessions/%s" % (animal, date))
+
+
+def getform(r=None):
+    """Get copy of POST request data coverting unicode to str along the way."""
+    if r is None:
+        r = request.form.copy()
+    for k in r.keys():
+        if type(r[k]) is types.UnicodeType:
+            r[k] = r[k].encode()
+    return r
+    
+@app.route('/animals/<animal>/sessions/new', methods=['POST'])
+@requires_auth
+def newsession_today(animal):
+    animal = animal.encode()
+    
+    form = getform()
+    if len(form['date']) < 10:
+        date = today()
+    else:
+        date = form['date']
+    return newsession(animal, date)
 
 @app.route('/favicon.ico')
 @requires_auth
@@ -369,11 +463,6 @@ def favicon():
 @app.route('/assets/<path>')
 @requires_auth
 def assets(path):
-    return send_from_directory('assets', path)
-
-@app.route('/images/<path>')
-@requires_auth
-def images(path):
     return send_from_directory('assets', path)
 
 @app.route('/fonts/<path>')
@@ -387,7 +476,8 @@ def search():
     from flask import redirect, request, url_for
     db = getdb()
 
-    links = findsessionlinks(request.form['pattern'])
+    form = getform()
+    links = findsessionlinks(form['pattern'])
     
     if len(links) == 1:
         return redirect(links[0])
@@ -396,17 +486,17 @@ def search():
         env = baseenv()
         return render_template("searchresult.html",
                                message="'%s': %d matches." % \
-                               (request.form['pattern'], len(links),),
+                               (form['pattern'], len(links),),
                                items=links, **env)
     elif len(links) > 0:
         env = baseenv()
-        env['sessions'] = expandsessions(request.form['pattern'])
+        env['sessions'] = expandsessions(form['pattern'])
         return render_template("sessions.html", **env)
     else:
         env = baseenv()
         return render_template("searchresult.html",
                                message="'%s': no matches." % \
-                               (request.form['pattern'],),
+                               (form['pattern'],),
                                items=[], **env)
 
 @app.route('/report/fluids/<int:year>-<int:month>')
@@ -429,38 +519,43 @@ def pick():
                            message="Select month",
                            items=l, **env)
 
-@app.route('/expers/<exper>/editnote')
+@app.route('/expers/<exper>/edit')
 @requires_auth
-def exper_editnote(exper):
+def exper_edit(exper):
     if not writeaccess():
-        return render_template("message.html", message="No write access!")
+        return render_template("message.html",
+                               header="Error",
+                               message="No write access!")
     db = getdb()
     rows = db.query("""SELECT * FROM exper WHERE exper='%s'""" % (exper,))
     if rows:
         env = baseenv()
         env['row'] = rows[0]
-        env['action'] = '/expers/%s/setnote' % (exper,)
+        env['action'] = '/expers/%s/set' % (exper,)
         return render_template("edit_exper.html", **env)
     else:
         return "no match."
 
-@app.route('/expers/<exper>/setnote', methods=['POST'])
+@app.route('/expers/<exper>/set', methods=['POST'])
 @requires_auth
-def exper_setnote(exper):
+def exper_set(exper):
+    form = getform()
     db = getdb()
-    note = request.form['note']
-    if 'save' in request.form or 'done' in request.form:
+    note = form['note']
+    if 'save' in form or 'done' in form:
         db.query("""UPDATE exper SET note='%s' WHERE exper='%s' """ % (note, exper))
-        if not 'done' in request.form:
+        if not 'done' in form:
             return ('', 204)
-    return redirect(request.form['_back'])
+    return redirect(form['_back'])
 
 
-@app.route('/expers/<exper>/units/<unit>/editnote')
+@app.route('/expers/<exper>/units/<unit>/edit')
 @requires_auth
-def exper_unit_editnote(exper, unit):
+def exper_unit_edit(exper, unit):
     if not writeaccess():
-        return render_template("message.html", message="No write access!")
+        return render_template("message.html",
+                               header="Error",
+                               message="No write access!")
     
     db = getdb()
     rows = db.query("""SELECT * FROM unit WHERE exper='%s' """
@@ -468,30 +563,27 @@ def exper_unit_editnote(exper, unit):
     if rows:
         env = baseenv()
         env['row'] = rows[0]
-        env['action'] = '/expers/%s/units/%s/setnote' % (exper, unit,)
+        env['action'] = '/expers/%s/units/%s/set' % (exper, unit,)
         return render_template("edit_unit.html", **env)
     else:
         return "no match."
 
-@app.route('/expers/<exper>/units/<unit>/setnote', methods=['POST'])
+@app.route('/expers/<exper>/units/<unit>/set', methods=['POST'])
 @requires_auth
-def exper_units_setnote(exper, unit):
+def exper_units_set(exper, unit):
     db = getdb()
-    r = request.form.copy()
+    r = getform()
  
-    r['depth'] = int(r['depth'])
-    r['qual'] = float(r['qual'])
-    r['rfx'] = float(r['rfx'])
-    r['rfy'] = float(r['rfy'])
-    r['rfr'] = float(r['rfr'])
-    r['latency'] = float(r['latency'])
+    r['depth'] = str2num(r['depth'])
+    r['qual'] = str2num(r['qual'], float)
+    r['rfx'] = str2num(r['rfx'], float)
+    r['rfy'] = str2num(r['rfy'], float)
+    r['rfr'] = str2num(r['rfr'], float)
+    r['latency'] = str2num(r['latency'], float)
 
-    print r
- 
-    if 'save' in request.form or 'done' in request.form:
+    if 'save' in r or 'done' in r:
         db.query("""UPDATE unit SET """
                  """   note='%(note)s', """
-                 """   well='%(well)s', """
                  """   wellloc='%(wellloc)s', """
                  """   note='%(area)s', """
                  """   hemi='%(hemi)s', """
@@ -504,15 +596,17 @@ def exper_units_setnote(exper, unit):
                  """   rfr=%(rfr)f, """
                  """   latency=%(latency)f """
                  """ WHERE exper='%(exper)s' AND unit='%(unit)s' """ % r)
-        if not 'done' in request.form:
+        if not 'done' in r:
             return ('', 204)
-    return redirect(request.form['_back'])
+    return redirect(r['_back'])
 
-@app.route('/animals/<animal>/sessions/<date>/editnote')
+@app.route('/animals/<animal>/sessions/<date>/edit')
 @requires_auth
-def session_editnote(animal, date):
+def session_edit(animal, date):
     if not writeaccess():
-        return render_template("message.html", message="No write access!")
+        return render_template("message.html",
+                               header="Error",
+                               message="No write access!")
     
     db = getdb()
     rows = db.query("""SELECT * FROM session WHERE animal='%s' AND""" \
@@ -520,29 +614,29 @@ def session_editnote(animal, date):
     if rows:
         env = baseenv()
         env['row'] = rows[0]
-        env['action'] = '/animals/%s/sessions/%s/setnote' % \
+        env['action'] = '/animals/%s/sessions/%s/set' % \
           (animal, date)
         return render_template("edit_session.html", **env)
     else:
         return "no match."
 
-@app.route('/animals/<animal>/sessions/<date>/setnote', methods=['POST'])
+@app.route('/animals/<animal>/sessions/<date>/set', methods=['POST'])
 @requires_auth
-def session_setnote(animal, date):
+def session_set(animal, date):
     db = getdb()
-    r = request.form.copy()
+    r = getform()
 
-    r['restricted'] = int('restricted' in r)
-    r['tested'] = int('tested' in r)
-    r['health_stool'] = int('health_stool' in r)
-    r['health_urine'] = int('health_urine' in r)
-    r['health_skin'] = int('health_skin' in r)
-    r['health_pcv'] = int('health_pcv' in r)
-    r['water_work'] = int(r['water_work'])
-    r['water_sup'] = int(r['water_sup'])
-    r['fruit_ml'] = int(r['fruit_ml'])
-    r['food'] = int(r['food'])
-    r['weight'] = float(r['weight'])
+    r['restricted'] = str2num('restricted' in r)
+    r['tested'] = str2num('tested' in r)
+    r['health_stool'] = str2num('health_stool' in r)
+    r['health_urine'] = str2num('health_urine' in r)
+    r['health_skin'] = str2num('health_skin' in r)
+    r['health_pcv'] = str2num('health_pcv' in r)
+    r['water_work'] = str2num(r['water_work'])
+    r['water_sup'] = str2num(r['water_sup'])
+    r['fruit_ml'] = str2num(r['fruit_ml'])
+    r['food'] = str2num(r['food'])
+    r['weight'] = str2num(r['weight'], float)
 
     if 'save' in r or 'done' in r:
         db.query("""UPDATE session SET """
@@ -560,10 +654,9 @@ def session_setnote(animal, date):
                  """   weight=%(weight)f """
                  """ WHERE animal='%(animal)s' """
                  """ AND date='%(date)s'""" % r)
-        if not 'done' in request.form:
+        if not 'done' in r:
             return ('', 204)
-    return redirect(request.form['_back'])
-
+    return redirect(r['_back'])
 
 @app.route('/test')
 @requires_auth
@@ -578,6 +671,7 @@ def dbtest():
     return '%s' % columntypes(db)
 
 if __name__ == "__main__":
+    db = getdb(quiet=True)
     if not LOGGING:
         import logging
         log = logging.getLogger('werkzeug')

@@ -1,8 +1,8 @@
 <div class="panel panel-default">
   <div class="panel panel-heading">
     {% if RW %}
-      <a class="hidden-print" href="/expers/{{exper}}/editnote">
-        <button type="button" class="btn btn-primary">Edit text</button>
+      <a class="hidden-print" href="/expers/{{exper}}/edit">
+        <button type="button" class="btn btn-primary">Edit</button>
       </a>
     {% endif %}
     {{exper}}
@@ -22,8 +22,8 @@
       <div class="panel panel-default">
 	<div class="panel panel-heading">
 	  {% if RW %}
-	    <a class="hidden-print" href="/expers/{{exper}}/units/{{unit['unit']}}/editnote">
-	      <button type="button" class="btn btn-primary">Edit text</button>
+	    <a class="hidden-print" href="/expers/{{exper}}/units/{{unit['unit']}}/edit">
+	      <button type="button" class="btn btn-primary">Edit</button>
 	    </a>
 	  {% endif %}
 	  {{exper}}_{{unit['unit']}}
@@ -108,8 +108,8 @@
       <div class="panel panel-default">
 	<div class="panel panel-heading">
 	  {% if RW %}
-	    <a class="hidden-print" href="/dfile/{{d['src']}}/editnote">
-	      <button type="button" class="btn btn-primary">Edit text</button>
+	    <a class="hidden-print" href="/dfile/{{d['src']}}/edit">
+	      <button type="button" class="btn btn-primary">Edit</button>
 	    </a>
 	  {% endif %}
 	  file: {{d['src']}}
