@@ -8,7 +8,7 @@
     {% include "navbar.html" %}
 
     <div class="container">
-      <div class="panel panel-default">
+      <div class="panel panel-default col-md-3">
 	<div class="panel panel-heading">
 	  Animals in database
 	</div>
@@ -16,18 +16,23 @@
 	  <ul class="list-group">
 	    {% for a in ANIMALS %}
             <li class="list-group-item">
-	      <div class="btn-group" role="group">
-		<a href="/animals/{{a}}">
-		  <button type="button" class="btn btn-primary">Go</button>
-		</a>
-		<a href="/animals/{{a}}/edit">
-		  <button type="button" class="btn btn-primary">Edit</button>
-		</a>
-		<a href="/animals/{{a}}/delete">
-		  <button type="button" class="btn btn-danger">Delete!</button>
-		</a>
-	      </div>
-	      {{a}}
+	      {#
+	      <a href="/animals/{{a}}" role="button">
+		{{a}} <span class="glyphicon glyphicon-arrow-right"></span>
+	      </a>
+	      #}
+	      <a href="/animals/{{a}}">
+		<button type="button"
+			class="btn btn-primary" style="width:25%;">{{a}}</button>
+	      </a>
+
+	      <a href="/animals/{{a}}/delete">
+		<button type="button"
+			class="btn btn-danger pull-right">Delete!</button>
+	      </a>
+	      <a href="/animals/{{a}}/edit">
+		<button type="button" class="btn btn-warning pull-right">Edit</button>
+	      </a>
 	    </li>
 	    {% endfor %}
 	</div>

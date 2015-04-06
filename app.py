@@ -46,7 +46,7 @@ def baseenv(**env):
 def getanimals():
     db = getdb()
     rows = db.query("""SELECT animal FROM animal WHERE 1 ORDER BY animal""")
-    return list(set([row['animal'] for row in rows]))
+    return [row['animal'] for row in rows]
 
 def expandattachment(id):
     env = baseenv()
@@ -379,6 +379,9 @@ def animal_edit(animal):
     env['action'] = '/animals/%s/set' % (animal,)
     return render_template("edit_animal.html", **env)
 
+# NOTE: THIS DELETES ENTRY IN ANIMAL TABLE, BUT NOT THE
+# ACTUAL DATA!!!
+
 @app.route('/animals/<animal>/delete')
 @requires_auth
 def animal_delete(animal):
@@ -388,8 +391,6 @@ def animal_delete(animal):
         return Error("""Can't delete %s""" % animal)
     else:
         db.query("""DELETE FROM animal WHERE animal='%s'""" % animal)
-
-    print 'deleted -- redirecting'
     return redirect("/")
 
 
@@ -400,10 +401,13 @@ def animal_set(animal):
     form = getform()
 
     if 'save' in form or 'done' in form:
-        db.query("""UPDATE animal SET animal='%s', date='%s', user='%s', idno='%s', note='%s'"""
-                 """ WHERE animal='%s'""" % (form['animal'], form['date'],
-                                             form['user'], form['idno'], form['note'],
-                                             animal))
+        db.query("""UPDATE animal SET """
+                 """ animal='%s', date='%s', """
+                 """ user='%s', idno='%s', note='%s' """
+                 """ WHERE animal='%s'""" % \
+                 (form['animal'], form['date'],
+                  form['user'], form['idno'],
+                  form['note'], animal))
         if not 'done' in form:
             return ('', 204)
     return redirect(form['_back'])
@@ -411,11 +415,10 @@ def animal_set(animal):
 @app.route('/animals/<animal>/sessions/<date>/new')
 @requires_auth
 def session_new(animal, date):
-    print 'session_new:', animal, date
     animal = animal.encode()
     date = date.encode()
     
-    db = getdb(quiet=False)
+    db = getdb()
     rows = db.query("""SELECT date FROM session WHERE """
                     """ animal='%s' AND date='%s' """ % (animal, date))
     if len(rows):
@@ -460,7 +463,6 @@ def getform(r=None):
 @app.route('/animals/<animal>/sessions/new', methods=['POST'])
 @requires_auth
 def session_new_today(animal):
-    print '\n\nXXX', animal, '\n'
     animal = animal.encode()
     form = getform()
     if len(form['date']) < 10:
@@ -613,7 +615,6 @@ def exper_units_set(exper, unit):
             return ('', 204)
     return redirect(r['_back'])
 
-# ---------------
 @app.route('/attachment/<id>/edit')
 @requires_auth
 def attachment_edit(id):
@@ -636,33 +637,16 @@ def attachment_edit(id):
 def attachment_set(id):
     db = getdb()
     r = getform()
- 
-    r['depth'] = str2num(r['depth'])
-    r['qual'] = str2num(r['qual'], float)
-    r['rfx'] = str2num(r['rfx'], float)
-    r['rfy'] = str2num(r['rfy'], float)
-    r['rfr'] = str2num(r['rfr'], float)
-    r['latency'] = str2num(r['latency'], float)
 
     if 'save' in r or 'done' in r:
         db.query("""UPDATE unit SET """
-                 """   note='%(note)s', """
-                 """   wellloc='%(wellloc)s', """
-                 """   note='%(area)s', """
-                 """   hemi='%(hemi)s', """
-                 """   depth=%(depth)d, """
-                 """   qual=%(qual)f, """
-                 """   ori='%(ori)s', """
-                 """   color='%(color)s', """
-                 """   rfx=%(rfx)f, """
-                 """   rfy=%(rfy)f, """
-                 """   rfr=%(rfr)f, """
-                 """   latency=%(latency)f """
-                 """ WHERE exper='%(exper)s' AND unit='%(unit)s' """ % r)
+                 """   note='%s', """
+                 """   title='%s' """
+                 """ WHERE attachemntID=%s' """ %
+                 (r['note'],r['title'],r['attachmentID']))
         if not 'done' in r:
             return ('', 204)
     return redirect(r['_back'])
-#-----------------
 
 @app.route('/animals/<animal>/sessions/<date>/edit')
 @requires_auth
