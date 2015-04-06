@@ -1,6 +1,8 @@
 -- call with something like:
 --    mysqladmin -h${HOST} -u${USER} -p${PASS} create ${DB} <<EOF
 
+use mlabdata;
+
 CREATE TABLE `attachment` (
   `attachmentID` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `title` varchar(255) DEFAULT NULL,
