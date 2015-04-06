@@ -5,7 +5,6 @@ Name: cmxform Styles
 ***********************************/
 form.cmxform {
 	width: 370px;
-	font-size: 1.0em;
 	color: #333;
 }
 
@@ -20,7 +19,7 @@ form.cmxform legend, form.cmxform label {
 form.cmxform fieldset {
 	border: none;
 	border-top: 1px solid #C9DCA6;
-	background-color: #F8FDEF;
+	background-color: #F8E0E6;
 }
 
 form.cmxform fieldset fieldset {

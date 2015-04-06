@@ -3,7 +3,10 @@
     <div class="panel panel-heading">
       {% if RW %}
       <a class="hidden-print" href="/animals/{{animal}}/sessions/{{date}}/edit">
-	<button type="button" class="btn btn-primary">Edit</button>
+	<button type="button" class="btn btn-primary">Edit Session</button>
+      </a>
+      <a class="hidden-print" href="/animals/{{animal}}/sessions/{{date}}/newexper">
+	<button type="button" class="btn btn-primary">New Exper</button>
       </a>
       {% endif %}
       {{date}} {{animal}}
@@ -21,7 +24,7 @@
           </tr>
           <tr>
             <td class="text-right"><strong>user</strong></td>
-            <td>{{user}}@{{computer}}</td>
+            <td>{{user|blue|safe}}@{{computer}}</td>
           </tr>
           <tr>
             <td class="text-right"><strong>rest,tested</strong></td>

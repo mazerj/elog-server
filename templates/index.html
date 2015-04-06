@@ -8,6 +8,7 @@
     {% include "navbar.html" %}
 
     <div class="container">
+
       <div class="panel panel-default col-md-3">
 	<div class="panel panel-heading">
 	  Animals in database
@@ -16,14 +17,9 @@
 	  <ul class="list-group">
 	    {% for a in ANIMALS %}
             <li class="list-group-item">
-	      {#
-	      <a href="/animals/{{a}}" role="button">
-		{{a}} <span class="glyphicon glyphicon-arrow-right"></span>
-	      </a>
-	      #}
 	      <a href="/animals/{{a}}">
 		<button type="button"
-			class="btn btn-primary" style="width:25%;">{{a}}</button>
+			class="btn btn-primary btn-lg" style="width:25%;">{{a}}</button>
 	      </a>
 
 	      <a href="/animals/{{a}}/delete">

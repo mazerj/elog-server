@@ -9,13 +9,11 @@ form.cmxform fieldset {
 
 form.cmxform legend {
 	padding: 0 2px;
-	font-weight: bold;
 	_margin: 0 -7px; /* IE Win */
 }
 
 form.cmxform label {
 	display: inline-block;
-	line-height: 1.8;
 	vertical-align: top;
 	cursor: hand;
 }
@@ -33,7 +31,6 @@ form.cmxform fieldset fieldset {
 
 form.cmxform fieldset fieldset legend {
 	padding: 0 0 5px;
-	font-weight: normal;
 }
 
 form.cmxform fieldset fieldset label {

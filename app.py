@@ -4,12 +4,13 @@ import sys, os, types, string
 import re, textwrap, datetime
 
 from flask import *
+from werkzeug import secure_filename
 from functools import wraps
 
 #sys.path.append('%s/lib/elog' % os.path.dirname(os.path.dirname(sys.argv[0])))
 
 sys.path.append(os.environ['ELOG_DIR'])
-from elogapi import getdb
+from elogapi import getdb, GetExper
 
 from app_tools import *
 
@@ -19,6 +20,8 @@ HOST='0.0.0.0'
 #HOST='127.0.0.1'
 PORT=5000
 LOCAL='192.168.1.1'
+UPLOAD_FOLDER = 'uploads'
+ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
 
 try:
     USERS = {}
@@ -32,6 +35,14 @@ except:
     sys.stderr.write("""bad/missing 'userdata' file.\n""")
     sys.exit(1)
 
+def nextexper(animal):
+    e = GetExper(animal)
+    if e is None:
+        nextno = 1
+    else:
+        nextno = int(e[-4:]) + 1
+    return "%s%04d" % (animal, nextno)
+    
 def writeaccess():
     try:
         return USERS_RW[session['username']]
@@ -58,7 +69,7 @@ def expandattachment(id):
 
     for k in env.keys():
         if type(env[k]) is types.StringType and len(env[k]) == 0:
-            env[k] = 'N/A'
+            env[k] = ''
 
     env['note'] = expandnote(env['note'])
     return render_template("attachment.html", **env)
@@ -72,7 +83,7 @@ def expandexper(exper):
 
     for k in env.keys():
         if type(env[k]) is types.StringType and len(env[k]) == 0:
-            env[k] = 'N/A'
+            env[k] = ''
 
     env['note'] = expandnote(env['note'])
 
@@ -92,7 +103,7 @@ def expandexper(exper):
             d['crap'] = check(d['crap'])
         for k in d.keys():
             if type(d[k]) is types.StringType and len(d[k]) == 0:
-                d[k] = 'N/A'
+                d[k] = ''
 
 
     return render_template("exper.html", **env)
@@ -107,7 +118,7 @@ def expandsession(animal, date):
     env.update(row)
     for k in env.keys():
         if type(env[k]) is types.StringType and len(env[k]) == 0:
-            env[k] = 'N/A'
+            env[k] = ''
 
     env['restricted'] = check(env['restricted'])
     env['tested'] = check(env['tested'])
@@ -307,15 +318,17 @@ def requires_auth(f):
 
 def Error(msg):
     return render_template("message.html", header="Error", message=msg)
-    
+
+def Message(msg):
+    return render_template("message.html", header="Message", message=msg)
 
 
 ########################################################################
 #  Actual server is implmemented starting here
 ########################################################################
 
-
 app = Flask(__name__)
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 @app.route('/')
 @requires_auth
@@ -588,7 +601,9 @@ def exper_unit_edit(exper, unit):
 def exper_units_set(exper, unit):
     db = getdb()
     r = getform()
- 
+    print r
+
+    r['orig_unit'] = unit
     r['depth'] = str2num(r['depth'])
     r['qual'] = str2num(r['qual'], float)
     r['rfx'] = str2num(r['rfx'], float)
@@ -598,9 +613,10 @@ def exper_units_set(exper, unit):
 
     if 'save' in r or 'done' in r:
         db.query("""UPDATE unit SET """
+                 """   unit='%(unit)s', """
                  """   note='%(note)s', """
                  """   wellloc='%(wellloc)s', """
-                 """   note='%(area)s', """
+                 """   area='%(area)s', """
                  """   hemi='%(hemi)s', """
                  """   depth=%(depth)d, """
                  """   qual=%(qual)f, """
@@ -610,7 +626,7 @@ def exper_units_set(exper, unit):
                  """   rfy=%(rfy)f, """
                  """   rfr=%(rfr)f, """
                  """   latency=%(latency)f """
-                 """ WHERE exper='%(exper)s' AND unit='%(unit)s' """ % r)
+                 """ WHERE exper='%(exper)s' AND unit='%(orig_unit)s' """ % r)
         if not 'done' in r:
             return ('', 204)
     return redirect(r['_back'])
@@ -639,14 +655,63 @@ def attachment_set(id):
     r = getform()
 
     if 'save' in r or 'done' in r:
-        db.query("""UPDATE unit SET """
-                 """   note='%s', """
-                 """   title='%s' """
-                 """ WHERE attachemntID=%s' """ %
+        db.query("""UPDATE attachment SET """
+                 """   note='%s', title='%s' """
+                 """ WHERE attachmentID=%s """ %
                  (r['note'],r['title'],r['attachmentID']))
         if not 'done' in r:
             return ('', 204)
     return redirect(r['_back'])
+
+@app.route('/animals/<animal>/sessions/<date>/newexper')
+@requires_auth
+def exper_new(animal, date):
+    db = getdb()
+    exper = nextexper(animal)
+    db.query("""INSERT INTO exper SET """
+             """  animal='%s', date='%s', exper='%s',"""
+             """  note=''""" % (animal, date, exper))
+    link = "\n<elog:exper=%s/%s>\n" % (date, exper)
+
+    rows = db.query("""SELECT note FROM session WHERE animal='%s' AND""" \
+                    """ date='%s'""" % (animal, date,))
+    note = rows[0]['note'] + link
+    rows = db.query("""UPDATE session SET note='%s' WHERE """\
+                    """  animal='%s' AND date='%s'""" % (note, animal, date,))
+    return redirect('/expers/%s/edit' % (exper,))
+
+@app.route('/expers/<exper>/newunit')
+@requires_auth
+def unit_new(exper):
+    # start with set as TTL, let user change
+    db = getdb()
+    r = db.query("""SELECT * FROM exper WHERE exper='%s'""" % exper)[0]
+    u = 'TTL'
+    k = 0
+    while 1:
+        rows = db.query("""SELECT unit FROM unit WHERE """
+                        """  unit='%s' and exper='%s'""" % (u, exper))
+        if len(rows) == 0:
+            break
+        u = 'sig%02d' % k
+        k = k + 1
+            
+    db.query("""INSERT INTO unit SET """
+             """  unit='%s', """
+             """  experID=%d, """
+             """  exper='%s', """
+             """  animal='%s', """
+             """  date='%s' """ % (u, r['experID'], exper, r['animal'], r['date']))
+    return redirect('/expers/%s/units/%s/edit' % (exper, u))
+
+@app.route('/expers/<exper>/units/<unit>/delete')
+@requires_auth
+def unit_delete(exper, unit):
+    db = getdb()
+    r = db.query("""SELECT animal,date FROM exper WHERE exper='%s'""" % (exper))[0]
+    db.query("""DELETE FROM unit WHERE """
+             """  exper='%s' AND unit='%s' """ % (exper, unit))
+    return redirect('/animals/%s/sessions/%s' % (r['animal'], r['date']))
 
 @app.route('/animals/<animal>/sessions/<date>/edit')
 @requires_auth
@@ -704,17 +769,39 @@ def session_set(animal, date):
             return ('', 204)
     return redirect(r['_back'])
 
-@app.route('/test')
-@requires_auth
-def test():
-    return render_template("test.html")
+@app.route('/dump', methods=['GET', 'POST'])
+def upload_file():
+    def allowed_file(filename):
+        return '.' in filename and \
+          filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 
-@app.route('/dbtest')
-@requires_auth
-def dbtest():
-    db = getdb()
-    r = db.query("""select * from session limit 1""")
-    return '%s' % columntypes(db)
+    if request.method == 'POST':
+        file = request.files['file']
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            return Message("uploaded: %s" % filename)
+    return '''
+    <!doctype html>
+    <title>Upload File</title>
+    <h1>Upload File</h1>
+    <form action="" method=post enctype=multipart/form-data>
+      <p><input type=file name=file>
+         <input type=submit value=Upload>
+    </form>
+    '''
+
+@app.template_filter('red')
+def red(s):
+    return """<font color="red">%s</font>""" % s
+
+@app.template_filter('blue')
+def blue(s):
+    return """<font color="blue">%s</font>""" % s
+
+@app.template_filter('glyph')
+def insert_glyph(name):
+    return """<span class="glyphicon glyphicon-%s" aria-hidden="true"></span> """ % name
 
 if __name__ == "__main__":
     try:

@@ -24,14 +24,13 @@
       <input type="hidden" name="animal" value="{{row['animal']}}">
       <input type="hidden" name="date" value="{{row['date']}}">
       <input type="hidden" name="exper" value="{{row['exper']}}">
-      <input type="hidden" name="unit" value="{{row['unit']}}">
       <fieldset>
 	<div>
 	  <p>
 	    <label for="exper">exper </label><input disabled id="exper" name="exper" value="{{row['exper']}}">
 	  </p>
 	  <p>
-	    <label for="unit">unit </label><input disabled id="unit" name="unit" value="{{row['unit']}}">
+	    <label for="unit">unit </label><input id="unit" name="unit" value="{{row['unit']}}">
 	  </p>
       </fieldset>
       <fieldset>
@@ -104,7 +103,7 @@
 	</div>
       </fieldset>
       <fieldset>
-	<legend>Notes: Don't change pseudo links!</legend>
+	{# <legend>Notes: Don't change pseudo links!</legend> #}
 	<textarea style="width:100%;" rows="7"
 		  name="note">{{row['note']}}</textarea>
       </fieldset>
