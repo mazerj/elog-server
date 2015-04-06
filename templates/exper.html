@@ -10,7 +10,8 @@
     {% endif %}
     {{exper}}
   </div>
-  <div class="panel panel-body">
+  <div class="panel panel-body"
+       onClick="jumpto('/expers/{{exper}}/edit');">
     <!-- general notes -->
     {% for (code, content) in note %}
       {% if code == 0 %}
@@ -37,7 +38,8 @@
 	  {% endif %}
 	  {{exper}}_{{unit['unit']}}
 	</div>
-	<div class="panel panel-body">
+	<div class="panel panel-body"
+	   onClick="jumpto('/expers/{{exper}}/units/{{unit['unit']}}/edit');">
 	  <div class="col-md-2">
             <table class="table table-striped table-bordered">
               <tr>
@@ -114,7 +116,8 @@
 
 
     {% for d in dfiles %}
-      <div class="panel panel-default" style="margin-left: 25px;">
+      <div class="panel panel-default" style="margin-left: 25px;"
+	   onClick="jumpto('/dfile/{{d['src']}}/edit');">
 	<div class="panel panel-heading">
 	  {% if RW %}
 	    <a class="hidden-print" href="/dfile/{{d['src']}}/edit">

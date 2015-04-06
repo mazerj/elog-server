@@ -4,7 +4,6 @@ import sys, os, types, string
 import re, textwrap, datetime
 
 from flask import *
-from werkzeug import secure_filename
 from functools import wraps
 
 #sys.path.append('%s/lib/elog' % os.path.dirname(os.path.dirname(sys.argv[0])))
@@ -293,17 +292,9 @@ def check_auth(username, password):
 
 def authenticate():
     """Sends a 401 response that enables basic auth"""
-    from keyboard import keyboard
     
-    if islocalconnection(request.remote_addr):
-        msg = "Username ONLY required"
-    else:
-        msg = "Username and password required"
-
-    return Response(("""Could not verify your access level for that URL.\n"""
-                     """You have to login with proper credentials"""),
-                        401, {'WWW-Authenticate':
-                              'Basic realm="%s"' % msg})
+    return Response(render_template("logout.html"),
+                    401, {'WWW-Authenticate':'Basic realm="elog"'})
 
 def requires_auth(f):
     @wraps(f)
@@ -334,6 +325,10 @@ def index():
     env = baseenv()
     env['ANIMALS'] = getanimals()
     return render_template("index.html", **env)
+
+@app.route('/logout')
+def logout():
+    return (render_template("logout.html"), 401)
 
 @app.route('/about')
 @requires_auth

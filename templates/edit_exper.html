@@ -18,33 +18,36 @@
     {% include "navbar.html" %}
 
     <div class="container">
+      <div class="well">Editing Experiment</div>
 
-    <form class="cmxform" id="editForm" method="post" action="{{action}}">
-      <input type="hidden" name="exper" value="{{row['exper']}}">
-      <fieldset>
-	<div>
-	  <p>
-	    <label for="exper">exper </label>
-	    <input disabled id="exper" name="exper" value="{{row['exper']}}">
-	  </p>
+      <form class="cmxform" id="editForm" method="post" action="{{action}}">
+	<input type="hidden" name="exper" value="{{row['exper']}}">
+	<fieldset>
+	  <div>
+	    <p>
+	      <label for="exper">exper </label>
+	      <input disabled id="exper" name="exper" value="{{row['exper']}}">
+	    </p>
+	  </div>
+	</fieldset>
+	<fieldset>
+	  {# <legend>Notes: Don't change pseudo links!</legend> #}
+	  <textarea style="width:100%;" rows="7"
+		    name="note">{{row['note']}}</textarea>
+	</fieldset>
+	
+	<div class="well">
+	  {% if RW %}
+	  <button class="btn btn-default" type="submit"
+		  name="done">Done</button>
+	  <button class="btn btn-default" type="submit" 
+		  name="save">Save</button>
+	  {% endif %}
+	  <button class="btn btn-default" 
+		  name="cancel">Cancel</button>
+	  <input type="hidden" name="_back" value="{{request.referrer}}">
 	</div>
-      </fieldset>
-      <fieldset>
-	{# <legend>Notes: Don't change pseudo links!</legend> #}
-	<textarea style="width:100%;" rows="7"
-		  name="note">{{row['note']}}</textarea>
-      </fieldset>
-
-      <div class="well">
-	<button class="btn btn-default" type="submit"
-		name="done">Done</button>
-	<button class="btn btn-default" type="submit" 
-		name="save">Save</button>
-	<button class="btn btn-default" 
-		name="cancel">Cancel</button>
-	<input type="hidden" name="_back" value="{{request.referrer}}">
-      </div>
-    </form>
+      </form>
     </div>
 
     <script>

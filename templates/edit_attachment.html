@@ -19,26 +19,30 @@
 
     <div class="container">
 
-    <form class="cmxform" id="editForm" method="post" action="{{action}}">
-      <input type="hidden" name="attachmentID" value="{{row['attachmentID']}}">
-      <label for="exper">title </label><input title id="title" name="title" value="{{row['title']}}">
-      {# <legend>Notes: Don't change pseudo links!</legend> #}
-      <textarea style="width:100%;" rows="7"
-		name="note">{{row['note']}}</textarea>
+      <div class="well">Editing Attachment</div>
 
-      <img src="data:image/jpg;base64,{{row['data']|safe}}"
-	   style="max-width: 700px;">
+      <form class="cmxform" id="editForm" method="post" action="{{action}}">
+	<input type="hidden" name="attachmentID" value="{{row['attachmentID']}}">
+	<label for="exper">title </label><input title id="title" name="title" value="{{row['title']}}">
+	{# <legend>Notes: Don't change pseudo links!</legend> #}
+	<textarea style="width:100%;" rows="7"
+		  name="note">{{row['note']}}</textarea>
+	
+	<img src="data:image/jpg;base64,{{row['data']|safe}}"
+	     style="max-width: 700px;">
 
-      <div class="well">
-	<button class="btn btn-default" type="submit"
-		name="done">Done</button>
-	<button class="btn btn-default" type="submit" 
-		name="save">Save</button>
-	<button class="btn btn-default" 
-		name="cancel">Cancel</button>
-	<input type="hidden" name="_back" value="{{request.referrer}}">
-      </div>
-    </form>
+	<div class="well">
+	  {% if RW %}
+	  <button class="btn btn-default" type="submit"
+		  name="done">Done</button>
+	  <button class="btn btn-default" type="submit" 
+		  name="save">Save</button>
+	  {% endif %}
+	  <button class="btn btn-default" 
+		  name="cancel">Cancel</button>
+	  <input type="hidden" name="_back" value="{{request.referrer}}">
+	</div>
+      </form>
     </div>
 
     <script>

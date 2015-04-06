@@ -20,20 +20,22 @@
 
     <div class="container">
 
-    <form class="cmxform" id="editForm" method="post" action="{{action}}">
-      <input type="hidden" name="animal" value="{{row['animal']}}">
-      <input type="hidden" name="date" value="{{row['date']}}">
-      <input type="hidden" name="exper" value="{{row['exper']}}">
-      <fieldset>
-	<div>
-	  <p>
-	    <label for="exper">exper </label><input disabled id="exper" name="exper" value="{{row['exper']}}">
-	  </p>
-	  <p>
-	    <label for="unit">unit </label><input id="unit" name="unit" value="{{row['unit']}}">
-	  </p>
-      </fieldset>
-      <fieldset>
+      <div class="well">Editing Unit</div>
+
+      <form class="cmxform" id="editForm" method="post" action="{{action}}">
+	<input type="hidden" name="animal" value="{{row['animal']}}">
+	<input type="hidden" name="date" value="{{row['date']}}">
+	<input type="hidden" name="exper" value="{{row['exper']}}">
+	<fieldset>
+	  <div>
+	    <p>
+	      <label for="exper">exper </label><input disabled id="exper" name="exper" value="{{row['exper']}}">
+	    </p>
+	    <p>
+	      <label for="unit">unit </label><input id="unit" name="unit" value="{{row['unit']}}">
+	    </p>
+	</fieldset>
+	<fieldset>
 	  <p>
 	    <label for="well">well </label>
 	    <input id="well"
@@ -101,23 +103,25 @@
 	    <label for="latency"  style="text-align: left;">ms </label>
 	  </p>
 	</div>
-      </fieldset>
-      <fieldset>
-	{# <legend>Notes: Don't change pseudo links!</legend> #}
-	<textarea style="width:100%;" rows="7"
-		  name="note">{{row['note']}}</textarea>
-      </fieldset>
+	</fieldset>
+	<fieldset>
+	  {# <legend>Notes: Don't change pseudo links!</legend> #}
+	  <textarea style="width:100%;" rows="7"
+		    name="note">{{row['note']}}</textarea>
+	</fieldset>
 
-      <div class="well">
-	<button class="btn btn-default" type="submit"
-		name="done">Done</button>
-	<button class="btn btn-default" type="submit" 
-		name="save">Save</button>
-	<button class="btn btn-default" 
-		name="cancel">Cancel</button>
-	<input type="hidden" name="_back" value="{{request.referrer}}">
-      </div>
-    </form>
+	<div class="well">
+	  {% if RW %}
+	  <button class="btn btn-default" type="submit"
+		  name="done">Done</button>
+	  <button class="btn btn-default" type="submit" 
+		  name="save">Save</button>
+	  {% endif %}
+	  <button class="btn btn-default" 
+		  name="cancel">Cancel</button>
+	  <input type="hidden" name="_back" value="{{request.referrer}}">
+	</div>
+      </form>
     </div>
 
     <script>
