@@ -327,7 +327,6 @@ def Message(msg):
 ########################################################################
 
 app = Flask(__name__)
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 @app.route('/')
 @requires_auth
