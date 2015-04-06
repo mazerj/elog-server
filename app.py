@@ -20,8 +20,6 @@ HOST='0.0.0.0'
 #HOST='127.0.0.1'
 PORT=5000
 LOCAL='192.168.1.1'
-UPLOAD_FOLDER = 'uploads'
-ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
 
 try:
     USERS = {}
@@ -295,9 +293,10 @@ def check_auth(username, password):
 
 def authenticate():
     """Sends a 401 response that enables basic auth"""
-
+    from keyboard import keyboard
+    
     if islocalconnection(request.remote_addr):
-        msg = "Username required"
+        msg = "Username ONLY required"
     else:
         msg = "Username and password required"
 
@@ -601,7 +600,6 @@ def exper_unit_edit(exper, unit):
 def exper_units_set(exper, unit):
     db = getdb()
     r = getform()
-    print r
 
     r['orig_unit'] = unit
     r['depth'] = str2num(r['depth'])
@@ -769,27 +767,7 @@ def session_set(animal, date):
             return ('', 204)
     return redirect(r['_back'])
 
-@app.route('/dump', methods=['GET', 'POST'])
-def upload_file():
-    def allowed_file(filename):
-        return '.' in filename and \
-          filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
-
-    if request.method == 'POST':
-        file = request.files['file']
-        if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            return Message("uploaded: %s" % filename)
-    return '''
-    <!doctype html>
-    <title>Upload File</title>
-    <h1>Upload File</h1>
-    <form action="" method=post enctype=multipart/form-data>
-      <p><input type=file name=file>
-         <input type=submit value=Upload>
-    </form>
-    '''
+# some useful filters
 
 @app.template_filter('red')
 def red(s):
