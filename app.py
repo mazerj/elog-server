@@ -32,8 +32,6 @@ except:
     sys.stderr.write("""bad/missing 'userdata' file.\n""")
     sys.exit(1)
 
-# Useful helper functions
-
 def writeaccess():
     try:
         return USERS_RW[session['username']]
@@ -47,8 +45,8 @@ def baseenv(**env):
 
 def getanimals():
     db = getdb()
-    rows = db.query("""SELECT animal FROM animal WHERE 1""")
-    return sorted(list(set([row['animal'] for row in rows])))
+    rows = db.query("""SELECT animal FROM animal WHERE 1 ORDER BY animal""")
+    return list(set([row['animal'] for row in rows]))
 
 def expandattachment(id):
     env = baseenv()
@@ -177,9 +175,9 @@ def findsessions(pattern):
     
     db = getdb()
 
-    if pattern.lower() == '=today':
+    if pattern.lower() == ':today':
         pattern = today(0)
-    elif pattern.lower() == '=yesterday':
+    elif pattern.lower().startswith(':yesterday'):
         pattern = today(1)
 
     # look for matching exper
@@ -615,6 +613,57 @@ def exper_units_set(exper, unit):
             return ('', 204)
     return redirect(r['_back'])
 
+# ---------------
+@app.route('/attachment/<id>/edit')
+@requires_auth
+def attachment_edit(id):
+    if not writeaccess():
+        return Error("No write access!")
+    
+    db = getdb()
+    rows = db.query("""SELECT * FROM attachment WHERE """
+                    """ attachmentID=%s""" % (id,))
+    if rows:
+        env = baseenv()
+        env['row'] = rows[0]
+        env['action'] = '/attachment/%s/set' % (id,)
+        return render_template("edit_attachment.html", **env)
+    else:
+        return Error("%s/%s: no matches." % (id,e))
+
+@app.route('/attachment/<id>/set', methods=['POST'])
+@requires_auth
+def attachment_set(id):
+    db = getdb()
+    r = getform()
+ 
+    r['depth'] = str2num(r['depth'])
+    r['qual'] = str2num(r['qual'], float)
+    r['rfx'] = str2num(r['rfx'], float)
+    r['rfy'] = str2num(r['rfy'], float)
+    r['rfr'] = str2num(r['rfr'], float)
+    r['latency'] = str2num(r['latency'], float)
+
+    if 'save' in r or 'done' in r:
+        db.query("""UPDATE unit SET """
+                 """   note='%(note)s', """
+                 """   wellloc='%(wellloc)s', """
+                 """   note='%(area)s', """
+                 """   hemi='%(hemi)s', """
+                 """   depth=%(depth)d, """
+                 """   qual=%(qual)f, """
+                 """   ori='%(ori)s', """
+                 """   color='%(color)s', """
+                 """   rfx=%(rfx)f, """
+                 """   rfy=%(rfy)f, """
+                 """   rfr=%(rfr)f, """
+                 """   latency=%(latency)f """
+                 """ WHERE exper='%(exper)s' AND unit='%(unit)s' """ % r)
+        if not 'done' in r:
+            return ('', 204)
+    return redirect(r['_back'])
+#-----------------
+
 @app.route('/animals/<animal>/sessions/<date>/edit')
 @requires_auth
 def session_edit(animal, date):
@@ -684,7 +733,12 @@ def dbtest():
     return '%s' % columntypes(db)
 
 if __name__ == "__main__":
-    db = getdb(quiet=True)
+    try:
+        getanimals()
+    except TypeError:
+        sys.stderr.write('run fix-animals to update database\n')
+        sys.exit(1)
+
     if not LOGGING:
         import logging
         log = logging.getLogger('werkzeug')

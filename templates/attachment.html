@@ -1,6 +1,9 @@
 <div class="panel panel-default">
   <div class="panel panel-heading">
-    {{title}}
+    <a href="/attachment/{{attachmentID}}/edit">
+      <button type="button" class="btn btn-primary">Edit</button>
+    </a>
+    #{{attachmentID}} {{title}}
   </div>
   <div class="panel panel-body">
     {% for (code, content) in note %}
