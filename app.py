@@ -455,7 +455,7 @@ def session_new(animal, date):
     rows = db.query("""SELECT * FROM session WHERE """
                     """ animal='%s' ORDER BY date DESC LIMIT 1""" % (animal,))
     
-    r = { 'computer':'http',
+    r = { 'computer':'web',
           'animal':animal, 'date':date, 'user':session['username'] }
     if len(rows):
         # propagate these values from last entry..
