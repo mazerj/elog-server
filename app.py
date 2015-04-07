@@ -21,6 +21,7 @@ FIREWALL='192.168.1.1'
 try:
     import pam
     pamchecker = pam.pam()
+    sys.stderr.write('Using PAM authentication.\n')
 except ImportError:
     pamchecker = None
     try:
@@ -31,11 +32,13 @@ except ImportError:
             if len(l) == 3:
                 USERS[l[0]] = l[1]
                 USERS_RW[l[0]] = (l[2].lower() == 'rw')
+        sys.stderr.write('Using 'userdata' file.\n')
     except:
-        sys.stderr.write("""bad/missing 'userdata' file.\n""")
+        sys.stderr.write("Bad or missing 'userdata' file.\n")
         sys.exit(1)
 
 def nextexper(animal):
+    """This really should be in elogapi.py"""
     e = GetExper(animal)
     if e is None:
         nextno = 1
