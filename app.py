@@ -6,6 +6,12 @@ import re, textwrap, datetime
 from flask import *
 from functools import wraps
 
+import matplotlib as mpl
+mpl.use('Agg')                        # prevent Tk loading..
+import matplotlib.pyplot as plt
+import mpld3
+
+
 #sys.path.append('%s/lib/elog' % os.path.dirname(os.path.dirname(sys.argv[0])))
 
 sys.path.append(os.environ['ELOG_DIR'])
@@ -779,6 +785,48 @@ def session_set(animal, date):
         if not 'done' in r:
             return ('', 204)
     return redirect(r['_back'])
+
+@app.route('/animals/<animal>/weight/plot')
+@requires_auth
+def plot_weight(animal):
+    import matplotlib.dates as mdates
+
+    db = getdb()
+    rows = db.query("""SELECT date,weight FROM session WHERE """
+                    """ animal='%s' AND """
+                    """ weight > 0""" % animal)
+    x = [mdates.strpdate2num('%Y-%m-%d')('%s'%r['date']) for r in rows]
+    y = [r['weight'] for r in rows]
+    plt.clf()
+    plt.plot_date(x, y)
+    plt.title(animal);
+    plt.ylabel('Weight (kg)')
+    return mpld3.fig_to_html(plt.gcf())
+
+
+    
+@app.route('/animals/<animal>/fluid/plot')
+@requires_auth
+def plot_fluid(animal):
+    import matplotlib.dates as mdates
+
+    db = getdb()
+    rows = db.query("""SELECT * FROM session WHERE """
+                    """ animal='%s' """ % animal)
+
+    x = [mdates.strpdate2num('%Y-%m-%d')('%s'%r['date']) for r in rows]
+    y1 = [safefloat(r['water_work'])+
+          safefloat(r['water_sup'])+
+          safefloat(r['fruit_ml']) for r in rows]
+    y2 = [safefloat(r['water_work']) for r in rows]
+    plt.clf()
+    plt.plot_date(x, y1, 'r.')
+    plt.hold(1)
+    plt.plot_date(x, y2, 'b+')
+    plt.hold(0)
+    plt.title(animal);
+    plt.ylabel('Fluid Intake (ml)')
+    return mpld3.fig_to_html(plt.gcf())
 
 # some useful filters
 

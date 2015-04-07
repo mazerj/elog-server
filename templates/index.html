@@ -9,7 +9,7 @@
 
     <div class="container">
 
-      <div class="panel panel-default col-md-3">
+      <div class="panel panel-default col-md-5">
 	<div class="panel panel-heading">
 	  Animals in database
 	</div>
@@ -21,16 +21,21 @@
 		<button type="button"
 			class="btn btn-primary btn-lg" style="width:25%;">{{a}}</button>
 	      </a>
-
-	      <a href="/animals/{{a}}/delete">
+	      <a href="/animals/{{a}}/weight/plot">
 		<button type="button"
-			class="btn btn-danger pull-right">Delete Animal
-		</button>
+			class="btn btn-primary btn">weights</button>
+	      </a>
+	      <a href="/animals/{{a}}/fluid/plot">
+		<button type="button"
+			class="btn btn-primary btn">fluid</button>
 	      </a>
 	      <a href="/animals/{{a}}/edit">
 		<button type="button"
-			class="btn btn-warning pull-right">Edit
-		</button>
+			class="btn btn-warning">Edit</button>
+	      </a>
+	      <a href="/animals/{{a}}/delete">
+		<button type="button"
+			class="btn btn-danger pull-right">Delete</button>
 	      </a>
 	    </li>
 	    {% endfor %}
