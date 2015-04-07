@@ -120,6 +120,7 @@ CREATE TABLE `animal` (
   `animalID` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `animal` varchar(255) DEFAULT NULL,
   `idno` varchar(255) DEFAULT NULL,
+  `dob` date DEFAULT NULL,
   `user` varchar(10) DEFAULT NULL,
   `date` date DEFAULT NULL,
   `note` text,

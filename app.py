@@ -424,10 +424,11 @@ def animal_set(animal):
     if 'save' in form or 'done' in form:
         db.query("""UPDATE animal SET """
                  """ animal='%s', date='%s', """
-                 """ user='%s', idno='%s', note='%s' """
+                 """ user='%s', idno='%s', dob='%s', """
+                 """ note='%s' """
                  """ WHERE animal='%s'""" % \
                  (form['animal'], form['date'],
-                  form['user'], form['idno'],
+                  form['user'], form['idno'], form['dob'],
                   form['note'], animal))
         if not 'done' in form:
             return ('', 204)

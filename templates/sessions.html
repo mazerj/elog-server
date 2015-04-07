@@ -7,14 +7,11 @@
 
     {% include "navbar.html" %}
 
-    <div class="well">
-      Showing {{sessions|length}}
-        {% if sessions|length > 1 %}
-          sessions.
-        {% else %}
-          session.
-        {% endif %}
-    </div>
+    {% if sessions|length > 1 %}
+      <div class="well">
+        Showing {{sessions|length}} sessions.
+      </div>
+    {% endif %}
 
     <div class="container">
       {% for session in sessions %}

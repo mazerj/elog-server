@@ -23,8 +23,9 @@
 
       <form class="cmxform" id="editForm" method="post" action="{{action}}">
 	<input type="hidden" name="attachmentID" value="{{row['attachmentID']}}">
-	<label for="exper">title </label><input title id="title" name="title" value="{{row['title']}}">
-	{# <legend>Notes: Don't change pseudo links!</legend> #}
+	<p>
+	  <label for="exper">title</label><input title id="title" name="title" value="{{row['title']}}">
+	</p>
 	<textarea style="width:100%;" rows="7"
 		  name="note">{{row['note']}}</textarea>
 	
