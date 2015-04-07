@@ -1,25 +1,23 @@
-/**********************************
+#/**********************************
 
 Name: cmxform Styles
 
 ***********************************/
 form.cmxform {
-	width: 370px;
-	color: #333;
+	width: 100%;
 }
 
 form.cmxform legend {
 	padding-left: 0;
 }
 
-form.cmxform legend, form.cmxform label {
-	color: #333;
+form.cmxform label {
+    text-align: right;
+    padding: 0px 5px 0px;
 }
 
 form.cmxform fieldset {
 	border: none;
-	border-top: 1px solid #C9DCA6;
-	background-color: #F8E0E6;
 }
 
 form.cmxform fieldset fieldset {
@@ -41,3 +39,4 @@ input.checkbox { border: none }
 input:focus { border: 1px dotted black; }
 input.error { border: 1px dotted red; }
 form.cmxform .gray * { color: gray; }
+

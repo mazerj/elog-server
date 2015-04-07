@@ -7,10 +7,6 @@
     <script src="/static/jquery.min.js"></script>
     <script src="/static/jquery.validate.min.js"></script>
     <link rel="stylesheet" media="screen" href="/static/screen.css">
-    <style>
-      #editForm { width: 100%; }
-      #editForm label { text-align: right; }
-    </style>
   </head>
 
   <body>
@@ -29,13 +25,13 @@
 	    <label for="idno">idno</label><input id="idno" name="idno" value="{{row['idno']}}">
 	  </p>
 	  <p>
-	    <label for="dob">dob</label><input id="dob" name="dob" value="{{row['dob']}}">
+	    <label for="dob">dob</label><input id="dob" name="dob" type="date" value="{{row['dob']}}">
 	  </p>
 	  <p>
 	    <label for="user">user</label><input id="user" name="user" value="{{row['user']}}">
 	  </p>
 	  <p>
-	    <label for="date">date</label><input id="date" name="date" value="{{row['date']}}">
+	    <label for="date">date</label><input id="date" name="date" type="date" value="{{row['date']}}">
 	  </p>
 	</fieldset>
 	<fieldset>

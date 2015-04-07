@@ -32,7 +32,7 @@ except ImportError:
             if len(l) == 3:
                 USERS[l[0]] = l[1]
                 USERS_RW[l[0]] = (l[2].lower() == 'rw')
-        sys.stderr.write('Using 'userdata' file.\n')
+        sys.stderr.write("Using 'userdata' file.\n")
     except:
         sys.stderr.write("Bad or missing 'userdata' file.\n")
         sys.exit(1)
