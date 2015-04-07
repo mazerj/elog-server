@@ -40,63 +40,66 @@
 	</div>
 	<div class="panel panel-body"
 	   onClick="jumpto('/expers/{{exper}}/units/{{unit['unit']}}/edit');">
-	  <div class="col-md-2">
+	  <div class="col-sm-2">
             <table class="table table-striped table-bordered">
               <tr>
-		<td class="text-right"><strong>date</strong></td>
+		<td class="text-right" width="50%"><strong>date</strong></td>
 		<td>{{unit['date']}}</td>
               </tr>
               <tr>
-		<td class="text-right"><strong>well</strong></td>
+		<td class="text-right" width="50%"><strong>well</strong></td>
 		<td>{{unit['well']}}</td>
               </tr>
 	      <tr>
-		<td class="text-right"><strong>well loc</strong></td>
+		<td class="text-right" width="50%"><strong>well loc</strong></td>
 		<td>{{unit['wellloc']}}</td>
 	      </tr>
 	    </table>
 	  </div>
-	  <div class="col-md-2">
+	  <div class="col-sm-2">
             <table class="table table-striped table-bordered">
 	      <tr>
-		<td class="text-right"><strong>area</strong></td>
+		<td class="text-right" width="50%"><strong>area</strong></td>
 		<td>{{unit['area']}}</td>
 	      </tr>
 	      <tr>
-		<td class="text-right"><strong>hemi</strong></td>
+		<td class="text-right" width="50%"><strong>hemi</strong></td>
 		<td>{{unit['hemi']}}</td>
 	      </tr>
 	      <tr>
-		<td class="text-right"><strong>depth</strong></td>
+		<td class="text-right" width="50%"><strong>depth</strong></td>
 		<td>{{unit['depth']}}um</td>
 	      </tr>
 	    </table>
 	  </div>
-	  <div class="col-md-2">
+	  <div class="col-sm-2">
             <table class="table table-striped table-bordered">
 	      <tr>
-		<td class="text-right"><strong>isol qual</strong></td>
+		<td class="text-right" width="50%"><strong>isol qual</strong></td>
 		<td>{{unit['quality']}}/10</td>
 	      </tr>
 	      <tr>
-		<td class="text-right"><strong>ori</strong></td>
+		<td class="text-right" width="50%"><strong>ori</strong></td>
 		<td>{{unit['ori']}}</td>
 	      </tr>
 	      <tr>
-		<td class="text-right"><strong>color</strong></td>
+		<td class="text-right" width="50%"><strong>color</strong></td>
 		<td>{{unit['color']}}</td>
 	      </tr>
 	    </table>
 	  </div>
-	  <div class="col-md-2">
+	  <div class="col-sm-2">
             <table class="table table-striped table-bordered">
 	      <tr>
-		<td class="text-right"><strong>rf</strong></td>
-		<td>({{unit['rfx']|int}},{{unit['rfy']|int}})
-		  r={{unit['rfr']|int}}px</td>
+		<td class="text-right" width="50%"><strong>rf loc</strong></td>
+		<td>({{unit['rfx']|int}},{{unit['rfy']|int}})</td>
 	      </tr>
 	      <tr>
-		<td class="text-right"><strong>lat</strong></td>
+		<td class="text-right" width="50%"><strong>rf rad</strong></td>
+		<td>{{unit['rfr']|int}}px</td>
+	      </tr>
+	      <tr>
+		<td class="text-right" width="50%"><strong>lat</strong></td>
 		<td>{{unit['latency']}}ms</td>
 	      </tr>
 	    </table>
@@ -127,26 +130,26 @@
 	  file: {{d['src']}}
 	</div>
 	<div class="panel panel-body">
-	  <div class="col-md-2">
+	  <div class="col-sm-2">
             <table class="table table-striped table-bordered">
               <tr>
-		<td class="text-right"><strong>crap</strong></td>
+		<td class="text-right" width="50%"><strong>crap</strong></td>
 		<td>{{d['crap']|safe}}</td>
 	      </tr>
 	    </table>
 	  </div>
-	  <div class="col-md-2">
+	  <div class="col-sm-2">
             <table class="table table-striped table-bordered">
               <tr>
-		<td class="text-right"><strong>lat</strong></td>
+		<td class="text-right" width="50%"><strong>lat</strong></td>
 		<td>{{d['latency']}}ms</td>
 	      </tr>
 	    </table>
 	  </div>
-	  <div class="col-md-2">
+	  <div class="col-sm-2">
             <table class="table table-striped table-bordered">
               <tr>
-		<td class="text-right"><strong>winsize</strong></td>
+		<td class="text-right" width="50%"><strong>winsize</strong></td>
 		<td>{{d['winsize']}}ms</td>
 	      </tr>
 	    </table>
