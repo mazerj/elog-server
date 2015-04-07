@@ -1,6 +1,0 @@
-#!/bin/sh
-
-. ./setup-elog.sh
-
-python ./fix-animals.py
-
