@@ -13,24 +13,27 @@ from elogapi import getdb, GetExper
 
 from app_tools import *
 
-HTTPS=True
 LOGGING=True
 HOST='0.0.0.0'
-#HOST='127.0.0.1'
 PORT=5000
-LOCAL='192.168.1.1'
+FIREWALL='192.168.1.1'
 
 try:
-    USERS = {}
-    USERS_RW = {}
-    for l in open('userdata', 'r').readlines():
-        l = l[:-1].split(':')
-        if len(l) == 3:
-            USERS[l[0]] = l[1]
-            USERS_RW[l[0]] = (l[2].lower() == 'rw')
-except:
-    sys.stderr.write("""bad/missing 'userdata' file.\n""")
-    sys.exit(1)
+    import pam
+    pamchecker = pam.pam()
+except ImportError:
+    pamchecker = None
+    try:
+        USERS = {}
+        USERS_RW = {}
+        for l in open('userdata', 'r').readlines():
+            l = l[:-1].split(':')
+            if len(l) == 3:
+                USERS[l[0]] = l[1]
+                USERS_RW[l[0]] = (l[2].lower() == 'rw')
+    except:
+        sys.stderr.write("""bad/missing 'userdata' file.\n""")
+        sys.exit(1)
 
 def nextexper(animal):
     e = GetExper(animal)
@@ -41,11 +44,14 @@ def nextexper(animal):
     return "%s%04d" % (animal, nextno)
     
 def writeaccess():
-    try:
-        return USERS_RW[session['username']]
-    except KeyError:
-        # if you're not in the userdata file, you get readonly access
-        return False
+    if pamchecker:
+        return True
+    else:
+        try:
+            return USERS_RW[session['username']]
+        except KeyError:
+            # if you're not in the userdata file, you get readonly access
+            return False
 
 def baseenv(**env):
     env['RW'] = writeaccess()
@@ -258,19 +264,28 @@ def columntypes(db):
 
 
 def islocalconnection(addr):
-    # If LOCAL is not None, then anything not matching the
-    # local definition is non-local. If LOCAL is none, then
-    # everything is non-local!
-    if LOCAL:
-        return not request.remote_addr.startswith(LOCAL)
+    # FILEWALL is None, the everything is considered external. Otherwise,
+    # anything coming from FIREWALL is considered insecure and requires
+    # full login.
+    if FIREWALL:
+        return not request.remote_addr.startswith(FIREWALL)
     else:
         return False
 
 def check_auth(username, password):
     """
     This function is called to check if a username / password combination
-    is valid.
+    is valid. If PAM is available, then it will validate against the system
+    login (validated users are always given RW access). Otherwise, the
+    'userdata' file fille be read. At least one has to be available..
     """
+
+    if pamchecker:
+        if pamchecker.authenticate(username, password):
+            session['username'] = username
+            return True
+        else:
+            return False
 
     if islocalconnection(request.remote_addr):
         # local source (not through firewall), don't require password,
@@ -787,9 +802,6 @@ if __name__ == "__main__":
         log = logging.getLogger('werkzeug')
         log.setLevel(logging.ERROR)
         
-    if HTTPS:
-        app.secret_key = 'aslLKJLjkasdf90u8s(&*(&assdfslkjfasLKJdf8'
-        app.run(debug=True, host=HOST, port=PORT,
-                ssl_context=('server.crt', 'server.key'))
-    else:
-        app.run(debug=True, host=HOST)
+    app.secret_key = 'aslLKJLjkasdf90u8s(&*(&assdfslkjfasLKJdf8'
+    app.run(debug=True, host=HOST, port=PORT,
+            ssl_context=('server.crt', 'server.key'))
