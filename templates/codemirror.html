@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    {% include "header2.html" %}
+
+    <link rel="stylesheet" href="/static/CodeMirror/lib/codemirror.css">
+    <script src="/static/CodeMirror/lib/codemirror.js"></script>
+    <script src="/static/CodeMirror/mode/markdown/markdown.js"></script>
+
+    <script>
+      window.onload = function () {
+      var x = CodeMirror.fromTextArea(document.getElementById('xyzzy'), {
+	      mode: "markdown",
+	      theme: "default",
+	      lineNumbers: true
+	})
+      };
+    </script>
+  </head>
+
+  <body>
+
+    {% include "navbar.html" %}
+
+    <div class="container">
+
+      <div class="panel panel-default">
+	<div class="panel panel-heading">
+	  Edit test
+	</div>
+
+	<div class="panel panel-body">
+	  <textarea rows="20" cols="50" id="xyzzy" name="xyzzy">
+foobar was here
+alsdkfjalskj
+alsdfjkalsdfkj
+	  </textarea>
+
+
+	</div>
+	<div class="panel panel-footer">
+	  ..footer..
+	</div>
+      </div>
+    <div>
+
+    {% include "footer.html" %}
+    {% include "js.html" %}
+
+  </body>
+</html>

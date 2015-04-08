@@ -71,6 +71,14 @@ def getanimals():
     rows = db.query("""SELECT animal FROM animal WHERE 1 ORDER BY animal""")
     return [row['animal'] for row in rows]
 
+def safenote(s):
+    # convert note to markdown format link
+    return re.sub('<elog:(.*)=(.*)>', '[elog:\\1=\\2](DO NOT CHANGE)', s)
+
+def unsafenote(s):
+    # markdown format 'speical' link back to elog link
+    return re.sub('\[elog:(.*)=(.*)\]\(DO NOT CHANGE\)', '<elog:\\1=\\2>', s)
+
 def expandattachment(id):
     env = baseenv()
     db = getdb()
@@ -406,6 +414,7 @@ def animal_edit(animal):
         return Error("Can't edit %s" % (animal,))
     env = baseenv(ANIMAL=animal)
     env['row'] = x[0]
+    env['row']['note'] = safenote(env['row']['note'])
     env['action'] = '/animals/%s/set' % (animal,)
     return render_template("edit_animal.html", **env)
 
@@ -431,6 +440,7 @@ def animal_set(animal):
     form = getform()
 
     if 'save' in form or 'done' in form:
+        form['note'] = unsafenote(form['note'])
         db.query("""UPDATE animal SET """
                  """ animal='%s', date='%s', """
                  """ user='%s', idno='%s', dob='%s', """
@@ -579,6 +589,7 @@ def exper_edit(exper):
     if rows:
         env = baseenv()
         env['row'] = rows[0]
+        env['row']['note'] = safenote(env['row']['note'])
         env['action'] = '/expers/%s/set' % (exper,)
         return render_template("edit_exper.html", **env)
     else:
@@ -591,7 +602,9 @@ def exper_set(exper):
     db = getdb()
     note = form['note']
     if 'save' in form or 'done' in form:
-        db.query("""UPDATE exper SET note='%s' WHERE exper='%s' """ % (note, exper))
+        note = unsafenote(note)
+        db.query("""UPDATE exper SET note='%s' """
+                 """ WHERE exper='%s' """ % (note, exper))
         if not 'done' in form:
             return ('', 204)
     return redirect(form['_back'])
@@ -609,6 +622,7 @@ def exper_unit_edit(exper, unit):
     if rows:
         env = baseenv()
         env['row'] = rows[0]
+        env['row']['note'] = safenote(env['row']['note'])
         env['action'] = '/expers/%s/units/%s/set' % (exper, unit,)
         return render_template("edit_unit.html", **env)
     else:
@@ -629,6 +643,7 @@ def exper_units_set(exper, unit):
     r['latency'] = str2num(r['latency'], float)
 
     if 'save' in r or 'done' in r:
+        form['note'] = unsafenote(form['note'])
         db.query("""UPDATE unit SET """
                  """   unit='%(unit)s', """
                  """   note='%(note)s', """
@@ -660,6 +675,7 @@ def attachment_edit(id):
     if rows:
         env = baseenv()
         env['row'] = rows[0]
+        env['row']['note'] = safenote(env['row']['note'])
         env['action'] = '/attachment/%s/set' % (id,)
         return render_template("edit_attachment.html", **env)
     else:
@@ -672,6 +688,7 @@ def attachment_set(id):
     r = getform()
 
     if 'save' in r or 'done' in r:
+        r['note'] = unsafenote(r['note'])
         db.query("""UPDATE attachment SET """
                  """   note='%s', title='%s' """
                  """ WHERE attachmentID=%s """ %
@@ -742,8 +759,8 @@ def session_edit(animal, date):
     if rows:
         env = baseenv()
         env['row'] = rows[0]
-        env['action'] = '/animals/%s/sessions/%s/set' % \
-          (animal, date)
+        env['row']['note'] = safenote(env['row']['note'])
+        env['action'] = '/animals/%s/sessions/%s/set' % (animal, date)
         return render_template("edit_session.html", **env)
     else:
         return Error("%s/%s: no matches." % (animal, date,))
@@ -767,6 +784,7 @@ def session_set(animal, date):
     r['weight'] = str2num(r['weight'], float)
 
     if 'save' in r or 'done' in r:
+        r['note'] = unsafenote(r['note'])
         db.query("""UPDATE session SET """
                  """   note='%(note)s', """
                  """   restricted=%(restricted)d, """
@@ -845,6 +863,11 @@ def insert_glyph(name):
     """ % name
 
 #############################################33
+
+@app.route('/cm')
+@requires_auth
+def test_codemirror():
+    return render_template("codemirror.html")
 
 @app.route('/ace')
 @requires_auth
