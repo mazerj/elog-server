@@ -840,8 +840,103 @@ def blue(s):
 
 @app.template_filter('glyph')
 def insert_glyph(name):
-    return """<span class="glyphicon glyphicon-%s" aria-hidden="true"></span> """ % name
+    return """
+    <span class="glyphicon glyphicon-%s" aria-hidden="true"></span>
+    """ % name
 
+#############################################33
+
+@app.route('/ace')
+@requires_auth
+def test_ace():
+    return """
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+       <title>ACE in Action</title>
+    <style type="text/css" media="screen">
+       #editor {
+           height: 300px;
+       }
+    </style>
+    </head>
+    <body>
+    <div class="container">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                 <h3 class="panel-title">Editor</h3>
+            </div>
+            <div class="panel-body">
+                <div id="editor">function foo(items) {
+                    var x = "All this is syntax highlighted";
+                    return x;
+                }</div>
+            </div>
+        </div>
+        ---End of editor---
+    </div>
+
+    <script src="/static/ace-min-noconflict/ace.js"
+        type="text/javascript" charset="utf-8"></script>
+    <script>
+        var editor = ace.edit("editor");
+        editor.setTheme("ace/theme/github");
+        editor.getSession().setMode("ace/mode/markdown");
+    </script>
+    </body>
+    </html>
+    """
+
+@app.route('/ace2')
+@requires_auth
+def test_ace2():
+    return """
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <style type="text/css" media="screen">
+        #editor { height: 300px; }
+        </style>
+    </head>
+    <body>
+    <div class="container">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                 <h3 class="panel-title">Editor</h3>
+            </div>
+            <div class="panel-body">
+              <textarea name="editor">
+              foobar
+              hello
+              now is the *time* for all *good* men.
+              </textarea>
+              <div id="editor"></div>
+            </div>
+            <div class="panel-footer">
+                 <h3 class="panel-title">end</h3>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/jquery.min.js"></script>
+    <script src="/static/ace-min-noconflict/ace.js"
+        type="text/javascript" charset="utf-8"></script>
+    <script>
+        var editor = ace.edit("editor");
+        var textarea = $('textarea[name="editor"]').hide();
+        editor.getSession().setValue(textarea.val());
+        editor.getSession().on('change', function(){
+        textarea.val(editor.getSession().getValue());
+        });
+
+        
+        editor.setTheme("ace/theme/github");
+        editor.getSession().setMode("ace/mode/markdown");
+    </script>
+    </body>
+    </html>
+    """
+    
 if __name__ == "__main__":
     try:
         getanimals()
