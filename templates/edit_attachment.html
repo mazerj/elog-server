@@ -4,9 +4,19 @@
   <head>
     {% include "header2.html" %}
 
-    <script src="/static/jquery.min.js"></script>
-    <script src="/static/jquery.validate.min.js"></script>
-    <link rel="stylesheet" media="screen" href="/static/screen.css">
+    <script>
+     $( document ).ready( function () {
+      CodeMirror.defineSimpleMode("elog", {
+        start: [
+          {regex: /<elog:.*=.*>/, token: "strikethrough"},
+        ]
+      });
+      var editor = CodeMirror.fromTextArea(document.getElementById('attachment-note'), {
+	mode: "elog",
+	lineNumbers: true
+	});
+      });
+    </script>
   </head>
 
   <body>
@@ -23,7 +33,7 @@
 	  <label for="exper">title</label><input title id="title" name="title" value="{{row['title']}}">
 	</p>
 	<textarea style="width:100%;" rows="7"
-		  name="note">{{row['note']}}</textarea>
+		  id="attachment-note" name="note">{{row['note']}}</textarea>
 	
 	<img src="data:image/jpg;base64,{{row['data']|safe}}"
 	     style="max-width: 700px;">

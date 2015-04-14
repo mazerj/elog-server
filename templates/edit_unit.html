@@ -4,10 +4,20 @@
   <head>
     {% include "header2.html" %}
 
-    <script src="/static/jquery.min.js"></script>
-    <script src="/static/jquery.validate.min.js"></script>
-    {# <script src="/static/additional-methods.min.js"></script>  #}
-    <link rel="stylesheet" media="screen" href="/static/screen.css">
+    <script>
+     $( document ).ready( function () {
+      CodeMirror.defineSimpleMode("elog", {
+        start: [
+          {regex: /<elog:.*=.*>/, token: "strikethrough"},
+        ]
+      });
+      var editor = CodeMirror.fromTextArea(document.getElementById('unit-note'), {
+	mode: "elog",
+	lineNumbers: true
+	});
+      });
+    </script>
+
   </head>
 
   <body>
@@ -38,9 +48,9 @@
 		   name="well" value="{{row['well']}}">
 	  </p>
 	  <p>
-	    <label for="well loc">wellloc</label>
+	    <label for="wellloc">well loc</label>
 	    <input id="wellloc"
-		   name="well loc" value="{{row['wellloc']}}">
+		   name="wellloc" value="{{row['wellloc']}}">
 	  </p>
 	  <p>
 	    <label for="area">area</label>
@@ -103,7 +113,7 @@
 	<fieldset>
 	  {# <legend>Notes: Don't change pseudo links!</legend> #}
 	  <textarea style="width:100%;" rows="7"
-		    name="note">{{row['note']}}</textarea>
+		    id="unit-note" name="note">{{row['note']}}</textarea>
 	</fieldset>
 
 	<div class="well">

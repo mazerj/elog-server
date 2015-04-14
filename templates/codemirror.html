@@ -3,22 +3,28 @@
   <head>
     {% include "header2.html" %}
 
-    <link rel="stylesheet" href="/static/CodeMirror/lib/codemirror.css">
-    <script src="/static/CodeMirror/lib/codemirror.js"></script>
-    <script src="/static/CodeMirror/mode/markdown/markdown.js"></script>
 
-    <script>
-      window.onload = function () {
-      var x = CodeMirror.fromTextArea(document.getElementById('xyzzy'), {
-	      mode: "markdown",
-	      theme: "default",
-	      lineNumbers: true
-	})
-      };
-    </script>
   </head>
 
   <body>
+
+    <link rel="stylesheet" href="/static/codemirror.css">
+    <script src="/static/jquery.min.js"></script>
+    <script src="/static/codemirror-compressed.js"></script>
+    <script>
+      CodeMirror.defineSimpleMode("elog", {
+        start: [
+          {regex: /<elog:.*=.*>/, token: "strikethrough"},
+        ]
+      });
+     $( document ).ready( function () {
+      var editor = CodeMirror.fromTextArea(document.getElementById('xyzzy'), {
+	mode: "elog",
+	lineNumbers: true
+	});
+      });
+    </script>
+
 
     {% include "navbar.html" %}
 
@@ -34,6 +40,9 @@
 foobar was here
 alsdkfjalskj
 alsdfjkalsdfkj
+<elog:help=me>
+analskdfjasdf
+/jamie
 	  </textarea>
 
 

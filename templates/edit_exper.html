@@ -4,9 +4,20 @@
   <head>
     {% include "header2.html" %}
 
-    <script src="/static/jquery.min.js"></script>
-    <script src="/static/jquery.validate.min.js"></script>
-    <link rel="stylesheet" media="screen" href="/static/screen.css">
+    <script>
+     $( document ).ready( function () {
+      CodeMirror.defineSimpleMode("elog", {
+        start: [
+          {regex: /<elog:.*=.*>/, token: "strikethrough"},
+        ]
+      });
+      var editor = CodeMirror.fromTextArea(document.getElementById('exper-note'), {
+	mode: "elog",
+	lineNumbers: true
+	});
+      });
+    </script>
+
   </head>
 
   <body>
@@ -28,7 +39,7 @@
 	</fieldset>
 	<fieldset>
 	  <textarea style="width:100%;" rows="7"
-		    name="note">{{row['note']}}</textarea>
+		    id="exper-note" name="note">{{row['note']}}</textarea>
 	</fieldset>
 	
 	<div class="well">

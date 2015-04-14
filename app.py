@@ -73,11 +73,13 @@ def getanimals():
 
 def safenote(s):
     # convert note to markdown format link
-    return re.sub('<elog:(.*)=(.*)>', '[elog:\\1=\\2](DO NOT CHANGE)', s)
+    return s
+    #return re.sub('<elog:(.*)=(.*)>', '[elog:\\1=\\2](DO NOT CHANGE)', s)
 
 def unsafenote(s):
     # markdown format 'speical' link back to elog link
-    return re.sub('\[elog:(.*)=(.*)\]\(DO NOT CHANGE\)', '<elog:\\1=\\2>', s)
+    return s.replace('\r\n', '\n')
+    #return re.sub('\[elog:(.*)=(.*)\]\(DO NOT CHANGE\)', '<elog:\\1=\\2>', s)
 
 def expandattachment(id):
     env = baseenv()
@@ -182,10 +184,13 @@ def expandnote(note):
             frags = note[k0:].split('\n')
         for j in frags:
             lines = textwrap.wrap(j, 80)
-            for lno in range(len(lines)):
-                if lno > 0:
-                    n.append((1, '.. '+'&nbsp;'*8,))
-                n.append((0, lines[lno],))
+            if len(lines):
+                for lno in range(len(lines)):
+                    if lno > 0:
+                        n.append((1, '.. '+'&nbsp;'*8,))
+                    n.append((0, lines[lno],))
+            else:
+                    n.append((0, '\n',))
         if l:
             ltype = l.split(' ')[2].split('/')[1]
             lid = l.split(' ')[2].split('/')[2]
@@ -631,7 +636,7 @@ def exper_unit_edit(exper, unit):
 @app.route('/expers/<exper>/units/<unit>/set', methods=['POST'])
 @requires_auth
 def exper_units_set(exper, unit):
-    db = getdb()
+    db = getdb(quiet=False)
     r = getform()
 
     r['orig_unit'] = unit
@@ -643,7 +648,9 @@ def exper_units_set(exper, unit):
     r['latency'] = str2num(r['latency'], float)
 
     if 'save' in r or 'done' in r:
-        form['note'] = unsafenote(form['note'])
+        r['note'] = unsafenote(r['note'])
+        r['orig_unit'] = r['orig_unit'].encode()
+
         db.query("""UPDATE unit SET """
                  """   unit='%(unit)s', """
                  """   note='%(note)s', """
@@ -659,6 +666,7 @@ def exper_units_set(exper, unit):
                  """   rfr=%(rfr)f, """
                  """   latency=%(latency)f """
                  """ WHERE exper='%(exper)s' AND unit='%(orig_unit)s' """ % r)
+
         if not 'done' in r:
             return ('', 204)
     return redirect(r['_back'])
@@ -869,97 +877,11 @@ def insert_glyph(name):
 def test_codemirror():
     return render_template("codemirror.html")
 
-@app.route('/ace')
+@app.route('/copy')
 @requires_auth
-def test_ace():
-    return """
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-       <title>ACE in Action</title>
-    <style type="text/css" media="screen">
-       #editor {
-           height: 300px;
-       }
-    </style>
-    </head>
-    <body>
-    <div class="container">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                 <h3 class="panel-title">Editor</h3>
-            </div>
-            <div class="panel-body">
-                <div id="editor">function foo(items) {
-                    var x = "All this is syntax highlighted";
-                    return x;
-                }</div>
-            </div>
-        </div>
-        ---End of editor---
-    </div>
+def test_copy():
+    return render_template("copy.html")
 
-    <script src="/static/ace-min-noconflict/ace.js"
-        type="text/javascript" charset="utf-8"></script>
-    <script>
-        var editor = ace.edit("editor");
-        editor.setTheme("ace/theme/github");
-        editor.getSession().setMode("ace/mode/markdown");
-    </script>
-    </body>
-    </html>
-    """
-
-@app.route('/ace2')
-@requires_auth
-def test_ace2():
-    return """
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <style type="text/css" media="screen">
-        #editor { height: 300px; }
-        </style>
-    </head>
-    <body>
-    <div class="container">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                 <h3 class="panel-title">Editor</h3>
-            </div>
-            <div class="panel-body">
-              <textarea name="editor">
-              foobar
-              hello
-              now is the *time* for all *good* men.
-              </textarea>
-              <div id="editor"></div>
-            </div>
-            <div class="panel-footer">
-                 <h3 class="panel-title">end</h3>
-            </div>
-        </div>
-    </div>
-
-    <script src="/static/jquery.min.js"></script>
-    <script src="/static/ace-min-noconflict/ace.js"
-        type="text/javascript" charset="utf-8"></script>
-    <script>
-        var editor = ace.edit("editor");
-        var textarea = $('textarea[name="editor"]').hide();
-        editor.getSession().setValue(textarea.val());
-        editor.getSession().on('change', function(){
-        textarea.val(editor.getSession().getValue());
-        });
-
-        
-        editor.setTheme("ace/theme/github");
-        editor.getSession().setMode("ace/mode/markdown");
-    </script>
-    </body>
-    </html>
-    """
-    
 if __name__ == "__main__":
     try:
         getanimals()
