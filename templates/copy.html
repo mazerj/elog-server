@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    {% include "header2.html" %}
+
+    <script src="/static/jquery.min.js"></script>
+    <script>
+      $(document).ready(function() {
+        $(window).addEvent("paste",function(e){
+          console.log("pasting..")
+          if (e.event.clipboardData) {
+            Array.each(e.event.clipboardData.items,function(item){
+              if (item.type.indexOf("image") !== -1) {
+                var blob = item.getAsFile();
+                var URL = window.URL || window.webkitURL;
+                var source = URL.createObjectURL(blob);
+        
+                $("xyzzy").set("src",source);
+              }
+            });
+           }
+         });
+      });
+    </script>
+  </head>
+
+  <body>
+
+    {% include "navbar.html" %}
+
+    <div class="container">
+
+      <div class="panel panel-default">
+	<div class="panel panel-heading">
+	  Copy test
+	</div>
+
+	<div class="panel panel-body">
+	  <textarea rows="20" cols="50" id="xyzzy" name="xyzzy"></textarea>
+
+
+	</div>
+	<div class="panel panel-footer">
+	  ..footer..
+	</div>
+      </div>
+    <div>
+
+    {% include "footer.html" %}
+    {% include "js.html" %}
+
+  </body>
+</html>

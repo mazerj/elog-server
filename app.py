@@ -872,11 +872,6 @@ def insert_glyph(name):
 
 #############################################33
 
-@app.route('/cm')
-@requires_auth
-def test_codemirror():
-    return render_template("codemirror.html")
-
 @app.route('/copy')
 @requires_auth
 def test_copy():
