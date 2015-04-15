@@ -5,17 +5,12 @@
     {% include "header2.html" %}
 
     <script>
-     $( document ).ready( function () {
-      CodeMirror.defineSimpleMode("elog", {
-        start: [
-          {regex: /<elog:.*=.*>/, token: "strikethrough"},
-        ]
-      });
-      var editor = CodeMirror.fromTextArea(document.getElementById('session-note'), {
-	mode: "elog",
-	lineNumbers: true
-	});
-      });
+      $( document ).ready( function () {
+        var editor = CodeMirror.fromTextArea(document.getElementById('session-note'), {
+	  mode: "elog",
+	  lineNumbers: true
+	  });
+        });
     </script>
 
   </head>
