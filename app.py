@@ -503,6 +503,19 @@ def getform(r=None):
             r[k] = r[k].encode()
     return r
     
+@app.route('/animals/<animal>/sessions/today')
+@requires_auth
+def session_today(animal):
+    db = getdb()
+    animal = animal.encode()
+
+    t = today()
+    rows = db.query("""SELECT date FROM session WHERE date='%s'""" % t)
+    if rows is not None and len(rows) > 0:
+        return redirect('/animals/%s/sessions/%s' % (animal, t,))
+    else:
+        return session_new(animal, t)
+
 @app.route('/animals/<animal>/sessions/new', methods=['POST'])
 @requires_auth
 def session_new_today(animal):
