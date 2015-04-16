@@ -537,12 +537,12 @@ def sessions(animal, date):
 @app.route('/favicon.ico')
 @requires_auth
 def favicon():
-    return send_from_directory('assets', 'favicon.ico')
+    return send_from_directory('static', 'favicon.ico')
 
 @app.route('/assets/<path>')
 @requires_auth
 def assets(path):
-    return send_from_directory('assets', path)
+    return send_from_directory('static', path)
 
 @app.route('/fonts/<path>')
 @requires_auth
