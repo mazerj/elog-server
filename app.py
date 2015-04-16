@@ -2,6 +2,7 @@
 
 import sys, os, types, string
 import re, textwrap, datetime
+import distutils.spawn
 
 from flask import *
 from functools import wraps
@@ -11,11 +12,16 @@ mpl.use('Agg')                        # prevent Tk loading..
 import matplotlib.pyplot as plt
 import mpld3
 
-
-#sys.path.append('%s/lib/elog' % os.path.dirname(os.path.dirname(sys.argv[0])))
-
-sys.path.append(os.environ['ELOG_DIR'])
-from elogapi import getdb, GetExper
+# load elogapi based on elog executable location
+elogpath = distutils.spawn.find_executable('elog')
+if elogpath is None:
+    sys.stderr.write("Can't find elog executable\n")
+    sys.exit(1)
+else:
+    p = elogpath.replace('/bin/','/lib/')
+    sys.path.append(p)
+    from elogapi import getdb, GetExper, GetNextExper
+    sys.stderr.write("loaded elogapi from %s\n" % p)
 
 from app_tools import *
 
@@ -43,15 +49,6 @@ except ImportError:
         sys.stderr.write("Bad or missing 'userdata' file.\n")
         sys.exit(1)
 
-def nextexper(animal):
-    """This really should be in elogapi.py"""
-    e = GetExper(animal)
-    if e is None:
-        nextno = 1
-    else:
-        nextno = int(e[-4:]) + 1
-    return "%s%04d" % (animal, nextno)
-    
 def writeaccess():
     if pamchecker:
         return True
@@ -636,7 +633,7 @@ def exper_unit_edit(exper, unit):
 @app.route('/expers/<exper>/units/<unit>/set', methods=['POST'])
 @requires_auth
 def exper_units_set(exper, unit):
-    db = getdb(quiet=False)
+    db = getdb()
     r = getform()
 
     r['orig_unit'] = unit
@@ -709,7 +706,7 @@ def attachment_set(id):
 @requires_auth
 def exper_new(animal, date):
     db = getdb()
-    exper = nextexper(animal)
+    exper = GetNextExper(animal)
     db.query("""INSERT INTO exper SET """
              """  animal='%s', date='%s', exper='%s',"""
              """  note=''""" % (animal, date, exper))
@@ -791,26 +788,23 @@ def session_set(animal, date):
     r['food'] = str2num(r['food'])
     r['weight'] = str2num(r['weight'], float)
 
-    if 'save' in r or 'done' in r:
-        r['note'] = unsafenote(r['note'])
-        db.query("""UPDATE session SET """
-                 """   note='%(note)s', """
-                 """   restricted=%(restricted)d, """
-                 """   tested=%(tested)d, """
-                 """   health_stool=%(health_stool)d, """
-                 """   health_skin=%(health_skin)d, """
-                 """   health_urine=%(health_urine)d, """
-                 """   health_pcv=%(health_pcv)d, """
-                 """   water_work=%(water_work)d, """
-                 """   water_sup=%(water_sup)d, """
-                 """   fruit_ml=%(fruit_ml)d, """
-                 """   food=%(food)d, """
-                 """   weight=%(weight)f """
-                 """ WHERE animal='%(animal)s' """
-                 """ AND date='%(date)s'""" % r)
-        if not 'done' in r:
-            return ('', 204)
-    return redirect(r['_back'])
+    r['note'] = unsafenote(r['note'])
+    db.query("""UPDATE session SET """
+             """   note='%(note)s', """
+             """   restricted=%(restricted)d, """
+             """   tested=%(tested)d, """
+             """   health_stool=%(health_stool)d, """
+             """   health_skin=%(health_skin)d, """
+             """   health_urine=%(health_urine)d, """
+             """   health_pcv=%(health_pcv)d, """
+             """   water_work=%(water_work)d, """
+             """   water_sup=%(water_sup)d, """
+             """   fruit_ml=%(fruit_ml)d, """
+             """   food=%(food)d, """
+             """   weight=%(weight)f """
+             """ WHERE animal='%(animal)s' """
+             """ AND date='%(date)s'""" % r)
+    return ('', 204)
 
 @app.route('/animals/<animal>/weight/plot')
 @requires_auth
@@ -869,13 +863,6 @@ def insert_glyph(name):
     return """
     <span class="glyphicon glyphicon-%s" aria-hidden="true"></span>
     """ % name
-
-#############################################33
-
-@app.route('/copy')
-@requires_auth
-def test_copy():
-    return render_template("copy.html")
 
 if __name__ == "__main__":
     try:

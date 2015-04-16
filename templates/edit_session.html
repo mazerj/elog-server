@@ -1,142 +1,96 @@
-<!DOCTYPE html>
-<html lang="en">
+<script>
+  $( document ).ready( function () {
+     var editor = CodeMirror.fromTextArea(document.getElementById('session-note'), {
+       mode: "elog",
+       });
+     });
+</script>
 
-  <head>
-    {% include "header2.html" %}
 
-    <script>
-      $( document ).ready( function () {
-        var editor = CodeMirror.fromTextArea(document.getElementById('session-note'), {
-	  mode: "elog",
-	  lineNumbers: true
-	  });
-        });
-    </script>
-
-    <script>
-$(document).ready(function() {
-	$('a[data-confirm]').click(function(ev) {
-		var href = $(this).attr('href');
-		if (!$('#dataConfirmModal').length) {
-			$('body').append('<div id="dataConfirmModal" class="modal" role="dialog" aria-labelledby="dataConfirmLabel" aria-hidden="true"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button><h3 id="dataConfirmLabel">Please Confirm</h3></div><div class="modal-body"></div><div class="modal-footer"><button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button><a class="btn btn-primary" id="dataConfirmOK">OK</a></div></div>');
-		} 
-		$('#dataConfirmModal').find('.modal-body').text($(this).attr('data-confirm'));
-		$('#dataConfirmOK').attr('href', href);
-		$('#dataConfirmModal').modal({show:true});
-		return false;
-	});
-});
-    </script>
-
-  </head>
-
-  <body>
-
-    {% include "navbar.html" %}
-
-    <div class="container">
-      <div class="well">Editing Session</div>
-
-      <form class="cmxform" id="editForm" method="post" action="{{action}}">
-	<input type="hidden" name="animal" value="{{row['animal']}}">
-	<input type="hidden" name="date" value="{{row['date']}}">
-	<div class="table-responsive table-bordered">
-	  <table>
-	    <tr>
-	      <td>
-		<label for="animal">animal</label><input disabled id="animal" name="animal" value="{{row['animal']}}">
-		<label for="date">date</label><input disabled id="date" name="date" type="date" value="{{row['date']}}">
-	      </td>
-	    </tr>
-	    <tr>
-	      <td colspan="3">
-		<label for="restricted">restricted</label>
-		<input id="restricted" type="checkbox"
-		       name="restricted" {{ 'checked' if row['restricted'] }}>
-		<label for="tested">tested</label>
-		<input id="tested" type="checkbox"
-		       name="tested" {{ 'checked' if row['tested'] }}>
-		<label for="health_stool">stool</label>
-		<input id="health_stool" type="checkbox"
-		       name="health_stool" {{ 'checked' if row['health_stool'] }}>
-		<label for="health_urine">urine</label>
-		<input id="health_urine" type="checkbox"
-		       name="health_urine" {{ 'checked' if row['health_urine'] }}>
-		<label for="health_skin">skin</label>
-		<input id="health_skin" type="checkbox"
-		       name="health_skin" {{ 'checked' if row['health_skin'] }}>
-		<label for="health_pcv">pcv</label>
-		<input id="health_pcv" type="checkbox"
-		       name="health_pcv" {{ 'checked' if row['health_pcv'] }}>
-	      </td>
-	    </tr>
-	    <tr>
-	      <td>
-		<label for="weight">weight</label>
-		<input id="weight" type="number"
-		       name="weight" value="{{row['weight']}}">
-		<label for="weight"  style="text-align: left;">kg</label>
-	      </td>
-	      <td>
-		<label for="food">food</label>
-		<input id="food" type="digits"
-		       name="food" value="{{row['food']}}">
-		<label for="food"  style="text-align: left;"># bisc</label>
-	      </td>
-	    </tr>
-	    <tr>
-	      <td>
-		<label for="water_work">water_work</label>
-		<input id="water_work" type="digits"
-		       name="water_work" value="{{row['water_work']}}">
-		<label for="water_work"  style="text-align: left;">ml</label>
-	      </td>
-	      <td>
-		<label for="water_sup">water_sup</label>
-		<input id="water_sup" type="digits"
-		       name="water_sup" value="{{row['water_sup']}}">
-		<label for="water_sup"  style="text-align: left;">ml</label>
-	      </td>
-	      <td>
-		<label for="fruit_ml">fruit_ml</label>
-		<input id="fruit_ml" type="digits"
-		       name="fruit_ml" value="{{row['fruit_ml']}}">
-		<label for="fruit_ml"  style="text-align: left;">ml</label>
-	      </td>
-	    </tr>
-	  </table>
-	</div>
-
-	<fieldset>
-	  <textarea style="width:100%;" rows="20"
-		    id="session-note" name="note">{{row['note']}}</textarea>
-	</fieldset>
-	
-	<div class="well">
-	  {% if RW %}
-	  <button class="btn btn-default" type="submit"
-		  name="done">Done</button>
-	  <button class="btn btn-default" type="submit" 
-		  name="save">Save</button>
-	  {% endif %}
-	  <button class="btn btn-default" 
-		  name="cancel">Cancel</button>
-	  <input type="hidden" name="_back" value="{{request.referrer}}">
-	</div>
-      </form>
+<div class="container">
+  <form class="cmxform" id="editForm" method="post" action="{{action}}">
+    <input type="hidden" name="animal" value="{{row['animal']}}">
+    <input type="hidden" name="date" value="{{row['date']}}">
+    <div class="table-responsive table-bordered">
+      <table>
+        <tr>
+          <td>
+            <label for="animal">animal</label><input disabled id="animal" name="animal" value="{{row['animal']}}">
+            <label for="date">date</label><input disabled id="date" name="date" type="date" value="{{row['date']}}">
+          </td>
+        </tr>
+        <tr>
+          <td colspan="3">
+            <label for="restricted">restricted</label>
+            <input id="restricted" type="checkbox"
+                   name="restricted" {{ 'checked' if row['restricted'] }}>
+            <label for="tested">tested</label>
+            <input id="tested" type="checkbox"
+                   name="tested" {{ 'checked' if row['tested'] }}>
+            <label for="health_stool">stool</label>
+            <input id="health_stool" type="checkbox"
+                   name="health_stool" {{ 'checked' if row['health_stool'] }}>
+            <label for="health_urine">urine</label>
+            <input id="health_urine" type="checkbox"
+                   name="health_urine" {{ 'checked' if row['health_urine'] }}>
+            <label for="health_skin">skin</label>
+            <input id="health_skin" type="checkbox"
+                   name="health_skin" {{ 'checked' if row['health_skin'] }}>
+            <label for="health_pcv">pcv</label>
+            <input id="health_pcv" type="checkbox"
+                   name="health_pcv" {{ 'checked' if row['health_pcv'] }}>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <label for="weight">weight</label>
+            <input id="weight" type="number"
+                   name="weight" value="{{row['weight']}}">
+            <label for="weight"  style="text-align: left;">kg</label>
+          </td>
+          <td>
+            <label for="food">food</label>
+            <input id="food" type="digits"
+                   name="food" value="{{row['food']}}">
+            <label for="food"  style="text-align: left;"># bisc</label>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <label for="water_work">water_work</label>
+            <input id="water_work" type="digits"
+                   name="water_work" value="{{row['water_work']}}">
+            <label for="water_work"  style="text-align: left;">ml</label>
+          </td>
+          <td>
+            <label for="water_sup">water_sup</label>
+            <input id="water_sup" type="digits"
+                   name="water_sup" value="{{row['water_sup']}}">
+            <label for="water_sup"  style="text-align: left;">ml</label>
+          </td>
+          <td>
+            <label for="fruit_ml">fruit_ml</label>
+            <input id="fruit_ml" type="digits"
+                   name="fruit_ml" value="{{row['fruit_ml']}}">
+            <label for="fruit_ml"  style="text-align: left;">ml</label>
+          </td>
+        </tr>
+      </table>
     </div>
+     <fieldset>
+      <textarea style="width:100%;" rows="20"
+                id="session-note" name="note">{{row['note']}}</textarea>
+    </fieldset>
+    
+    {% if RW %}
+      <div class="well">
+        <button class="btn btn-default" type="submit" 
+                name="save">Save</button>
+      </div>
+    {% endif %}
+  </form>
+</div>
 
-    <a href="delete.cfm" data-confirm="Are you sure you want to delete?">Delete</a>
-
-    <script>
-      $("#editForm").validate();
-    </script>
-
-
-    {% include "footer.html" %}
-    {% include "js.html" %}
-
-  </body>
-</html>
-
-
+<script>
+  $("#editForm").validate();
+</script>
