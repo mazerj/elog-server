@@ -821,18 +821,38 @@ def plot_weight(animal):
     import matplotlib.dates as mdates
 
     db = getdb()
+
+    plots = []
+    
+    rows = db.query("""SELECT date,weight FROM session WHERE """
+                    """ animal='%s' AND """
+                    """ weight > 0 AND """
+                    """ date > DATE_SUB(NOW(), INTERVAL 90 DAY)""" % animal)
+    if len(rows) > 0:
+        x = [mdates.strpdate2num('%Y-%m-%d')('%s'%r['date']) for r in rows]
+        y = [r['weight'] for r in rows]
+        plt.clf()
+        plt.plot_date(x, y)
+        plt.title('%s: last 90d' % animal);
+        plt.ylabel('Weight (kg)')
+        plots.append(('dummy%d'%len(plots), json.dumps(mpld3.fig_to_dict(plt.gcf()))))
+
     rows = db.query("""SELECT date,weight FROM session WHERE """
                     """ animal='%s' AND """
                     """ weight > 0""" % animal)
-    x = [mdates.strpdate2num('%Y-%m-%d')('%s'%r['date']) for r in rows]
-    y = [r['weight'] for r in rows]
-    plt.clf()
-    plt.plot_date(x, y)
-    #plt.title(animal);
-    plt.ylabel('Weight (kg)')
+    if len(rows) > 0:
+        x = [mdates.strpdate2num('%Y-%m-%d')('%s'%r['date']) for r in rows]
+        y = [r['weight'] for r in rows]
+        plt.clf()
+        plt.plot_date(x, y)
+        plt.title('%s: all data' % animal);
+        plt.ylabel('Weight (kg)')
+        plots.append(('dummy%d'%len(plots), json.dumps(mpld3.fig_to_dict(plt.gcf()))))
+        
+    
     return render_template("plotview.html",
                            title='%s weight history' % animal,
-                           plot=mpld3.fig_to_html(plt.gcf()))
+                           plots=plots)
 
     
 @app.route('/animals/<animal>/fluid/plot')
@@ -840,30 +860,48 @@ def plot_weight(animal):
 def plot_fluid(animal):
     import matplotlib.dates as mdates
 
+    plots = []
+    
     db = getdb()
+
+    rows = db.query("""SELECT * FROM session WHERE """
+                    """ animal='%s' AND """
+                    """ date > DATE_SUB(NOW(), INTERVAL 90 DAY)""" % animal)
+    if len(rows) > 0:
+        x = [mdates.strpdate2num('%Y-%m-%d')('%s'%r['date']) for r in rows]
+        y1 = [safefloat(r['water_sup'])+
+                   safefloat(r['fruit_ml']) for r in rows]
+        y2 = [safefloat(r['water_work']) for r in rows]
+        plt.clf()
+        plt.bar(x, y2, color='b', label='work')
+        plt.bar(x, y1, color='r', bottom=y2, label='total')
+        plt.legend(framealpha=0)              #<- bug wrap around...
+        plt.gca().xaxis_date()
+        plt.title('%s: last 90d' % animal)
+        plt.ylabel('Fluid Intake (ml)')
+        plots.append(('dummy%d'%len(plots), json.dumps(mpld3.fig_to_dict(plt.gcf()))))
+        
     rows = db.query("""SELECT * FROM session WHERE """
                     """ animal='%s'""" % animal)
 
-    x = [mdates.strpdate2num('%Y-%m-%d')('%s'%r['date']) for r in rows]
-    y1 = [safefloat(r['water_sup'])+
-               safefloat(r['fruit_ml']) for r in rows]
-    y2 = [safefloat(r['water_work']) for r in rows]
-    plt.clf()
-    w = plt.bar(x, y2, color='b', label='work')
-    t = plt.bar(x, y1, color='r', bottom=y2, label='total')
-    plt.gca().xaxis_date()
-    plt.legend((w, t))
-    if 0:
-        plt.plot_date(x, y1, 'r.')
-        plt.hold(1)
-        plt.plot_date(x, y2, 'b+')
-        plt.hold(0)
-    #plt.title(animal);
-    plt.ylabel('Fluid Intake (ml)')
+    if len(rows) > 0:
+        x = [mdates.strpdate2num('%Y-%m-%d')('%s'%r['date']) for r in rows]
+        y1 = [safefloat(r['water_sup'])+
+                   safefloat(r['fruit_ml']) for r in rows]
+        y2 = [safefloat(r['water_work']) for r in rows]
+        plt.clf()
+        plt.bar(x, y2, color='b', label='work')
+        plt.bar(x, y1, color='r', bottom=y2, label='total')
+        plt.legend(framealpha=0)              #<- bug wrap around...
+        plt.gca().xaxis_date()
+        plt.title('%s: all data' % animal)
+        plt.ylabel('Fluid Intake (ml)')
+        plots.append(('dummy%d'%len(plots), json.dumps(mpld3.fig_to_dict(plt.gcf()))))
+
     
     return render_template("plotview.html",
                            title='%s fluid history' % animal,
-                           plot=mpld3.fig_to_html(plt.gcf()))
+                           plots=plots)
 
 # some useful filters
 
