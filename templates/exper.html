@@ -55,7 +55,7 @@ $(document).ready(function () {
                       class="btn btn-danger pull-right hidden-print">Delete Unit</button>
             </a>
           {% endif %}
-          {{exper}}_{{unit['unit']}}
+          {{exper}}:{{unit['unit']}}
         </div>
         <div class="panel panel-body">
           <div class="col-sm-3">
@@ -138,61 +138,50 @@ $(document).ready(function () {
     {% if dfiles|length < 1 %}
       <span class="label label-default">No Datafiles</span>
     {% else %}
-      <button type="button" class="btn btn-default"
-              data-toggle="collapse" data-target="#{{exper}}_dfiles">
-	<span class="badge">{{dfiles|length}}</span>
-	Datafiles
-	<span class="glyphicon glyphicon-chevron-right"></span>
-      </button>
-
-      <div id="{{exper}}_dfiles" class="panel panel-default collapse">
-      {% for d in dfiles %}
-        <div class="panel panel-default">
-          <div class="panel panel-heading">
-            {% if RW %}
-              <a class="hidden-print" href="/dfile/{{d['src']}}/edit">
-                <button type="button" class="btn btn-primary hidden-print">Edit Datafile</button>
-              </a>
-            {% endif %}
-            file: {{d['src']}}
-          </div>
-          <div class="panel panel-body">
-            <div class="col-sm-3">
-              <table class="table table-striped table-bordered">
-                <tr>
-                  <td class="text-right" width="50%"><strong>crap</strong></td>
-                  <td>{{d['crap']|safe}}</td>
-                </tr>
-              </table>
-            </div>
-            <div class="col-sm-3">
-              <table class="table table-striped table-bordered">
-                <tr>
-                  <td class="text-right" width="50%"><strong>lat</strong></td>
-                  <td>{{d['latency']}}ms</td>
-                </tr>
-              </table>
-            </div>
-            <div class="col-sm-3">
-              <table class="table table-striped table-bordered">
-                <tr>
-                  <td class="text-right" width="50%"><strong>winsize</strong></td>
-                  <td>{{d['winsize']}}ms</td>
-                </tr>
-              </table>
-            </div>
-            {% for (code, content) in d['note'] %}
-              {% if code == 0 %}
-                <tt>{{content}}</tt><br>
-              {% else %}
-                {{content|safe}}
-              {% endif %}
-            {% endfor %}
+      <div class="panel panel-default">
+        <div class="panel-heading" role="tab" id="headingOne">
+          <div class="panel-title">
+	    <button type="button" class="btn btn-default hidden-print">
+            <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+	      <span class="badge">{{dfiles|length}}</span>
+	      Datafiles
+	      <span class="glyphicon glyphicon-chevron-right"></span>
+            </a>
+	    </button>
           </div>
         </div>
-      {% endfor %}
+        <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+          <div class="panel-body">
+            {% for d in dfiles %}
+              <div class="panel panel-default">
+                <div class="panel panel-heading">
+                  {% if RW %}
+                    <a class="hidden-print" href="/dfile/{{d['src']}}/edit">
+                      <button type="button" class="btn btn-primary hidden-print">Edit Datafile</button>
+                    </a>
+                  {% endif %}
+		  {% if d['crap'] %}
+                    src: {{d['src']|blue|safe}}
+		  {% else %}
+                    src: {{d['src']|red|safe}}
+		  {% endif %}
+                </div>
+		{% if not (d['note']|length == 1 and d['note'][0][1]|length == 0) %}
+                  <div class="panel panel-body">
+                    {% for (code, content) in d['note'] %}
+                      {% if code == 0 %}
+                        <tt>{{content}}</tt><br>
+                      {% else %}
+                        {{content|safe}}
+                      {% endif %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+              </div>
+	    {% endfor %}
+	  </div>
+	</div>
+      </div>
     {% endif %}
-
-
   </div>
 </div>

@@ -183,14 +183,16 @@ def expandnote(note):
         else:
             frags = note[k0:].split('\n')
         for j in frags:
-            lines = textwrap.wrap(j, 80)
-            if len(lines):
-                for lno in range(len(lines)):
-                    if lno > 0:
-                        n.append((1, '.. '+'&nbsp;'*8,))
-                    n.append((0, lines[lno],))
-            else:
-                    n.append((0, '\n',))
+            n.append((0, j))
+            if 0:
+                lines = textwrap.wrap(j, 80)
+                if len(lines):
+                    for lno in range(len(lines)):
+                        if lno > 0:
+                            n.append((1, '.. '+'&nbsp;'*8,))
+                        n.append((0, lines[lno],))
+                else:
+                        n.append((0, '\n',))
         if l:
             ltype = l.split(' ')[2].split('/')[1]
             lid = l.split(' ')[2].split('/')[2]
@@ -680,7 +682,25 @@ def exper_units_set(exper, unit):
             return ('', 204)
     return redirect(r['_back'])
 
-@app.route('/attachment/<id>/edit')
+@app.route('/dfile/<id>/edit')
+@requires_auth
+def dfile_edit(exper, unit):
+    if not writeaccess():
+        return Error("No write access!")
+    
+    db = getdb()
+    rows = db.query("""SELECT * FROM unit WHERE exper='%s' """
+                    """ AND unit='%s' """ % (exper, unit))
+    if rows:
+        env = baseenv()
+        env['row'] = rows[0]
+        env['row']['note'] = safenote(env['row']['note'])
+        env['action'] = '/expers/%s/units/%s/set' % (exper, unit,)
+        return render_template("edit_unit.html", **env)
+    else:
+        return Error("%s/%s: no matches." % (exper, unit,))
+
+    @app.route('/attachment/<id>/edit')
 @requires_auth
 def attachment_edit(id):
     if not writeaccess():
