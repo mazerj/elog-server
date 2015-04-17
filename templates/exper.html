@@ -2,10 +2,10 @@
   <div class="panel panel-heading">
     {% if RW %}
       <a class="hidden-print" href="/expers/{{exper}}/edit">
-        <button type="button" class="btn btn-primary">Edit Exper</button>
+        <button type="button" class="btn btn-primary hidden-print">Edit Exper</button>
       </a>
       <a class="hidden-print" href="/expers/{{exper}}/newunit">
-        <button type="button" class="btn btn-primary">New Unit</button>
+        <button type="button" class="btn btn-primary hidden-print">New Unit</button>
       </a>
     {% endif %}
     {{exper}}
@@ -27,12 +27,12 @@
 	  {% if RW %}
 	    <a class="hidden-print" 
 	       href="/expers/{{exper}}/units/{{unit['unit']}}/edit">
-	      <button type="button" class="btn btn-primary">Edit Unit</button>
+	      <button type="button" class="btn btn-primary hidden-print">Edit Unit</button>
 	    </a>
 	    <a class="hidden-print"
 	       href="/expers/{{exper}}/units/{{unit['unit']}}/delete">
 	      <button type="button"
-		      class="btn btn-danger pull-right">Delete Unit</button>
+		      class="btn btn-danger pull-right hidden-print">Delete Unit</button>
 	    </a>
 	  {% endif %}
 	  {{exper}}_{{unit['unit']}}
@@ -116,7 +116,7 @@
     {% endfor %}
 
     {% if dfiles|length > 0 %}
-      <button type="button" class="btn" ...
+      <button type="button" class="btn btn-default"
 	      data-toggle="collapse" data-target="#{{exper}}_dfiles">Datafiles ...</button>
       <div id="{{exper}}_dfiles" class="panel panel-default collapse">
 
@@ -125,7 +125,7 @@
 	<div class="panel panel-heading">
 	  {% if RW %}
 	    <a class="hidden-print" href="/dfile/{{d['src']}}/edit">
-	      <button type="button" class="btn btn-primary">Edit Datafile</button>
+	      <button type="button" class="btn btn-primary hidden-print">Edit Datafile</button>
 	    </a>
 	  {% endif %}
 	  file: {{d['src']}}

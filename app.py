@@ -455,6 +455,7 @@ def animal_set(animal):
             return ('', 204)
     return redirect(form['_back'])
 
+# this actually creates new or jumps to existing..
 @app.route('/animals/<animal>/sessions/<date>/new')
 @requires_auth
 def session_new(animal, date):
@@ -464,32 +465,28 @@ def session_new(animal, date):
     db = getdb()
     rows = db.query("""SELECT date FROM session WHERE """
                     """ animal='%s' AND date='%s' """ % (animal, date))
-    if len(rows):
-        return Error("%s/%s exists." % (animal, date))
+    if len(rows) == 0:
+        # get most recent session for this animal
+        rows = db.query("""SELECT * FROM session WHERE """
+                        """ animal='%s' ORDER BY date DESC LIMIT 1""" % (animal,))
 
-                               
+        r = { 'computer':'web',
+              'animal':animal, 'date':date, 'user':session['username'] }
+        if len(rows):
+            # propagate these values from last entry..
+            r['restricted'] = int(rows[0]['restricted'])
+            r['tested'] = int(rows[0]['tested'])
+            r['thweight'] = safefloat(rows[0]['thweight'])
+            r['food'] = safeint(rows[0]['food'], 20)
+            r['health_stool'] = safeint(rows[0]['health_stool'])
+            r['health_skin'] = safeint(rows[0]['health_skin'])
+            r['health_urine'] = safeint(rows[0]['health_urine'])
+            r['health_pcv'] = safeint(rows[0]['health_pcv'])
 
-    # get most recent session for this animal
-    rows = db.query("""SELECT * FROM session WHERE """
-                    """ animal='%s' ORDER BY date DESC LIMIT 1""" % (animal,))
-    
-    r = { 'computer':'web',
-          'animal':animal, 'date':date, 'user':session['username'] }
-    if len(rows):
-        # propagate these values from last entry..
-        r['restricted'] = int(rows[0]['restricted'])
-        r['tested'] = int(rows[0]['tested'])
-        r['thweight'] = safefloat(rows[0]['thweight'])
-        r['food'] = safeint(rows[0]['food'], 20)
-        r['health_stool'] = safeint(rows[0]['health_stool'])
-        r['health_skin'] = safeint(rows[0]['health_skin'])
-        r['health_urine'] = safeint(rows[0]['health_urine'])
-        r['health_pcv'] = safeint(rows[0]['health_pcv'])
-
-    x = db.query("""INSERT INTO session (%s) VALUES %s""" % \
-                 (string.join(r.keys(), ','), tuple([r[k] for k in r.keys()]),))
-    if x is None:
-        return Error("Can't insert %s/%s" % (animal, date))
+        x = db.query("""INSERT INTO session (%s) VALUES %s""" % \
+                     (string.join(r.keys(), ','), tuple([r[k] for k in r.keys()]),))
+        if x is None:
+            return Error("Can't insert %s/%s" % (animal, date))
     
     return redirect("/animals/%s/sessions/%s" % (animal, date))
 
@@ -521,10 +518,9 @@ def session_today(animal):
 def session_new_today(animal):
     animal = animal.encode()
     form = getform()
-    if len(form['date']) < 10:
-        date = today()
-    else:
-        date = form['date']
+    # jquery-ui returns MM/DD/YYYY, conert to YYYY-MM-DD...
+    date = form['date']
+    date = string.join([date.split('/')[n] for n in [2,0,1]], '-')
     return session_new(animal, date)
 
 @app.route('/animals/<animal>/sessions/<date>')
@@ -832,10 +828,11 @@ def plot_weight(animal):
     y = [r['weight'] for r in rows]
     plt.clf()
     plt.plot_date(x, y)
-    plt.title(animal);
+    #plt.title(animal);
     plt.ylabel('Weight (kg)')
-    return mpld3.fig_to_html(plt.gcf())
-
+    return render_template("plotview.html",
+                           title='%s weight history' % animal,
+                           plot=mpld3.fig_to_html(plt.gcf()))
 
     
 @app.route('/animals/<animal>/fluid/plot')
@@ -845,21 +842,28 @@ def plot_fluid(animal):
 
     db = getdb()
     rows = db.query("""SELECT * FROM session WHERE """
-                    """ animal='%s' """ % animal)
+                    """ animal='%s'""" % animal)
 
     x = [mdates.strpdate2num('%Y-%m-%d')('%s'%r['date']) for r in rows]
-    y1 = [safefloat(r['water_work'])+
-          safefloat(r['water_sup'])+
-          safefloat(r['fruit_ml']) for r in rows]
+    y1 = [safefloat(r['water_sup'])+
+               safefloat(r['fruit_ml']) for r in rows]
     y2 = [safefloat(r['water_work']) for r in rows]
     plt.clf()
-    plt.plot_date(x, y1, 'r.')
-    plt.hold(1)
-    plt.plot_date(x, y2, 'b+')
-    plt.hold(0)
-    plt.title(animal);
+    w = plt.bar(x, y2, color='b', label='work')
+    t = plt.bar(x, y1, color='r', bottom=y2, label='total')
+    plt.gca().xaxis_date()
+    plt.legend((w, t))
+    if 0:
+        plt.plot_date(x, y1, 'r.')
+        plt.hold(1)
+        plt.plot_date(x, y2, 'b+')
+        plt.hold(0)
+    #plt.title(animal);
     plt.ylabel('Fluid Intake (ml)')
-    return mpld3.fig_to_html(plt.gcf())
+    
+    return render_template("plotview.html",
+                           title='%s fluid history' % animal,
+                           plot=mpld3.fig_to_html(plt.gcf()))
 
 # some useful filters
 

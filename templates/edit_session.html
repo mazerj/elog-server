@@ -1,11 +1,22 @@
-<script>
-  $( document ).ready( function () {
-     var editor = CodeMirror.fromTextArea(document.getElementById('session-note'), {
-       mode: "elog",
-       });
-     });
-</script>
+<!DOCTYPE html>
+<html lang="en">
 
+  <head>
+    {% include "header2.html" %}
+
+    <script>
+      $( document ).ready( function () {
+        var editor = CodeMirror.fromTextArea(document.getElementById('session-note'), {
+	  mode: "elog",
+	  });
+       });
+    </script>
+
+  </head>
+
+  <body>
+
+    {% include "navbar.html" %}
 
 <div class="container">
   <form class="cmxform" id="editForm" method="post" action="{{action}}">
@@ -16,6 +27,9 @@
         <tr>
           <td>
             <label for="animal">animal</label><input disabled id="animal" name="animal" value="{{row['animal']}}">
+          </td>
+        </tr>
+        <tr>
             <label for="date">date</label><input disabled id="date" name="date" type="date" value="{{row['date']}}">
           </td>
         </tr>
@@ -94,3 +108,5 @@
 <script>
   $("#editForm").validate();
 </script>
+
+</body>

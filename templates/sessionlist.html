@@ -1,7 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 
-  {% include "header.html" %}
+  <head>
+  {% include "header2.html" %}
+
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+  <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+  <script>
+  $(function() {
+    $( "#datepicker" ).datepicker();
+    $( "#datepicker" ).datepicker('setDate', new Date());
+  });
+  </script>
+  </head>
 
   <body>
 
@@ -9,34 +20,34 @@
 
     <div class="panel panel-default">
       <div class="panel-heading">
-	{{ANIMAL}}
+	<h1>{{ANIMAL}} sessions</h1>
       </div>
       <div class="panel-body">
 
-	<form class="well" method="post" action="/animals/{{ANIMAL}}/sessions/new">
-            <input type="text" placeholder="opt YYYY-MM-DD" name="date">
-	    <button type="submit" class="btn btn-default">New Session</button>
+	<form class="well" method="post"
+	      action="/animals/{{ANIMAL}}/sessions/new">
+            <input type="text" id="datepicker" name="date">
+	    <button type="submit"
+		    class="btn btn-default">Create/Goto session </button>
 	</form>
 
 	{% for year in years %}
         <div class="panel panel-default">
           <div class="panel-heading">
-            {{ANIMAL}} {{year}}
+            {{year}}
           </div>
           <div class="panel-body">
             {% for month in range(12,-1,-1) %}
             {% if toc[year][month]|length > 0 %}
             <div class="panel panel-default">
               <div class="panel-heading">
-                {{ANIMAL}} {{year}} {{MONTHS[month]}}
+                 {{MONTHS[month]}} {{year}}
               </div>
               <div class="panel-body">
-                <div class="list-group">
+                <div class="list-group col-sm-3">
                   {% for session in toc[year][month] %}
-                    <a href="{{session}}" class="list-group-item">
-                      {{session}}
-		      <span class="glyphicon glyphicon-arrow-right"></span>
-                    </a>
+		    <a class="btn btn-default list-group-item"
+		       role="button" href="{{session}}">{{session}}</a>
                   {% endfor %}
                 </div>
               </div>

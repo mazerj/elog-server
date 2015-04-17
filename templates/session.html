@@ -1,35 +1,13 @@
-<div class="modal" id="editModal" tabindex="-1" role="dialog">
-  <div class="modal-dialog modal-lg" style="height: 95%; width: 95%;">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title">Editing session</h4>
-      </div>
-      <div id="mbody" class="modal-body"></div>
-    </div>
-  </div>
-</div>
-
-<script>
-$("#editModal").on('show.bs.modal', function() {
-  // load data from url when shown
-  $("#mbody").load('/animals/{{animal}}/sessions/{{date}}/edit');
-  });
-$("#editModal").on('hidden.bs.modal', function() {
-  // make this page reload when editModal is closed
-  window.location.reload(true);
-  });
-</script>
-
-
 <div class="container">
   <div class="panel panel-info">
     <div class="panel panel-heading">
       {% if RW %}
-      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#editModal">Edit Session</button>
+      <a class="hidden-print" href="/animals/{{animal}}/sessions/{{date}}/edit">
+        <button type="button" class="btn btn-primary hidden-print">Edit Session</button>
+      </a>
       <a class="hidden-print"
 	 href="/animals/{{animal}}/sessions/{{date}}/newexper">
-	<button type="button" class="btn btn-primary">New Exper</button>
+	<button type="button" class="btn btn-primary hidden-print">New Exper</button>
       </a>
       {% endif %}
       {{date}} {{animal}}
@@ -71,7 +49,7 @@ $("#editModal").on('hidden.bs.modal', function() {
           </tr>
           <tr>
             <td class="text-right" width="50%"><em>totalfluid</em></td>
-            <td>{{totalfluid}}</td>
+            <td>{{water_work + water_sup + fruit_ml}}ml</td>
           </tr>
         </table>
       </div>
