@@ -4,13 +4,8 @@
   <head>
     {% include "header2.html" %}
 
-    <script>
-      $( document ).ready( function () {
-        var editor = CodeMirror.fromTextArea(document.getElementById('exper-note'), {
-	  mode: "elog",
-	  });
-       });
-    </script>
+    {% set boxid="exper-note" %}
+    {% include "editbox.html" %}
 
   </head>
 
@@ -33,7 +28,7 @@
 	</fieldset>
 	<fieldset>
 	  <textarea style="width:100%;" rows="7"
-		    id="exper-note" name="note">{{row['note']}}</textarea>
+		    id="{{boxid}}" name="note">{{row['note']}}</textarea>
 	</fieldset>
 	
 	<div class="well">

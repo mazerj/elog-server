@@ -4,13 +4,8 @@
   <head>
     {% include "header2.html" %}
 
-    <script>
-      $( document ).ready( function () {
-        var editor = CodeMirror.fromTextArea(document.getElementById('session-note'), {
-	  mode: "elog",
-	  });
-       });
-    </script>
+    {% set boxid="session-note" %}
+    {% include "editbox.html" %}
 
   </head>
 
@@ -93,7 +88,7 @@
     </div>
      <fieldset>
       <textarea style="width:100%;" rows="20"
-                id="session-note" name="note">{{row['note']}}</textarea>
+                id="{{boxid}}" name="note">{{row['note']}}</textarea>
     </fieldset>
     
     {% if RW %}

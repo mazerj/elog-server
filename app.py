@@ -152,6 +152,9 @@ def expandsession(animal, date):
     env['health_urine'] = check(env['health_urine'])
     env['health_pcv'] = check(env['health_pcv'])
 
+    env['totalfluid'] = safeint(env['water_work']) + \
+      safeint(env['water_sup']) + safeint(env['fruit_ml'])
+
     env['note'] = expandnote(env['note'])
 
     return render_template("session.html", **env)

@@ -3,14 +3,9 @@
 
   <head>
     {% include "header2.html" %}
-
-    <script>
-      $( document ).ready( function () {
-       var editor = CodeMirror.fromTextArea(document.getElementById('unit-note'), {
-	 mode: "elog",
- 	});
-      });
-    </script>
+    
+    {% set boxid="unit-note" %}
+    {% include "editbox.html" %}
 
   </head>
 
@@ -107,7 +102,7 @@
 	<fieldset>
 	  {# <legend>Notes: Don't change pseudo links!</legend> #}
 	  <textarea style="width:100%;" rows="7"
-		    id="unit-note" name="note">{{row['note']}}</textarea>
+		    id="{{boxid}}" name="note">{{row['note']}}</textarea>
 	</fieldset>
 
 	<div class="well">
