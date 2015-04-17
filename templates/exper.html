@@ -1,3 +1,23 @@
+<script>
+$(document).ready(function () {
+     $('.collapse')
+         .on('shown.bs.collapse', function() {
+             $(this)
+                 .parent()
+                 .find(".glyphicon-chevron-right")
+                 .removeClass("glyphicon-chevron-right")
+                 .addClass("glyphicon-chevron-down");
+             })
+         .on('hidden.bs.collapse', function() {
+             $(this)
+                 .parent()
+                 .find(".glyphicon-chevron-down")
+                 .removeClass("glyphicon-chevron-down")
+                 .addClass("glyphicon-chevron-right");
+             });
+         });
+</script>
+
 <div class="panel panel-default">
   <div class="panel panel-heading">
     {% if RW %}
@@ -23,86 +43,86 @@
     <!-- units -->
     {% for unit in units %}
       <div class="panel panel-default">
-	<div class="panel panel-heading">
-	  {% if RW %}
-	    <a class="hidden-print" 
-	       href="/expers/{{exper}}/units/{{unit['unit']}}/edit">
-	      <button type="button" class="btn btn-primary hidden-print">Edit Unit</button>
-	    </a>
-	    <a class="hidden-print"
-	       href="/expers/{{exper}}/units/{{unit['unit']}}/delete">
-	      <button type="button"
-		      class="btn btn-danger pull-right hidden-print">Delete Unit</button>
-	    </a>
-	  {% endif %}
-	  {{exper}}_{{unit['unit']}}
-	</div>
-	<div class="panel panel-body">
-	  <div class="col-sm-3">
+        <div class="panel panel-heading">
+          {% if RW %}
+            <a class="hidden-print" 
+               href="/expers/{{exper}}/units/{{unit['unit']}}/edit">
+              <button type="button" class="btn btn-primary hidden-print">Edit Unit</button>
+            </a>
+            <a class="hidden-print"
+               href="/expers/{{exper}}/units/{{unit['unit']}}/delete">
+              <button type="button"
+                      class="btn btn-danger pull-right hidden-print">Delete Unit</button>
+            </a>
+          {% endif %}
+          {{exper}}_{{unit['unit']}}
+        </div>
+        <div class="panel panel-body">
+          <div class="col-sm-3">
             <table class="table table-striped table-bordered">
               <tr>
-		<td class="text-right" width="50%"><strong>date</strong></td>
-		<td>{{unit['date']}}</td>
+                <td class="text-right" width="50%"><strong>date</strong></td>
+                <td>{{unit['date']}}</td>
               </tr>
               <tr>
-		<td class="text-right" width="50%"><strong>well</strong></td>
-		<td>{{unit['well']}}</td>
+                <td class="text-right" width="50%"><strong>well</strong></td>
+                <td>{{unit['well']}}</td>
               </tr>
-	      <tr>
-		<td class="text-right" width="50%"><strong>well loc</strong></td>
-		<td>{{unit['wellloc']}}</td>
-	      </tr>
-	    </table>
-	  </div>
-	  <div class="col-sm-3">
+              <tr>
+                <td class="text-right" width="50%"><strong>well loc</strong></td>
+                <td>{{unit['wellloc']}}</td>
+              </tr>
+            </table>
+          </div>
+          <div class="col-sm-3">
             <table class="table table-striped table-bordered">
-	      <tr>
-		<td class="text-right" width="50%"><strong>area</strong></td>
-		<td>{{unit['area']}}</td>
-	      </tr>
-	      <tr>
-		<td class="text-right" width="50%"><strong>hemi</strong></td>
-		<td>{{unit['hemi']}}</td>
-	      </tr>
-	      <tr>
-		<td class="text-right" width="50%"><strong>depth</strong></td>
-		<td>{{unit['depth']}}um</td>
-	      </tr>
-	    </table>
-	  </div>
-	  <div class="col-sm-3">
+              <tr>
+                <td class="text-right" width="50%"><strong>area</strong></td>
+                <td>{{unit['area']}}</td>
+              </tr>
+              <tr>
+                <td class="text-right" width="50%"><strong>hemi</strong></td>
+                <td>{{unit['hemi']}}</td>
+              </tr>
+              <tr>
+                <td class="text-right" width="50%"><strong>depth</strong></td>
+                <td>{{unit['depth']}}um</td>
+              </tr>
+            </table>
+          </div>
+          <div class="col-sm-3">
             <table class="table table-striped table-bordered">
-	      <tr>
-		<td class="text-right" width="50%"><strong>isol qual</strong></td>
-		<td>{{unit['quality']}}/10</td>
-	      </tr>
-	      <tr>
-		<td class="text-right" width="50%"><strong>ori</strong></td>
-		<td>{{unit['ori']}}</td>
-	      </tr>
-	      <tr>
-		<td class="text-right" width="50%"><strong>color</strong></td>
-		<td>{{unit['color']}}</td>
-	      </tr>
-	    </table>
-	  </div>
-	  <div class="col-sm-3">
+              <tr>
+                <td class="text-right" width="50%"><strong>isol qual</strong></td>
+                <td>{{unit['quality']}}/10</td>
+              </tr>
+              <tr>
+                <td class="text-right" width="50%"><strong>ori</strong></td>
+                <td>{{unit['ori']}}</td>
+              </tr>
+              <tr>
+                <td class="text-right" width="50%"><strong>color</strong></td>
+                <td>{{unit['color']}}</td>
+              </tr>
+            </table>
+          </div>
+          <div class="col-sm-3">
             <table class="table table-striped table-bordered">
-	      <tr>
-		<td class="text-right" width="50%"><strong>rf loc</strong></td>
-		<td>({{unit['rfx']|int}},{{unit['rfy']|int}})</td>
-	      </tr>
-	      <tr>
-		<td class="text-right" width="50%"><strong>rf rad</strong></td>
-		<td>{{unit['rfr']|int}}px</td>
-	      </tr>
-	      <tr>
-		<td class="text-right" width="50%"><strong>lat</strong></td>
-		<td>{{unit['latency']}}ms</td>
-	      </tr>
-	    </table>
-	  </div>
-	</div>
+              <tr>
+                <td class="text-right" width="50%"><strong>rf loc</strong></td>
+                <td>({{unit['rfx']|int}},{{unit['rfy']|int}})</td>
+              </tr>
+              <tr>
+                <td class="text-right" width="50%"><strong>rf rad</strong></td>
+                <td>{{unit['rfr']|int}}px</td>
+              </tr>
+              <tr>
+                <td class="text-right" width="50%"><strong>lat</strong></td>
+                <td>{{unit['latency']}}ms</td>
+              </tr>
+            </table>
+          </div>
+        </div>
 
         <!-- general notes -->
         {% for (code, content) in unit['note'] %}
@@ -115,56 +135,62 @@
       </div>
     {% endfor %}
 
-    {% if dfiles|length > 0 %}
+    {% if dfiles|length < 1 %}
+      <span class="label label-default">No Datafiles</span>
+    {% else %}
       <button type="button" class="btn btn-default"
-	      data-toggle="collapse" data-target="#{{exper}}_dfiles">Datafiles ...</button>
-      <div id="{{exper}}_dfiles" class="panel panel-default collapse">
+              data-toggle="collapse" data-target="#{{exper}}_dfiles">
+	<span class="badge">{{dfiles|length}}</span>
+	Datafiles
+	<span class="glyphicon glyphicon-chevron-right"></span>
+      </button>
 
-    {% for d in dfiles %}
-      <div class="panel panel-default">
-	<div class="panel panel-heading">
-	  {% if RW %}
-	    <a class="hidden-print" href="/dfile/{{d['src']}}/edit">
-	      <button type="button" class="btn btn-primary hidden-print">Edit Datafile</button>
-	    </a>
-	  {% endif %}
-	  file: {{d['src']}}
-	</div>
-	<div class="panel panel-body">
-	  <div class="col-sm-3">
-            <table class="table table-striped table-bordered">
-              <tr>
-		<td class="text-right" width="50%"><strong>crap</strong></td>
-		<td>{{d['crap']|safe}}</td>
-	      </tr>
-	    </table>
-	  </div>
-	  <div class="col-sm-3">
-            <table class="table table-striped table-bordered">
-              <tr>
-		<td class="text-right" width="50%"><strong>lat</strong></td>
-		<td>{{d['latency']}}ms</td>
-	      </tr>
-	    </table>
-	  </div>
-	  <div class="col-sm-3">
-            <table class="table table-striped table-bordered">
-              <tr>
-		<td class="text-right" width="50%"><strong>winsize</strong></td>
-		<td>{{d['winsize']}}ms</td>
-	      </tr>
-	    </table>
-	  </div>
-          {% for (code, content) in d['note'] %}
-            {% if code == 0 %}
-              <tt>{{content}}</tt><br>
-            {% else %}
-              {{content|safe}}
+      <div id="{{exper}}_dfiles" class="panel panel-default collapse">
+      {% for d in dfiles %}
+        <div class="panel panel-default">
+          <div class="panel panel-heading">
+            {% if RW %}
+              <a class="hidden-print" href="/dfile/{{d['src']}}/edit">
+                <button type="button" class="btn btn-primary hidden-print">Edit Datafile</button>
+              </a>
             {% endif %}
-	  {% endfor %}
-	</div>
-      </div>
-    {% endfor %}
+            file: {{d['src']}}
+          </div>
+          <div class="panel panel-body">
+            <div class="col-sm-3">
+              <table class="table table-striped table-bordered">
+                <tr>
+                  <td class="text-right" width="50%"><strong>crap</strong></td>
+                  <td>{{d['crap']|safe}}</td>
+                </tr>
+              </table>
+            </div>
+            <div class="col-sm-3">
+              <table class="table table-striped table-bordered">
+                <tr>
+                  <td class="text-right" width="50%"><strong>lat</strong></td>
+                  <td>{{d['latency']}}ms</td>
+                </tr>
+              </table>
+            </div>
+            <div class="col-sm-3">
+              <table class="table table-striped table-bordered">
+                <tr>
+                  <td class="text-right" width="50%"><strong>winsize</strong></td>
+                  <td>{{d['winsize']}}ms</td>
+                </tr>
+              </table>
+            </div>
+            {% for (code, content) in d['note'] %}
+              {% if code == 0 %}
+                <tt>{{content}}</tt><br>
+              {% else %}
+                {{content|safe}}
+              {% endif %}
+            {% endfor %}
+          </div>
+        </div>
+      {% endfor %}
     {% endif %}
 
 
