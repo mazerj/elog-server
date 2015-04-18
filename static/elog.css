@@ -3,4 +3,23 @@
    line-height: 1.2;
 }
 
-.btn { font-size: 11px; }
+h1 { font-size: 25px; }
+h2 { font-size: 20px; }
+h3 { font-size: 15px; }
+h4 { font-size: 11px; }
+
+
+.btn {
+    font-size: 11px;
+    border-radius: 0px;
+}
+
+.form-control {
+    font-size: 11px;
+    border-radius: 0px;
+}
+
+.panel {
+    margin-bottom: 5px;
+}
+

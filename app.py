@@ -11,6 +11,7 @@ import matplotlib as mpl
 mpl.use('Agg')                        # prevent Tk loading..
 import matplotlib.pyplot as plt
 import mpld3
+import numpy as np
 
 # load elogapi based on elog executable location
 elogpath = distutils.spawn.find_executable('elog')
@@ -119,7 +120,7 @@ def expandexper(exper):
     if rows:
         for d in env['dfiles']:
             d['note'] = expandnote(d['note'])
-            d['crap'] = check(d['crap'])
+            d['dfileID'] = '%s' % d['dfileID']
         for k in d.keys():
             if type(d[k]) is types.StringType and len(d[k]) == 0:
                 d[k] = ''
@@ -682,24 +683,6 @@ def exper_units_set(exper, unit):
             return ('', 204)
     return redirect(r['_back'])
 
-@app.route('/dfile/<id>/edit')
-@requires_auth
-def dfile_edit(exper, unit):
-    if not writeaccess():
-        return Error("No write access!")
-    
-    db = getdb()
-    rows = db.query("""SELECT * FROM unit WHERE exper='%s' """
-                    """ AND unit='%s' """ % (exper, unit))
-    if rows:
-        env = baseenv()
-        env['row'] = rows[0]
-        env['row']['note'] = safenote(env['row']['note'])
-        env['action'] = '/expers/%s/units/%s/set' % (exper, unit,)
-        return render_template("edit_unit.html", **env)
-    else:
-        return Error("%s/%s: no matches." % (exper, unit,))
-
 @app.route('/attachment/<id>/edit')
 @requires_auth
 def attachment_edit(id):
@@ -716,7 +699,7 @@ def attachment_edit(id):
         env['action'] = '/attachment/%s/set' % (id,)
         return render_template("edit_attachment.html", **env)
     else:
-        return Error("%s/%s: no matches." % (id,e))
+        return Error("%s: no matches." % (id,))
 
 @app.route('/attachment/<id>/set', methods=['POST'])
 @requires_auth
@@ -730,6 +713,43 @@ def attachment_set(id):
                  """   note='%s', title='%s' """
                  """ WHERE attachmentID=%s """ %
                  (r['note'],r['title'],r['attachmentID']))
+        if not 'done' in r:
+            return ('', 204)
+    return redirect(r['_back'])
+
+@app.route('/dfile/<id>/edit')
+@requires_auth
+def dfile_edit(id):
+    if not writeaccess():
+        return Error("No write access!")
+    
+    db = getdb()
+    rows = db.query("""SELECT * FROM dfile WHERE """
+                    """ dfileID=%s""" % (id,))
+    if rows:
+        env = baseenv()
+        env['row'] = rows[0]
+        env['row']['note'] = safenote(env['row']['note'])
+        env['action'] = '/dfile/%s/set' % (id,)
+        return render_template("edit_dfile.html", **env)
+    else:
+        return Error("%s: no matches." % (id,))
+
+@app.route('/dfile/<id>/set', methods=['POST'])
+@requires_auth
+def dfile_set(id):
+    db = getdb()
+    r = getform()
+
+    r['crap'] = str2num('crap' in r)
+    print r
+
+    if 'save' in r or 'done' in r:
+        r['note'] = unsafenote(r['note'])
+        db.query("""UPDATE dfile SET """
+                 """   note='%s', crap=%s """
+                 """ WHERE dfileID=%s """ %
+                 (r['note'],r['crap'],id,))
         if not 'done' in r:
             return ('', 204)
     return redirect(r['_back'])
@@ -887,18 +907,20 @@ def plot_fluid(animal):
     
     db = getdb()
 
-    rows = db.query("""SELECT * FROM session WHERE """
-                    """ animal='%s' AND """
+    rows = db.query("""SELECT date,water_sup,water_work,fruit_ml """
+                    """ FROM session """
+                    """ WHERE animal='%s' AND """
                     """ date > DATE_SUB(NOW(), INTERVAL 90 DAY)""" % animal)
     if len(rows) > 0:
         x = [mdates.strpdate2num('%Y-%m-%d')('%s'%r['date']) for r in rows]
-        y1 = [safefloat(r['water_sup'])+
-                   safefloat(r['fruit_ml']) for r in rows]
+        y1 = [safefloat(r['water_work']) +
+              safefloat(r['water_sup']) +
+              safefloat(r['fruit_ml']) for r in rows]
         y2 = [safefloat(r['water_work']) for r in rows]
         plt.clf()
-        plt.bar(x, y2, color='b', label='work')
-        plt.bar(x, y1, color='r', bottom=y2, label='total')
-        plt.legend(framealpha=0)              #<- bug wrap around...
+        plt.plot(x, y1, 'ro', label='total')
+        plt.plot(x, y2, 'bo', label='work')
+        plt.legend()              #<- bug wrap around...
         plt.gca().xaxis_date()
         plt.title('%s: last 90d' % animal)
         plt.ylabel('Fluid Intake (ml)')
@@ -909,13 +931,14 @@ def plot_fluid(animal):
 
     if len(rows) > 0:
         x = [mdates.strpdate2num('%Y-%m-%d')('%s'%r['date']) for r in rows]
-        y1 = [safefloat(r['water_sup'])+
-                   safefloat(r['fruit_ml']) for r in rows]
+        y1 = [safefloat(r['water_work']) +
+              safefloat(r['water_sup']) +
+              safefloat(r['fruit_ml']) for r in rows]
         y2 = [safefloat(r['water_work']) for r in rows]
         plt.clf()
-        plt.bar(x, y2, color='b', label='work')
-        plt.bar(x, y1, color='r', bottom=y2, label='total')
-        plt.legend(framealpha=0)              #<- bug wrap around...
+        plt.plot(x, np.array(y1), 'ro', label='total')
+        plt.plot(x, np.array(y2)-1., 'bo', label='work')
+        plt.legend()              #<- bug wrap around...
         plt.gca().xaxis_date()
         plt.title('%s: all data' % animal)
         plt.ylabel('Fluid Intake (ml)')

@@ -4,13 +4,8 @@
   <head>
     {% include "header2.html" %}
 
-    <script>
-      $( document ).ready( function () {
-        var editor = CodeMirror.fromTextArea(document.getElementById('session-note'), {
-	  mode: "elog",
-         });
-      });
-    </script>
+    {% set boxid="animal-note" %}
+    {% include "editbox.html" %}
 
   </head>
 

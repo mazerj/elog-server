@@ -156,14 +156,15 @@ $(document).ready(function () {
               <div class="panel panel-default">
                 <div class="panel panel-heading">
                   {% if RW %}
-                    <a class="hidden-print" href="/dfile/{{d['src']}}/edit">
+                    <a class="hidden-print" href="/dfile/{{d['dfileID']}}/edit">
                       <button type="button" class="btn btn-primary hidden-print">Edit Datafile</button>
                     </a>
                   {% endif %}
+		  src:
 		  {% if d['crap'] %}
-                    src: {{d['src']|blue|safe}}
+                    <strike>{{d['src']}}<</strike>
 		  {% else %}
-                    src: {{d['src']|red|safe}}
+                    {{d['src']|red|safe}}
 		  {% endif %}
                 </div>
 		{% if not (d['note']|length == 1 and d['note'][0][1]|length == 0) %}
