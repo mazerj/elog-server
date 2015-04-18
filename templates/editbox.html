@@ -1,0 +1,9 @@
+{# set boxid before including... #}
+<script>
+  $( document ).ready( function () {
+   var editor = CodeMirror.fromTextArea(document.getElementById("{{boxid}}"), {
+     mode: "elog",
+     lineNumbers: true,
+     });
+   });
+</script>
