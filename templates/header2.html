@@ -2,17 +2,16 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<meta name="description" content="flask-based elog intervace">
-<meta name="author" content="jamie mazer">
+<meta name="description" content="flask-based elog interface">
+<meta name="author" content="mazerj2006@gmail.com">
 
 <title>elog</title>
 
-<link href="/static/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="/static/bootstrap.min.css">
 <link rel="stylesheet" href="/static/codemirror.css">
 <link rel="stylesheet" href="/static/cmxformTemplate.css">
 <link rel="stylesheet" href="/static/cmxform.css">
-
-<xlink rel="stylesheet" media="screen" href="/static/screen.css">
+<link rel="stylesheet" href="/static/elog.css">
 
 <script src="/static/jquery.min.js"></script>
 <script src="/static/bootstrap.min.js"></script>
@@ -20,10 +19,12 @@
 <script src="/static/codemirror-compressed.js"></script>
 
 <script>
-<!-- this adds a simple 'elog' mode to the codemirror editor-->
+<!-- this adds a simple 'elog' mode to the standard codemirror editor-->
 $( document ).ready( function () {
   CodeMirror.defineSimpleMode("elog", {
     start: [ {regex: /<elog:.*=.*>/, token: "strikethrough"} ]
   });
 });
 </script>
+
+

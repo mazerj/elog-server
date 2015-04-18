@@ -700,7 +700,7 @@ def dfile_edit(exper, unit):
     else:
         return Error("%s/%s: no matches." % (exper, unit,))
 
-    @app.route('/attachment/<id>/edit')
+@app.route('/attachment/<id>/edit')
 @requires_auth
 def attachment_edit(id):
     if not writeaccess():
