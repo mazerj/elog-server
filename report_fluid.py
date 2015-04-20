@@ -26,11 +26,11 @@ def report(date0):
     
     env = {}
     # only do this for animals restricted during the specified month
-    (ok, rows) = db.q("""SELECT animal """
-                      """ FROM session WHERE """
-                      """ MONTH('%s') = MONTH(date) AND """
-                      """ YEAR('%s') = YEAR(date) AND """
-                      """ restricted > 0""" % (date0, date0,))
+    rows = db.query("""SELECT animal """
+                    """ FROM session WHERE """
+                    """ MONTH('%s') = MONTH(date) AND """
+                    """ YEAR('%s') = YEAR(date) AND """
+                    """ restricted > 0""" % (date0, date0,))
 
     env['animals'] = sorted(list(set([r['animal'] for r in rows])))
     env['data'] = {}
@@ -50,10 +50,10 @@ def report(date0):
                 datestr = """<font color='blue'>%s</font>""" % x
             else:
                 datestr = x
-            (ok, rows) = db.q("""SELECT * """
-                              """ FROM session WHERE """
-                              """ date='%s' AND """
-                              """ animal LIKE "%s" """ % (date, animal))
+            rows = db.query("""SELECT * """
+                            """ FROM session WHERE """
+                            """ date='%s' AND """
+                            """ animal LIKE "%s" """ % (date, animal))
             if len(rows):
                 tr = [datestr,]
                 tr.append(ps('%s' % rows[0]['user']))
@@ -78,11 +78,13 @@ def report(date0):
                 else:
                     tr.append(' ')
             else:
-                tr = ([datestr, glyph('flag')] + [' '] * 7)
+                link = """<button href="/animals/%s/sessions/%s/new">%s</button>""" % \
+                  (animal, date, glyph('flag'))
+                tr = ([datestr, link] + [' '] * 7)
             t.append(tr)
         env['data'][animal] = t
     env['header'] = ['date', 'user', 'wt (kg)', 'rstrct', 'test', \
-                     'health<br>st/ur/sk/pcv', \
+                     'health<br>(St/Ur/Sk/PCV)', \
                      'fluid<br>(work+sup+fruit)', \
                      'fruit', 'other']
     env['date0'] = date0
