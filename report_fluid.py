@@ -61,14 +61,19 @@ def report(date0):
                 tr.append(check(rows[0]['restricted']))
                 tr.append(check(rows[0]['tested']))
 
-                tr.append(check(rows[0]['health_stool']) + check(rows[0]['health_urine']) +
-                          check(rows[0]['health_skin']) + check(rows[0]['health_pcv']))
-                
-                ww = iget(rows,'water_work')
-                ws = iget(rows, 'water_sup')
-                wf = iget(rows, 'fruit_ml')
-                wt = ww + ws + wf
-                tr.append('%s (%s+%s+%s)' % (wt, ww, ws, wf))
+                tr.append(check(rows[0]['health_stool']) +
+                          check(rows[0]['health_urine']) +
+                          check(rows[0]['health_skin']) +
+                          check(rows[0]['health_pcv']))
+
+                if rows[0]['restricted']:
+                    ww = iget(rows,'water_work')
+                    ws = iget(rows, 'water_sup')
+                    wf = iget(rows, 'fruit_ml')
+                    wt = ww + ws + wf
+                    tr.append('%s (%s+%s+%s)' % (wt, ww, ws, wf))
+                else:
+                    tr.append('ad lib')
                 tr.append(rows[0]['fruit'])
                 l = rows[0]['note'].split('\n')[0]
                 if len(l) and l[0] in '%#;%/!':
