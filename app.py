@@ -251,12 +251,12 @@ def findsessions(pattern):
     if rows:
         return [(x['animal'], x['date']) for x in rows]
 
-    rows = db.query("""SELECT * FROM exper WHERE unit LIKE '%%%s%%'""" % \
+    rows = db.query("""SELECT * FROM unit WHERE unit LIKE '%%%s%%'""" % \
                     pattern)
     if rows:
         return [(x['animal'], x['date']) for x in rows]
 
-    rows = db.query("""SELECT * FROM exper WHERE dfile LIKE '%%%s%%'""" % \
+    rows = db.query("""SELECT * FROM dfile WHERE dfile LIKE '%%%s%%'""" % \
                     pattern)
     if rows:
         return [(x['animal'], x['date']) for x in rows]
@@ -304,7 +304,6 @@ def check_auth(username, password):
     login (validated users are always given RW access). Otherwise, the
     'userdata' file fille be read. At least one has to be available..
     """
-
     if pamchecker:
         if pamchecker.authenticate(username, password):
             session['username'] = username
@@ -352,12 +351,25 @@ def Error(msg):
 def Message(msg):
     return render_template("message.html", header="Message", message=msg)
 
+def Reload():
+    return ('', 204)
+
 
 ########################################################################
 #  Actual server is implmemented starting here
 ########################################################################
 
 app = Flask(__name__)
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'GET':
+        return render_template("login.html")
+    form = getform()
+    if check_auth(form['username'], form['password']):
+        return redirect('/')
+    else:
+        return Reload()
 
 @app.route('/')
 @requires_auth
@@ -458,7 +470,7 @@ def animal_set(animal):
                   form['user'], form['idno'], form['dob'],
                   form['note'], animal))
         if not 'done' in form:
-            return ('', 204)
+            return Reload()
     return redirect(form['_back'])
 
 # this actually creates new or jumps to existing..
@@ -507,7 +519,7 @@ def getform(r=None):
     return r
     
 @app.route('/animals/<animal>/sessions/today')
-@requires_auth
+
 def session_today(animal):
     db = getdb()
     animal = animal.encode()
@@ -623,7 +635,7 @@ def exper_set(exper):
         db.query("""UPDATE exper SET note='%s' """
                  """ WHERE exper='%s' """ % (note, exper))
         if not 'done' in form:
-            return ('', 204)
+            return Reload()
     return redirect(form['_back'])
 
 
@@ -680,7 +692,7 @@ def exper_units_set(exper, unit):
                  """ WHERE exper='%(exper)s' AND unit='%(orig_unit)s' """ % r)
 
         if not 'done' in r:
-            return ('', 204)
+            return Reload()
     return redirect(r['_back'])
 
 @app.route('/attachment/<id>/edit')
@@ -714,7 +726,7 @@ def attachment_set(id):
                  """ WHERE attachmentID=%s """ %
                  (r['note'],r['title'],r['attachmentID']))
         if not 'done' in r:
-            return ('', 204)
+            return Reload()
     return redirect(r['_back'])
 
 @app.route('/dfile/<id>/edit')
@@ -751,7 +763,7 @@ def dfile_set(id):
                  """ WHERE dfileID=%s """ %
                  (r['note'],r['crap'],id,))
         if not 'done' in r:
-            return ('', 204)
+            return Reload()
     return redirect(r['_back'])
 
 @app.route('/animals/<animal>/sessions/<date>/newexper')
@@ -856,7 +868,7 @@ def session_set(animal, date):
              """   weight=%(weight)f """
              """ WHERE animal='%(animal)s' """
              """ AND date='%(date)s'""" % r)
-    return ('', 204)
+    return Reload()
 
 @app.route('/animals/<animal>/weight/plot')
 @requires_auth

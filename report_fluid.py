@@ -93,5 +93,5 @@ def report(date0):
                      'fluid<br>(work+sup+fruit)', \
                      'fruit', 'other']
     env['date0'] = date0
-                    
+
     return env
