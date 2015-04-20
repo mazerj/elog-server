@@ -715,9 +715,13 @@ def paste():
                     """ ORDER BY attachmentID DESC LIMIT 1""")
     id = rows[0]['attachmentID']
 
-    return redirect('/attachment/%s/edit' % id)
+    return redirect('/attachments/%s/edit' % id)
 
-@app.route('/attachment/<id>/edit')
+@app.route('/attachments/<id>/edit')
+@requires_auth
+def attachment_edit(id):
+
+@app.route('/attachments/<id>/edit')
 @requires_auth
 def attachment_edit(id):
     if not writeaccess():
@@ -730,12 +734,12 @@ def attachment_edit(id):
         env = baseenv()
         env['row'] = rows[0]
         env['row']['note'] = safenote(env['row']['note'])
-        env['action'] = '/attachment/%s/set' % (id,)
+        env['action'] = '/attachments/%s/set' % (id,)
         return render_template("edit_attachment.html", **env)
     else:
         return Error("%s: no matches." % (id,))
 
-@app.route('/attachment/<id>/set', methods=['POST'])
+@app.route('/attachments/<id>/set', methods=['POST'])
 @requires_auth
 def attachment_set(id):
     db = getdb()
