@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    {% include "header2.html" %}
+    {#
+    <script type="text/javascript"
+	    src="https://cdnjs.cloudflare.com/ajax/libs/zeroclipboard/2.2.0/ZeroClipboard.min.js"></script>
+    #}
+  </head>
+
+  <body>
+
+    {% include "navbar.html" %}
+
+    <div class="container">
+    <div class="panel panel-default">
+
+      <div class="panel-heading">
+	<h3>Attachment Directory: Page {{page}}/{{pages}}</h3>
+
+	<a class="btn btn-primary" role="button"
+	   href="/attachments/showlist/1">
+	  <span class="glyphicon glyphicon-fast-backward"></span></a>
+	<a class="btn btn-primary" role="button"
+	   href="/attachments/showlist/{{page-10}}">
+	  <span class="glyphicon glyphicon-step-backward"></span></a>
+	<a class="btn btn-primary" role="button"
+	   href="/attachments/showlist/{{page-1}}">
+	  <span class="glyphicon glyphicon-chevron-left"></span></a>
+	<a class="btn btn-primary" role="button"
+	   href="/attachments/showlist/{{page+10}}">
+	  <span class="glyphicon glyphicon-chevron-right"></span></a>
+	<a class="btn btn-primary" role="button"
+	   href="/attachments/showlist/{{page+1}}">
+	  <span class="glyphicon glyphicon-step-forward"></span></a>
+	<a class="btn btn-primary" role="button"
+	   href="/attachments/showlist/10000">
+	  <span class="glyphicon glyphicon-fast-forward"></span></a>
+      </div>
+
+      <div class="panel-body">
+	{% for r in rows %}
+	  <div class="row">
+            <div class="thumbnail col-sm-6 col-md-2">
+		<a href="/attachments/{{'%d'|format(r['attachmentID'])}}/edit">
+		  <img class="media-object"
+		     src="data:image/jpg;base64,{{r['data']|safe}}"
+		     style="max-width: 64px;">
+		  </a>
+	    </div>
+            <div class="caption">
+	      <h4>#{{'%d'|format(r['attachmentID'])}} {{r['date']}} "{{r['title']}}"</h4>
+	      <h4>&lt;elog:attach={{r['attachmentID']}}&gt;</h4>
+	      {{r['note']}}
+	      {# <button data-clipboard-text="&lt;elog:attach={{r['attachmentID']}}&gt;"> #}
+	    </div>
+	  </div>
+	{% endfor %}
+      </div>
+    </div>
+
+    {% include "footer.html" %}
+    {% include "js.html" %}
+
+  </body>
+
+</html>
