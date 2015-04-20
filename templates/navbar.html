@@ -1,3 +1,27 @@
+<script>
+  $(document).ready(function() {
+    // catch paste event, if image, the stick in the idata hidden
+    // element and generate a submit event.. need to iterate over
+    // the clipboardData.items and find any images inside..
+    $('#pastebox').bind('paste', function(e) {
+      $('#pastebox').val("");
+      d = e.originalEvent.clipboardData.items;
+      for (n=0; n < d.length; n++) {
+        console.log(d[n].type);
+        if (/image\/.*/.test(d[n].type)) {
+          var data = d[n].getAsFile();
+          var fr = new FileReader;
+          fr.onloadend = function() {
+            $('#idata').val(fr.result);
+            $('#paste').submit();
+          };
+          fr.readAsDataURL(data);
+        }
+      }
+    });
+  });
+</script>
+
 <nav class="navbar navbar-default">
   <div class="container-fluid">
     <div class="navbar-header">
@@ -18,13 +42,21 @@
 	<li><a href="/about">About</a></li>
 	<li><a href="/logout">Logout</a></li>
 	<li><a href="#">{{("uri:%s" % request.path)|red|safe}}</a></li>
-	<form class="navbar-form navbar-right" role="search" 
+	<form id="search" class="navbar-form navbar-right" role="search" 
 	      method="post" action="/search">
 	  <div class="form-group">
             <input type="text" class="form-control" 
 		   placeholder="exper, date, text" name="pattern">
 	  </div>
 	  <button type="submit" class="btn btn-default">Search</button>
+	</form>
+	<form id="paste" class="navbar-form navbar-left" role="paste" 
+	      method="post" action="/paste">
+	  <input id="idata" name="idata" value="" type="hidden">
+	  <input id="pastebox" name="pastebox"
+		 type="text" class="form-control"
+		 style="background-color: lightgreen;"
+		 placeholder="paste images here" value="">
 	</form>
       </ul>
     </div>

@@ -82,17 +82,20 @@ def unsafenote(s):
 def expandattachment(id):
     env = baseenv()
     db = getdb()
-    row = db.query("""SELECT * FROM attachment WHERE"""
-                   """ attachmentID=%s""" % (id,))[0]
-    row['date'] = '%s' % row['date']
-    env.update(row)
+    rows = db.query("""SELECT * FROM attachment WHERE"""
+                    """ attachmentID=%s""" % (id,))
+    if len(rows) > 0:
+        rows[0]['date'] = '%s' % rows[0]['date']
+        env.update(rows[0])
 
-    for k in env.keys():
-        if type(env[k]) is types.StringType and len(env[k]) == 0:
-            env[k] = ''
+        for k in env.keys():
+            if type(env[k]) is types.StringType and len(env[k]) == 0:
+                env[k] = ''
 
-    env['note'] = expandnote(env['note'])
-    return render_template("attachment.html", **env)
+        env['note'] = expandnote(env['note'])
+        return render_template("attachment.html", **env)
+    else:
+        return red("BAD-ATTACH: #%s" % id)
 
 def expandexper(exper):
     env = baseenv()
@@ -695,6 +698,25 @@ def exper_units_set(exper, unit):
             return Reload()
     return redirect(r['_back'])
 
+@app.route('/paste', methods=['POST'])
+@requires_auth
+def paste():
+    db = getdb()
+    imtype, imdata = request.form['idata'].split(',')
+    print imtype
+    #imtype = imtype.split('/')[1].split(';')[0]
+    
+    db.query("""INSERT INTO attachment"""
+                """ (type,user,date,title,note,data)"""
+                """ VALUES ('%s','%s','%s','%s','%s', '%s')""" % \
+                (imtype, session['username'], today(),
+                 'no title', 'no note', imdata,))
+    rows = db.query("""SELECT attachmentID FROM attachment"""
+                    """ ORDER BY attachmentID DESC LIMIT 1""")
+    id = rows[0]['attachmentID']
+
+    return redirect('/attachment/%s/edit' % id)
+
 @app.route('/attachment/<id>/edit')
 @requires_auth
 def attachment_edit(id):
@@ -754,8 +776,7 @@ def dfile_set(id):
     r = getform()
 
     r['crap'] = str2num('crap' in r)
-    print r
-
+    
     if 'save' in r or 'done' in r:
         r['note'] = unsafenote(r['note'])
         db.query("""UPDATE dfile SET """
@@ -853,22 +874,26 @@ def session_set(animal, date):
     r['weight'] = str2num(r['weight'], float)
 
     r['note'] = unsafenote(r['note'])
-    db.query("""UPDATE session SET """
-             """   note='%(note)s', """
-             """   restricted=%(restricted)d, """
-             """   tested=%(tested)d, """
-             """   health_stool=%(health_stool)d, """
-             """   health_skin=%(health_skin)d, """
-             """   health_urine=%(health_urine)d, """
-             """   health_pcv=%(health_pcv)d, """
-             """   water_work=%(water_work)d, """
-             """   water_sup=%(water_sup)d, """
-             """   fruit_ml=%(fruit_ml)d, """
-             """   food=%(food)d, """
-             """   weight=%(weight)f """
-             """ WHERE animal='%(animal)s' """
-             """ AND date='%(date)s'""" % r)
-    return Reload()
+
+    if 'save' in r or 'done' in r:
+        db.query("""UPDATE session SET """
+                 """   note='%(note)s', """
+                 """   restricted=%(restricted)d, """
+                 """   tested=%(tested)d, """
+                 """   health_stool=%(health_stool)d, """
+                 """   health_skin=%(health_skin)d, """
+                 """   health_urine=%(health_urine)d, """
+                 """   health_pcv=%(health_pcv)d, """
+                 """   water_work=%(water_work)d, """
+                 """   water_sup=%(water_sup)d, """
+                 """   fruit_ml=%(fruit_ml)d, """
+                 """   food=%(food)d, """
+                 """   weight=%(weight)f """
+                 """ WHERE animal='%(animal)s' """
+                 """ AND date='%(date)s'""" % r)
+        if not 'done' in r:
+            return Reload()
+    return redirect(r['_back'])
 
 @app.route('/animals/<animal>/weight/plot')
 @requires_auth

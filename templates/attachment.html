@@ -15,6 +15,7 @@
     {% endfor %}
   </div>
   <div class="panel panel-footer">
+    {# technically we should specifiy the type, but jpg works with png.. #}
     <img src="data:image/jpg;base64,{{data|safe}}"
 	 style="max-width: 700;">
   </div>
