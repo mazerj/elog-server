@@ -157,17 +157,18 @@ $(document).ready(function () {
             {% for d in dfiles %}
               <div class="panel panel-default">
                 <div class="panel panel-heading">
+		  <h3>
                   {% if RW %}
                     <a class="hidden-print" href="/dfile/{{d['dfileID']}}/edit">
                       <button type="button" class="btn btn-primary hidden-print">Edit Datafile</button>
                     </a>
                   {% endif %}
-		  src:
 		  {% if d['crap'] %}
                     <strike>{{d['src']}}<</strike>
 		  {% else %}
-                    {{d['src']|red|safe}}
+                    {{d['src']}}
 		  {% endif %}
+		  </h3>
                 </div>
 		{% if not (d['note']|length == 1 and d['note'][0][1]|length == 0) %}
                   <div class="panel panel-body">

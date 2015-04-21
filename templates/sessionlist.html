@@ -20,7 +20,7 @@
 
     <div class="panel panel-default">
       <div class="panel-heading">
-	<h1>{{ANIMAL}} sessions</h1>
+	<h1>{{ANIMAL}} session list</h1>
       </div>
       <div class="panel-body">
 
@@ -44,10 +44,10 @@
                  {{MONTHS[month]}} {{year}}
               </div>
               <div class="panel-body">
-                <div class="list-group col-sm-3">
-                  {% for session in toc[year][month] %}
+                <div class="list-group col-sm-2">
+                  {% for (label, session) in toc[year][month] %}
 		    <a class="btn btn-default list-group-item"
-		       role="button" href="{{session}}">{{session}}</a>
+		       role="button" href="{{session}}">{{label|safe}}</a>
                   {% endfor %}
                 </div>
               </div>

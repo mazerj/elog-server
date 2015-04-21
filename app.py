@@ -404,6 +404,8 @@ def animals(animal):
 	db = getdb()
 	rows = db.query("""SELECT date FROM session WHERE animal='%s'""" % animal)
 
+    tod = today()
+    print tod
 	env['toc'] = {}
 	env['years'] = sorted(uniq([r['date'].year for r in rows]))[::-1]
 	for y in env['years']:
@@ -415,7 +417,11 @@ def animals(animal):
 							(animal, y, m))
 			ml = []
 			for r in rows:
-				ml.append('/animals/%s/sessions/%s' % (animal, r['date']))
+                label = '%s' % r['date']
+                if label.startswith(tod):
+                    label = blue(label)
+				ml.append((label,
+                           '/animals/%s/sessions/%s' % (animal, r['date'])))
 			yl.append(ml[::-1])
 		env['toc'][y] = yl
 	env['MONTHS'] = [datetime.date(2014,n+1,1).strftime('%B') \
