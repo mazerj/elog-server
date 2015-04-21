@@ -13,16 +13,19 @@ import matplotlib.pyplot as plt
 import mpld3
 import numpy as np
 
-# load elogapi based on elog executable location
-elogpath = distutils.spawn.find_executable('elog')
+# run elog with -dir option to find install dir
+try:
+    elogpath = os.popen('elog -dir').read()[:-1] + '/lib/elog'
+except:
+    elogpath = None
+    
 if elogpath is None:
 	sys.stderr.write("Can't find elog executable\n")
 	sys.exit(1)
 else:
-	p = elogpath.replace('/bin/','/lib/')
-	sys.path.append(p)
+	sys.path.append(elogpath)
 	from elogapi import getdb, GetExper, GetNextExper
-	sys.stderr.write("loaded elogapi from %s\n" % p)
+	sys.stderr.write("loaded elogapi from %s\n" % elogpath)
 
 from app_tools import *
 

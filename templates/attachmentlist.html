@@ -11,6 +11,7 @@
         var clip = new ZeroClipboard($('.copy-button'));
       });
     </script>
+
   </head>
 
   <body>
@@ -44,27 +45,28 @@
       </div>
 
       <div class="panel-body">
-	{% for r in rows %}
-	  <div class="row">
-            <div class="thumbnail col-sm-6 col-md-2">
-		<a href="/attachments/{{'%d'|format(r['attachmentID'])}}/edit">
-		  <img class="media-object"
-		     src="data:image/jpg;base64,{{r['data']|safe}}"
-		     style="max-height: 100px;">
-		  </a>
-	    </div>
-            <div class="caption">
-	      <button class="copy-button"
-		      data-clipboard-text="&lt;elog:attach={{r['attachmentID']}}&gt;">
-		copy link
-	      </button>
-	      <h4>#{{'%d'|format(r['attachmentID'])}} {{r['date']}} "{{r['title']}}"</h4>
-	      {{r['note']}}
-	    </div>
-	  </div>
-	{% endfor %}
+	<table border="1">
+	  {% for r in rows %}
+	    <tr>
+	      <td style="text-align:center;">
+		<a href="/attachments/{{'%d'|format(r['attachmentID'])}}/edit"
+			title="edit: #{{'%d'|format(r['attachmentID'])}} {{r['date']}}">
+		  <img src="data:image/jpg;base64,{{r['data']|safe}}"
+		       style="max-height: 100px;">
+		</a>
+	      </td>
+	      <td style="vertical-align: top;">
+		<button class="copy-button"
+			data-clipboard-text="&lt;elog:attach={{r['attachmentID']}}&gt;">
+		  copy link
+		</button>
+		<h3>{{r['title']}}</h3>
+		{{r['note']}}
+	      </td>
+	    </tr>
+	  {% endfor %}
+	</table>
       </div>
-    </div>
 
     {% include "footer.html" %}
     {% include "js.html" %}

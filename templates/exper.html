@@ -142,7 +142,9 @@ $(document).ready(function () {
         <div class="panel-heading" role="tab" id="headingOne">
           <div class="panel-title">
 	    <button type="button" class="btn btn-default hidden-print">
-            <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+            <a class="collapsed"
+	       data-toggle="collapse" data-parent="#accordion"
+	       href="#collapseOne">
 	      <span class="badge">{{dfiles|length}}</span>
 	      Datafiles
 	      <span class="glyphicon glyphicon-chevron-right"></span>
@@ -150,7 +152,7 @@ $(document).ready(function () {
 	    </button>
           </div>
         </div>
-        <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+        <div id="collapseOne" class="panel-collapse collapse" role="tabpanel">
           <div class="panel-body">
             {% for d in dfiles %}
               <div class="panel panel-default">

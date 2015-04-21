@@ -1,22 +1,25 @@
-<div class="panel panel-default" style="margin-left: 25px;">
-  <div class="panel panel-heading">
-    <a href="/attachments/{{attachmentID}}/edit">
-      <button type="button" class="btn btn-primary hidden-print">Edit</button>
-    </a>
-    #{{attachmentID}} {{title}}
-  </div>
-  <div class="panel panel-body">
-    {% for (code, content) in note %}
-      {% if code == 0 %}
-        {{content}}<br>
-      {% else %}
-        {{content|safe}}
-      {% endif %}
-    {% endfor %}
-  </div>
-  <div class="panel panel-footer">
-    {# technically we should specifiy the type, but jpg works with png.. #}
-    <img src="data:image/jpg;base64,{{data|safe}}"
-	 style="max-width: 700;">
-  </div>
-</div>  
+<table>
+  <tr>
+    <td valign="top">
+      <a href="/attachments/{{'%d'|format(attachmentID)}}/edit"
+	 title="edit: #{{'%d'|format(attachmentID)}} {{date}}">
+	<img class="media-object"
+	     src="data:image/jpg;base64,{{data|safe}}"
+	     style="max-width: 700px;">
+	</a>
+    </td>
+    <td valign="top">
+      <h3>{{title}}</h3>
+
+      {% for (code, content) in note %}
+        {% if code == 0 %}
+          {{content}}<br>
+        {% else %}
+          {{content|safe}}
+        {% endif %}
+      {% endfor %}
+    </td>
+  </tr>
+</table>
+
+
