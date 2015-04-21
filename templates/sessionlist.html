@@ -38,22 +38,22 @@
           </div>
           <div class="panel-body">
             {% for month in range(12,-1,-1) %}
-            {% if toc[year][month]|length > 0 %}
-            <div class="panel panel-default">
-              <div class="panel-heading">
-                 {{MONTHS[month]}} {{year}}
-              </div>
-              <div class="panel-body">
-                <div class="list-group col-sm-2">
-                  {% for (label, session) in toc[year][month] %}
-		    <a class="btn btn-default list-group-item"
-		       role="button" href="{{session}}">{{label|safe}}</a>
-                  {% endfor %}
-                </div>
-              </div>
-            </div>
-            {% endif %}
-            {% endfor %}
+              {% if toc[year][month]|length > 0 %}
+                <div class="panel panel-default">
+		  <div class="panel-heading">
+                    {{MONTHS[month]}} {{year}}
+		  </div>
+		  <div class="panel-body">
+                    <div class="list-group col-sm-2">
+                      {% for (label, session) in toc[year][month] %}
+		        <a class="btn btn-default list-group-item"
+			   role="button" href="{{session}}">{{label|safe}}</a>
+                      {% endfor %}
+                    </div>
+		  </div>
+		</div>
+              {% endif %}
+	    {% endfor %}
           </div>
         </div>
 	{% endfor %}

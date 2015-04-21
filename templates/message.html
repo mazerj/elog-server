@@ -14,6 +14,12 @@
 	</div>
 	<div class="panel panel-body">
 	  {{message}}
+
+	{% if goto|length > 1 %}
+	  <a href="{{goto[1]}}">
+	    <button>{{goto[0]}}</button>
+	  </a>
+	{% endif %}
 	</div>
       </div>
     </div>

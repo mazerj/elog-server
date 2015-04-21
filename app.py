@@ -15,14 +15,15 @@ import numpy as np
 
 # run elog with -dir option to find install dir
 try:
-    elogpath = os.popen('elog -dir').read()[:-1] + '/lib/elog'
+    elogpath = os.popen('elog -dir 2>/dev/null').read()[:-1]
 except:
-    elogpath = None
+    elogpath = ''
     
 if elogpath is None:
-	sys.stderr.write("Can't find elog executable\n")
+	sys.stderr.write("Can't find elog executable/path\n")
 	sys.exit(1)
 else:
+    elogpath = elogpath + '/lib/elog'
 	sys.path.append(elogpath)
 	from elogapi import getdb, GetExper, GetNextExper
 	sys.stderr.write("loaded elogapi from %s\n" % elogpath)
@@ -79,7 +80,7 @@ def safenote(s):
 
 def unsafenote(s):
 	# markdown format 'speical' link back to elog link
-	return s.replace('\r\n', '\n')
+	return s.replace('\r\n', '\n').replace("'", "\\'")
 	#return re.sub('\[elog:(.*)=(.*)\]\(DO NOT CHANGE\)', '<elog:\\1=\\2>', s)
 
 def expandattachment(id):
@@ -351,11 +352,13 @@ def requires_auth(f):
 	return decorated
 
 
-def Error(msg):
-	return render_template("message.html", header="Error", message=msg)
+def Error(msg, goto=[]):
+	return render_template("message.html", header="Error",
+                           message=msg, goto=goto)
 
 def Message(msg):
-	return render_template("message.html", header="Message", message=msg)
+	return render_template("message.html", header="Message",
+                           message=msg)
 
 def Reload():
 	return ('', 204)
@@ -405,7 +408,6 @@ def animals(animal):
 	rows = db.query("""SELECT date FROM session WHERE animal='%s'""" % animal)
 
     tod = today()
-    print tod
 	env['toc'] = {}
 	env['years'] = sorted(uniq([r['date'].year for r in rows]))[::-1]
 	for y in env['years']:
@@ -575,14 +577,12 @@ def assets(path):
 def fonts(path):
 	return send_from_directory('fonts', path)
 
-@app.route('/search', methods=['POST'])
+@app.route('/search/<pattern>')
 @requires_auth
-def search():
-	from flask import redirect, request, url_for
+def globalsearch(pattern):
 	db = getdb()
 
-	form = getform()
-	links = findsessionlinks(form['pattern'])
+	links = findsessionlinks(pattern)
 	
 	if len(links) == 1:
 		return redirect(links[0])
@@ -591,14 +591,20 @@ def search():
 		env = baseenv()
 		return render_template("searchresult.html",
 							   message="'%s': %d matches." % \
-							   (form['pattern'], len(links),),
+							   (pattern, len(links),),
 							   items=links, **env)
 	elif len(links) > 0:
 		env = baseenv()
-		env['sessions'] = expandsessions(form['pattern'])
+		env['sessions'] = expandsessions(pattern)
 		return render_template("sessions.html", **env)
 	else:
-		return Error("%s: no matches." % form['pattern'])
+		return Error("%s: no matches." % pattern)
+
+@app.route('/search', methods=['POST'])
+@requires_auth
+def search():
+	form = getform()
+    return globalsearch(form['pattern'])
 
 @app.route('/report/fluids/<int:year>-<int:month>')
 @requires_auth
@@ -712,7 +718,6 @@ def exper_units_set(exper, unit):
 def paste():
 	db = getdb()
 	imtype, imdata = request.form['idata'].split(',')
-	print imtype
 	#imtype = imtype.split('/')[1].split(';')[0]
 	
 	db.query("""INSERT INTO attachment"""
@@ -790,8 +795,9 @@ def attachments_delete(id):
 
     n = attachment_countlinks(id)
     if n > 0:
-        return Error("""One or more links in notes.\n"""
-                     """Search for: %%attach=%s%% to fix and try again.""" % id)
+        return Error("""One or more links in notes.\n""",
+                     ("Search for them?",
+                      "/search/attach=%s" % id))
     else:
         db = getdb()
         rows = db.query("""DELETE FROM attachment WHERE """

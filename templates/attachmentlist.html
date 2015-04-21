@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<DOCTYPE html>
 <html lang="en">
 
   <head>
@@ -57,12 +57,14 @@
 	      </td>
 	      <td style="vertical-align: top;">
 		<button class="copy-button"
-			data-clipboard-text="&lt;elog:attach={{r['attachmentID']}}&gt;">
-		  copy link
-		</button>
+			data-clipboard-text="&lt;elog:attach={{r['attachmentID']}}&gt;">copy</button>
+		<a href="/search/attach={{'%d'|format(r['attachmentID'])}}">
+		  <button>find</button>
+		</a>
 		<a href="/attachments/{{'%d'|format(r['attachmentID'])}}/delete">
 		  <button>delete</button>
 		</a>
+		(#{{'%d'|format(r['attachmentID'])}})
 		<h3>{{r['title']}}</h3>
 		{{r['note']}}
 	      </td>
