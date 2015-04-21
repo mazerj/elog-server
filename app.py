@@ -257,12 +257,12 @@ def findsessions(pattern):
 	if rows:
 		return [(x['animal'], x['date']) for x in rows]
 
-	rows = db.query("""SELECT * FROM unit WHERE unit LIKE '%%%s%%'""" % \
+	rows = db.query("""SELECT * FROM unit WHERE note LIKE '%%%s%%'""" % \
 					pattern)
 	if rows:
 		return [(x['animal'], x['date']) for x in rows]
 
-	rows = db.query("""SELECT * FROM dfile WHERE dfile LIKE '%%%s%%'""" % \
+	rows = db.query("""SELECT * FROM dfile WHERE note LIKE '%%%s%%'""" % \
 					pattern)
 	if rows:
 		return [(x['animal'], x['date']) for x in rows]
@@ -747,8 +747,6 @@ def attachments_showlist_bypage(page):
 	env['rows'] = rows
 	return render_template("attachmentlist.html", **env)
 	
-	
-
 @app.route('/attachments/<id>/edit')
 @requires_auth
 def attachments_edit(id):
@@ -767,6 +765,33 @@ def attachments_edit(id):
 	else:
 		return Error("%s: no matches." % (id,))
 
+def attachment_countlinks(id):
+    ln = '<elog:attach=%s>' % id
+    
+	db = getdb()
+    n = 0
+    for t in ('session', 'exper', 'unit', 'dfile', 'animal'):
+        rows = db.query("""SELECT note FROM %s WHERE """
+                        """ note LIKE '%%%s%%'""" % (t, ln))
+        n = n + len(rows)
+    return n
+
+@app.route('/attachments/<id>/delete')
+@requires_auth
+def attachments_delete(id):
+	if not writeaccess():
+		return Error("No write access!")
+
+    n = attachment_countlinks(id)
+    if n > 0:
+        return Error("""One or more links in notes.\n"""
+                     """Search for: %%attach=%s%% to fix and try again.""" % id)
+    else:
+        db = getdb()
+        rows = db.query("""DELETE FROM attachment WHERE """
+                        """ attachmentID=%s""" % (id,))
+        return Message("""Deleted attachment.""")
+    
 @app.route('/attachments/<id>/set', methods=['POST'])
 @requires_auth
 def attachment_set(id):

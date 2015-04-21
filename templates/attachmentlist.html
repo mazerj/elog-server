@@ -60,6 +60,9 @@
 			data-clipboard-text="&lt;elog:attach={{r['attachmentID']}}&gt;">
 		  copy link
 		</button>
+		<a href="/attachments/{{'%d'|format(r['attachmentID'])}}/delete">
+		  <button>delete</button>
+		</a>
 		<h3>{{r['title']}}</h3>
 		{{r['note']}}
 	      </td>
