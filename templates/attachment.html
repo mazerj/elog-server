@@ -1,3 +1,5 @@
+{% include "textarea-expand.html" %}
+
 <table>
   <tr>
     <td valign="top">
@@ -13,7 +15,7 @@
 
       {% for (code, content) in note %}
         {% if code == 0 %}
-          {{content}}<br>
+          <textarea class="note" readonly>{{content}}</textarea>
         {% else %}
           {{content|safe}}
         {% endif %}

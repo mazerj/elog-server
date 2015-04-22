@@ -187,20 +187,11 @@ def expandnote(note):
 	for l in links:
 		if l:
 			k = note.find(l)
-			frags = note[k0:k].split('\n')
+			txt = note[k0:k]
 		else:
-			frags = note[k0:].split('\n')
-		for j in frags:
-			n.append((0, j))
-			if 0:
-				lines = textwrap.wrap(j, 80)
-				if len(lines):
-					for lno in range(len(lines)):
-						if lno > 0:
-							n.append((1, '.. '+'&nbsp;'*8,))
-						n.append((0, lines[lno],))
-				else:
-						n.append((0, '\n',))
+			txt = note[k0:]
+        if len(txt) > 0:
+            n.append((0, txt))
 		if l:
 			ltype = l.split(' ')[2].split('/')[1]
 			lid = l.split(' ')[2].split('/')[2]

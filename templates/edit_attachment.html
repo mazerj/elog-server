@@ -27,17 +27,8 @@
 	<img src="data:image/jpg;base64,{{row['data']|safe}}"
 	     style="max-width: 700px;">
 
-	<div class="well">
-	  {% if RW %}
-	  <button class="btn btn-default" type="submit"
-		  name="done">Done</button>
-	  <button class="btn btn-default" type="submit" 
-		  name="save">Save</button>
-	  {% endif %}
-	  <button class="btn btn-default" 
-		  name="cancel">Cancel</button>
-	  <input type="hidden" name="_back" value="{{request.referrer}}">
-	</div>
+	{% include "donesavecancel.html" %}
+
       </form>
     </div>
 

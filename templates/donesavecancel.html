@@ -1,0 +1,11 @@
+<div class="well">
+  {% if RW %}
+  <button class="btn btn-primary" type="submit"
+          name="done">Done</button>
+  <button class="btn btn-primary" type="submit" 
+          name="save">Save</button>
+  {% endif %}
+  <button class="btn btn-danger" 
+          name="cancel">Cancel</button>
+  <input type="hidden" name="_back" value="{{request.referrer}}">
+</div>

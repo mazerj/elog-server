@@ -1,3 +1,5 @@
+{% include "textarea-expand.html" %}
+
 <div class="container">
   <div class="panel panel-info">
     <div class="panel panel-heading">
@@ -97,11 +99,11 @@
     </div>
 
     {% for (code, content) in note %}
-    {% if code == 0 %}
-    <tt>{{content}}</tt><br>
-    {% else %}
-    {{content|safe}}
-    {% endif %}
+      {% if code == 0 %}
+        <textarea class="note" readonly style="width:100%">{{content}}</textarea>
+      {% else %}
+        {{content|safe}}
+      {% endif %}
     {% endfor %}
   </div>
 </div>

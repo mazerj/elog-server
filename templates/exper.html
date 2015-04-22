@@ -1,22 +1,4 @@
-<script>
-$(document).ready(function () {
-     $('.collapse')
-         .on('shown.bs.collapse', function() {
-             $(this)
-                 .parent()
-                 .find(".glyphicon-chevron-right")
-                 .removeClass("glyphicon-chevron-right")
-                 .addClass("glyphicon-chevron-down");
-             })
-         .on('hidden.bs.collapse', function() {
-             $(this)
-                 .parent()
-                 .find(".glyphicon-chevron-down")
-                 .removeClass("glyphicon-chevron-down")
-                 .addClass("glyphicon-chevron-right");
-             });
-         });
-</script>
+{% include "textarea-expand.html" %}
 
 <div class="panel panel-default">
   <div class="panel panel-heading">
@@ -34,7 +16,7 @@ $(document).ready(function () {
     <!-- general notes -->
     {% for (code, content) in note %}
       {% if code == 0 %}
-        <tt>{{content}}</tt><br>
+        <textarea class="note" readonly style="width:100%; height:100%;">{{content}}</textarea>
       {% else %}
         {{content|safe}}
       {% endif %}
@@ -127,7 +109,7 @@ $(document).ready(function () {
         <!-- general notes -->
         {% for (code, content) in unit['note'] %}
           {% if code == 0 %}
-            <tt>{{content}}</tt><br>
+	    <textarea class="note" readonly style="width:100%; height:100%;">{{content}}</textarea>
           {% else %}
             {{content|safe}}
           {% endif %}
@@ -138,54 +120,33 @@ $(document).ready(function () {
     {% if dfiles|length < 1 %}
       <span class="label label-default">No Datafiles</span>
     {% else %}
-      <div class="panel panel-default">
-        <div class="panel-heading" role="tab" id="headingOne">
-          <div class="panel-title">
-	    <button type="button" class="btn btn-default hidden-print">
-            <a class="collapsed"
-	       data-toggle="collapse" data-parent="#accordion"
-	       href="#collapseOne">
-	      <span class="badge">{{dfiles|length}}</span>
-	      Datafiles
-	      <span class="glyphicon glyphicon-chevron-right"></span>
-            </a>
-	    </button>
-          </div>
-        </div>
-        <div id="collapseOne" class="panel-collapse collapse" role="tabpanel">
-          <div class="panel-body">
-            {% for d in dfiles %}
-              <div class="panel panel-default">
-                <div class="panel panel-heading">
-		  <h3>
-                  {% if RW %}
-                    <a class="hidden-print" href="/dfile/{{d['dfileID']}}/edit">
-                      <button type="button" class="btn btn-primary hidden-print">Edit Datafile</button>
-                    </a>
-                  {% endif %}
-		  {% if d['crap'] %}
-                    <strike>{{d['src']}}<</strike>
-		  {% else %}
-                    {{d['src']}}
-		  {% endif %}
-		  </h3>
-                </div>
-		{% if not (d['note']|length == 1 and d['note'][0][1]|length == 0) %}
-                  <div class="panel panel-body">
-                    {% for (code, content) in d['note'] %}
-                      {% if code == 0 %}
-                        <tt>{{content}}</tt><br>
-                      {% else %}
-                        {{content|safe}}
-                      {% endif %}
-                    {% endfor %}
-                </div>
+      <ul class="list-group">
+        {% for d in dfiles %}
+          <li class="list-group-item">
+            {% if RW %}
+              <a class="hidden-print" href="/dfile/{{d['dfileID']}}/edit">
+                <button type="button"
+			class="btn btn-primary hidden-print">Edit</button>
+              </a>
+            {% endif %}
+	    {% if d['crap'] %}
+              <strike>{{d['src']}}</strike>
+	    {% else %}
+              {{d['src']}}
+	    {% endif %}
+            {% if d['note']|length > 0 and d['note'][0][1]|length > 0 %}
+	      <br>
+              {% for (code, content) in d['note'] %}
+                {% if code == 0 %}
+                  <textarea class="note" readonly style="width:100%; height:100%;">{{content}}</textarea>
+                {% else %}
+                  {{content|safe}}
                 {% endif %}
-              </div>
-	    {% endfor %}
-	  </div>
-	</div>
-      </div>
+              {% endfor %}
+            {% endif %}
+          </li>
+	{% endfor %}
+      </ul>
     {% endif %}
   </div>
 </div>
