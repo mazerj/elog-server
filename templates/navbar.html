@@ -55,7 +55,12 @@
 		   style="background-color: lightgreen;"
 		   placeholder="paste images here">
 	  </div>
+	  {#
 	  <button type="button" class="btn btn-default">
+	    <a href="/attachments/showlist" target="_blank">XAttachments</a>
+	  #}
+	  <button type="button" class="btn btn-default"
+		  onClick="window.open('/attachments/showlist','','resizable,height=500,width=700'); return false;">
 	    <a href="/attachments/showlist" target="_blank">Attachments</a>
 	  </button>
 	</form>
