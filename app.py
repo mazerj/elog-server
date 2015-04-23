@@ -302,7 +302,7 @@ def check_auth(username, password):
 	'userdata' file fille be read. At least one has to be available..
 	"""
 	if pam:
-        pam.pam().authenticate(username, password)
+        if pam.pam().authenticate(username, password):
 			session['username'] = username
 			return True
 		else:
