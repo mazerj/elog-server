@@ -37,10 +37,9 @@ FIREWALL='192.168.1.1'
 
 try:
 	import pam
-	pamchecker = pam.pam()
 	sys.stderr.write('Using PAM authentication.\n')
 except ImportError:
-	pamchecker = None
+    pam = None
 	try:
 		USERS = {}
 		USERS_RW = {}
@@ -55,7 +54,7 @@ except ImportError:
 		sys.exit(1)
 
 def writeaccess():
-	if pamchecker:
+	if pam:
 		return True
 	else:
 		try:
@@ -302,8 +301,8 @@ def check_auth(username, password):
 	login (validated users are always given RW access). Otherwise, the
 	'userdata' file fille be read. At least one has to be available..
 	"""
-	if pamchecker:
-		if pamchecker.authenticate(username, password):
+	if pam:
+        pam.pam().authenticate(username, password):
 			session['username'] = username
 			return True
 		else:
