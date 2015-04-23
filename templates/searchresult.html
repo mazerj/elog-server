@@ -13,12 +13,15 @@
 	  {{message}}
 	</div>
 	<div class="panel panel-body">
-	  {% for item in items %}
-          <a href="{{item}}" class="list-group-item">
-            {{item}}
-	    <span class="glyphicon glyphicon-arrow-right"></span>
-          </a>
-          {% endfor %}
+	  <div class="btn-group-vertical" role="group">
+	    {% for item in items %}
+              <ul>
+		<a href="{{item}}">
+		  <button type="button" class="btn btn-default">{{item}}</button>
+		</a>
+	      </ul>
+	    {% endfor %}
+	  </div>
 	</div>
       </div>
     </div>

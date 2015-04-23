@@ -529,7 +529,8 @@ def session_today(animal):
 	animal = animal.encode()
 
 	t = today()
-	rows = db.query("""SELECT date FROM session WHERE date='%s'""" % t)
+	rows = db.query("""SELECT date FROM session WHERE date='%s' AND animal='%s'""" % (t, animal))
+    print 'rows', rows
 	if rows is not None and len(rows) > 0:
 		return redirect('/animals/%s/sessions/%s' % (animal, t,))
 	else:
@@ -609,9 +610,10 @@ def pick():
 	db = getdb()
 
 	rows = db.query("""SELECT date FROM session WHERE 1""")
-	l = sorted(uniq(['/report/fluids/%s' % d[:7] \
+	l = sorted(uniq(['/report/fluids/%s' % d[:7]
 					 for d in ['%s' % r['date'] for r in rows]]))[::-1]
-	env = baseenv()
+    print l
+    env = baseenv()
 	return render_template("searchresult.html",
 						   message="Select month",
 						   items=l, **env)

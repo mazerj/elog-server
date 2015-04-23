@@ -10,49 +10,49 @@
     <div class="container">
 
       <div class="panel panel-default">
+
 	<div class="panel panel-heading">
 	  <h1>Animals in database</h1>
 	</div>
+
 	<div class="panel panel-body">
-	  <ul class="list-group">
+	  <div class="btn-group-vertical">
 	    {% for a in ANIMALS %}
-            <li class="list-group-item">
-	      <a href="/animals/{{a}}">
-		<button type="button"
-			class="btn btn-primary" style="width:25%;">{{a}}</button>
-	      </a>
-	      <a href="/animals/{{a}}/sessions/today">
-		<button type="button" class="btn btn-default">
-		  <span class="glyphicon glyphicon-arrow-right"></span>
-		  today
-		</button>
-	      </a>
-	      <a href="/animals/{{a}}/weight/plot">
-		<button type="button"
-			class="btn btn-warning btn">weights</button>
-	      </a>
-	      <a href="/animals/{{a}}/fluid/plot">
-		<button type="button"
-			class="btn btn-warning btn">fluid</button>
-	      </a>
-	      <a href="/animals/{{a}}/edit">
-		<button type="button"
-			class="btn btn-danger">Edit</button>
-	      </a>
-	      <a href="/animals/{{a}}/delete">
-		<button type="button"
-			class="btn btn-danger pull-right">Delete</button>
-	      </a>
-	    </li>
+	    <ul>
+	      <div class="dropdown">
+		  <button class="btn btn-primary dropdown-toggle"
+			  type="button" id="dropdownMenu{{animal}}" style="width:100%;"
+			  data-toggle="dropdown" aria-expanded="false">
+		    {{a}} <span class="caret"></span>
+		  </button>
+		  <ul class="dropdown-menu" role="menu"
+		      aria-labelledby="dropdownMenu{{animal}}">
+		    <li role="presentation"><a role="menuitem" tabindex="-1"
+					       href="/animals/{{a}}">Directory</a></li>
+		    <li role="presentation"><a role="menuitem" tabindex="-1"
+					       href="/animals/{{a}}/sessions/today">Today</a></li>
+		    <li role="presentation"><a role="menuitem" tabindex="-1"
+					       href="/animals/{{a}}/fluid/plot">Fluids</a></li>
+		    <li role="presentation"><a role="menuitem" tabindex="-1"
+					       href="/animals/{{a}}/weight/plot">Weights</a></li>
+		    <li role="presentation"><a role="menuitem" tabindex="-1"
+					       href="/animals/{{a}}/edit">Edit</a></li>
+		    <li role="presentation" class="divider"></li>
+		    <li role="presentation"><a role="menuitem" tabindex="-1"
+					       href="/animals/{{a}}/delete">{{"Delete"|red|safe}}</a></li>
+		  </ul>
+	      </div>
+	    </ul>
 	    {% endfor %}
-	  </ul>
+	  </div>
 	</div>
+
 	<div class="panel panel-footer">
 	  <a href="/animals/new">
-	    <button type="button" ="btn">Add New Animal
-	    </button>
+	    <button class="btn btn-default" type="button" ="btn">Add New Animal</button>
 	  </a>
 	</div>
+
       </div>
     </div>
 

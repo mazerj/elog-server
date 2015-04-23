@@ -44,13 +44,13 @@
                     {{MONTHS[month]}} {{year}}
 		  </div>
 		  <div class="panel-body">
-                    <div class="btn-group-vertical">
+                    <div class="btn-group-vertical" role="group">
                       {% for (label, session) in toc[year][month] %}
-		        <li class="list-group-item">
+		        <ul>
 		          <a href="{{session}}">
 			    <button class="btn btn-default">{{label|safe}}</button>
 			  </a>
-		        </li>
+		        </ul>
                       {% endfor %}
                     </div>
 		  </div>
