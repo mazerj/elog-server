@@ -1,4 +1,8 @@
 <script>
+
+// expand all textareas to be large enough to show
+// all contained text without scrollbars
+
 $(document).ready(function( ) {
   $("textarea").each(function(i, el) {
     $(el).height(el.scrollHeight);

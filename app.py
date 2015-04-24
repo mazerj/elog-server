@@ -98,7 +98,7 @@ def expandattachment(id):
 		env['note'] = expandnote(env['note'])
 		return render_template("attachment.html", **env)
 	else:
-		return red("BAD-ATTACH: #%s" % id)
+		return red("[WARNING: bad attachment link to #%s]\n" % id)
 
 def expandexper(exper):
 	env = baseenv()
@@ -353,6 +353,11 @@ def Message(msg):
 def Reload():
 	return ('', 204)
 
+def confirm(message, target):
+    return render_template("confirm.html",
+                           message=message,
+                           ok=target, cancel=request.referrer)
+
 
 ########################################################################
 #  Actual server is implmemented starting here
@@ -448,6 +453,12 @@ def animal_edit(animal):
 @app.route('/animals/<animal>/delete')
 @requires_auth
 def animal_delete(animal):
+    return confirm('Are you sure you want to delete animal %s?' % (animal),
+                   request.path + 'C')
+
+@app.route('/animals/<animal>/deleteC')
+@requires_auth
+def animal_deleteC(animal):
 	db = getdb()
 	rows = db.query("""SELECT * FROM animal WHERE animal='%s'""" % animal)
 	if rows is None or len(rows) > 1:
@@ -455,7 +466,6 @@ def animal_delete(animal):
 	else:
 		db.query("""DELETE FROM animal WHERE animal='%s'""" % animal)
 	return redirect("/")
-
 
 @app.route('/animals/<animal>/set', methods=['POST'])
 @requires_auth
@@ -782,6 +792,12 @@ def attachment_countlinks(id):
 @app.route('/attachments/<id>/delete')
 @requires_auth
 def attachments_delete(id):
+    return confirm('Are you sure you want to delete attachment %s?' % (id),
+                   request.path + 'C')
+
+@app.route('/attachments/<id>/deleteC')
+@requires_auth
+def attachments_deleteC(id):
 	if not writeaccess():
 		return Error("No write access!")
 
@@ -892,11 +908,23 @@ def unit_new(exper):
 @app.route('/expers/<exper>/units/<unit>/delete')
 @requires_auth
 def unit_delete(exper, unit):
+    # stage2: ask for confirmation
+    print 'url_rule', request.url_rule
+    print 'path', request.path
+
+    return confirm('Are you sure you want to delete unit %s:%s?' % (exper,unit),
+                   request.path + 'C')
+
+@app.route('/expers/<exper>/units/<unit>/deleteC')
+@requires_auth
+def unit_deleteC(exper, unit):
+    # stage2: actually delete..
 	db = getdb()
 	r = db.query("""SELECT animal,date FROM exper WHERE exper='%s'""" % (exper))[0]
 	db.query("""DELETE FROM unit WHERE """
 			 """  exper='%s' AND unit='%s' """ % (exper, unit))
 	return redirect('/animals/%s/sessions/%s' % (r['animal'], r['date']))
+
 
 @app.route('/animals/<animal>/sessions/<date>/edit')
 @requires_auth
