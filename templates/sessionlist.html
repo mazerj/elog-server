@@ -18,48 +18,51 @@
 
     {% include "navbar.html" %}
 
-    <div class="panel panel-default">
-      <div class="panel-heading">
-	<h1>{{ANIMAL}} session list</h1>
-      </div>
-      <div class="panel-body">
+    <div class="container">
 
-	<form class="well" method="post"
-	      action="/animals/{{ANIMAL}}/sessions/new">
-            <input type="text" id="datepicker" name="date">
-	    <button type="submit"
-		    class="btn btn-default">Create/Goto session </button>
-	</form>
-
-	{% for year in years %}
-        <div class="panel panel-default">
-          <div class="panel-heading">
-            {{year}}
-          </div>
-          <div class="panel-body">
-            {% for month in range(12,-1,-1) %}
-              {% if toc[year][month]|length > 0 %}
-                <div class="panel panel-default">
-		  <div class="panel-heading">
-                    {{MONTHS[month]}} {{year}}
-		  </div>
-		  <div class="panel-body">
-                    <div class="btn-group-vertical" role="group">
-                      {% for (label, session) in toc[year][month] %}
-		        <ul>
-		          <a href="{{session}}">
-			    <button class="btn btn-default">{{label|safe}}</button>
-			  </a>
-		        </ul>
-                      {% endfor %}
-                    </div>
-		  </div>
-		</div>
-              {% endif %}
-	    {% endfor %}
-          </div>
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h1>{{ANIMAL}} session list</h1>
         </div>
-	{% endfor %}
+        <div class="panel-body">
+
+          <form class="well" method="post"
+                action="/animals/{{ANIMAL}}/sessions/new">
+              <input type="text" id="datepicker" name="date">
+              <button type="submit"
+                      class="btn btn-default">Create/Goto session </button>
+          </form>
+
+          {% for year in years %}
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              {{year}}
+            </div>
+            <div class="panel-body">
+              {% for month in range(12,-1,-1) %}
+                {% if toc[year][month]|length > 0 %}
+                  <div class="panel panel-default">
+                    <div class="panel-heading">
+                      {{MONTHS[month]}} {{year}}
+                    </div>
+                    <div class="panel-body">
+                      <div class="btn-group-vertical" role="group">
+                        {% for (label, session) in toc[year][month] %}
+                          <ul>
+                            <a href="{{session}}">
+                              <button class="btn btn-default">{{label|safe}}</button>
+                            </a>
+                          </ul>
+                        {% endfor %}
+                      </div>
+                    </div>
+                  </div>
+                {% endif %}
+              {% endfor %}
+            </div>
+          </div>
+          {% endfor %}
+        </div>
       </div>
     </div>
 
