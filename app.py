@@ -55,7 +55,7 @@ except ImportError:
 
 def writeaccess():
 	if pam:
-        if session['username'] is 'elogger':
+        if session['username'] == 'elogger':
             # 'elogger' user is special -- read only access..
             return False
         else:
@@ -432,6 +432,9 @@ def animals(animal):
 @app.route('/animals/new')
 @requires_auth
 def animal_new():
+	if not writeaccess():
+		return Error("No write access!")
+    
 	db = getdb()
 	r = { 'animal':'CHANGE-ME', 'date':today(), 'user':session['username'] }
 	db.query("""INSERT INTO animal (%s) VALUES %s""" % \
@@ -474,6 +477,9 @@ def animal_deleteC(animal):
 @app.route('/animals/<animal>/set', methods=['POST'])
 @requires_auth
 def animal_set(animal):
+	if not writeaccess():
+		return Error("No write access!")
+    
 	db = getdb()
 	form = getform()
 
@@ -495,7 +501,10 @@ def animal_set(animal):
 @app.route('/animals/<animal>/sessions/<date>/new')
 @requires_auth
 def session_new(animal, date):
-	animal = animal.encode()
+	if not writeaccess():
+		return Error("No write access!")
+
+    animal = animal.encode()
 	date = date.encode()
 	
 	db = getdb()
@@ -651,6 +660,8 @@ def exper_edit(exper):
 @app.route('/expers/<exper>/set', methods=['POST'])
 @requires_auth
 def exper_set(exper):
+	if not writeaccess():
+		return Error("No write access!")
 	form = getform()
 	db = getdb()
 	note = form['note']
@@ -684,6 +695,8 @@ def exper_unit_edit(exper, unit):
 @app.route('/expers/<exper>/units/<unit>/set', methods=['POST'])
 @requires_auth
 def exper_units_set(exper, unit):
+	if not writeaccess():
+		return Error("No write access!")
 	db = getdb()
 	r = getform()
 
@@ -722,6 +735,9 @@ def exper_units_set(exper, unit):
 @app.route('/paste', methods=['POST'])
 @requires_auth
 def paste():
+	if not writeaccess():
+		return Error("No write access!")
+    
 	db = getdb()
 	imtype, imdata = request.form['idata'].split(',')
 	#imtype = imtype.split('/')[1].split(';')[0]
@@ -819,6 +835,8 @@ def attachments_deleteC(id):
 @app.route('/attachments/<id>/set', methods=['POST'])
 @requires_auth
 def attachment_set(id):
+	if not writeaccess():
+		return Error("No write access!")
 	db = getdb()
 	r = getform()
 
@@ -853,6 +871,8 @@ def dfile_edit(id):
 @app.route('/dfile/<id>/set', methods=['POST'])
 @requires_auth
 def dfile_set(id):
+	if not writeaccess():
+		return Error("No write access!")
 	db = getdb()
 	r = getform()
 
@@ -871,6 +891,8 @@ def dfile_set(id):
 @app.route('/animals/<animal>/sessions/<date>/newexper')
 @requires_auth
 def exper_new(animal, date):
+	if not writeaccess():
+		return Error("No write access!")
 	db = getdb()
 	exper = GetNextExper(animal)
 	db.query("""INSERT INTO exper SET """
@@ -888,6 +910,8 @@ def exper_new(animal, date):
 @app.route('/expers/<exper>/newunit')
 @requires_auth
 def unit_new(exper):
+	if not writeaccess():
+		return Error("No write access!")
 	# start with set as TTL, let user change
 	db = getdb()
 	r = db.query("""SELECT * FROM exper WHERE exper='%s'""" % exper)[0]
@@ -951,6 +975,8 @@ def session_edit(animal, date):
 @app.route('/animals/<animal>/sessions/<date>/set', methods=['POST'])
 @requires_auth
 def session_set(animal, date):
+	if not writeaccess():
+		return Error("No write access!")
 	db = getdb()
 	r = getform()
 
