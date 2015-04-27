@@ -30,14 +30,12 @@ else:
 
 from app_tools import *
 
-LOGGING=True
-HOST='0.0.0.0'
-PORT=5000
-FIREWALL='192.168.1.1'
+LOGGING = True
+HOST    = '0.0.0.0'
+PORT    = 5000
 
 try:
 	import pam
-	sys.stderr.write('Using PAM authentication.\n')
 except ImportError:
     pam = None
 	try:
@@ -48,7 +46,6 @@ except ImportError:
 			if len(l) == 3:
 				USERS[l[0]] = l[1]
 				USERS_RW[l[0]] = (l[2].lower() == 'rw')
-		sys.stderr.write("Using 'userdata' file.\n")
 	except:
 		sys.stderr.write("Bad or missing 'userdata' file.\n")
 		sys.exit(1)
@@ -289,15 +286,6 @@ def columntypes(db):
 	return x
 
 
-def islocalconnection(addr):
-	# FILEWALL is None, the everything is considered external. Otherwise,
-	# anything coming from FIREWALL is considered insecure and requires
-	# full login.
-	if FIREWALL:
-		return not request.remote_addr.startswith(FIREWALL)
-	else:
-		return False
-
 def check_auth(username, password):
 	"""
 	This function is called to check if a username / password combination
@@ -312,23 +300,14 @@ def check_auth(username, password):
 		else:
 			return False
 
-	if islocalconnection(request.remote_addr):
-		# local source (not through firewall), don't require
-        # password, just username..
-		if username:
-			session['username'] = username
-			return True
-		else:
-			return False
-	else:
-		if username in USERS and USERS[username] == password:
-			session['username'] = username
-			return True
-		else:
-			app.logger.info('invalid login attempt from %s.' % \
-							(request.remote_addr))
-			session['username'] = 'none'
-			return False
+    if username in USERS and USERS[username] == password:
+        session['username'] = username
+        return True
+    else:
+        app.logger.info('invalid login attempt from %s.' % \
+                        (request.remote_addr))
+        session['username'] = 'none'
+        return False
 
 def authenticate():
 	"""Sends a 401 response that enables basic auth"""
@@ -472,7 +451,7 @@ def animal_deleteC(animal):
 		return Error("""Can't delete %s""" % animal)
 	else:
 		db.query("""DELETE FROM animal WHERE animal='%s'""" % animal)
-	return redirect("/")
+return redirect("/")
 
 @app.route('/animals/<animal>/set', methods=['POST'])
 @requires_auth
