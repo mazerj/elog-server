@@ -55,7 +55,11 @@ except ImportError:
 
 def writeaccess():
 	if pam:
-		return True
+        if session['username'] is 'elogger':
+            # 'elogger' user is special -- read only access..
+            return False
+        else:
+            return True
 	else:
 		try:
 			return USERS_RW[session['username']]
@@ -309,8 +313,8 @@ def check_auth(username, password):
 			return False
 
 	if islocalconnection(request.remote_addr):
-		# local source (not through firewall), don't require password,
-		# just password..
+		# local source (not through firewall), don't require
+        # password, just username..
 		if username:
 			session['username'] = username
 			return True
