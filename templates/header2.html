@@ -8,21 +8,21 @@
 <title>elog</title>
 
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.2.0/codemirror.js">
-<link rel="stylesheet" href="/static/cmxformTemplate.css">
-<link rel="stylesheet" href="/static/cmxform.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.2.0/codemirror.min.css">
 
 <link rel="stylesheet" href="/static/elog.css">
 
 <script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.13.1/jquery.validate.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.2.0/codemirror.min.css"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.2.0/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.2.0/addon/mode/simple.min.js">
 
 
 <script>
 <!-- this adds a simple 'elog' mode to the standard codemirror editor-->
 $( document ).ready( function () {
+  console.log(CodeMirror.defineSimpleMode)
   CodeMirror.defineSimpleMode("elog", {
     start: [ {regex: /<elog:.*=.*>/, token: "strikethrough"} ]
   });
