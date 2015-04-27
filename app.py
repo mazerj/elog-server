@@ -451,7 +451,7 @@ def animal_deleteC(animal):
 		return Error("""Can't delete %s""" % animal)
 	else:
 		db.query("""DELETE FROM animal WHERE animal='%s'""" % animal)
-return redirect("/")
+    return redirect("/")
 
 @app.route('/animals/<animal>/set', methods=['POST'])
 @requires_auth
@@ -741,7 +741,8 @@ def attachments_showlist():
 @app.route('/attachments/showlist/<page>')
 @requires_auth
 def attachments_showlist_bypage(page):
-    PERPAGE = 10
+    print 'page', page
+    PERPAGE = 12
 	env = baseenv()
 	db = getdb()
     page = int(page)
