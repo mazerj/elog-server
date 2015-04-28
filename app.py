@@ -613,7 +613,6 @@ def pick():
 	rows = db.query("""SELECT date FROM session WHERE 1""")
 	l = sorted(uniq(['/report/fluids/%s' % d[:7]
 					 for d in ['%s' % r['date'] for r in rows]]))[::-1]
-    print l
     env = baseenv()
 	return render_template("searchresult.html",
 						   message="Select month",
@@ -740,7 +739,6 @@ def attachments_showlist():
 @app.route('/attachments/showlist/<page>')
 @requires_auth
 def attachments_showlist_bypage(page):
-    print 'page', page
     PERPAGE = 12
 	env = baseenv()
 	db = getdb()
@@ -916,9 +914,6 @@ def unit_new(exper):
 @requires_auth
 def unit_delete(exper, unit):
     # stage2: ask for confirmation
-    print 'url_rule', request.url_rule
-    print 'path', request.path
-
     return confirm('Are you sure you want to delete unit %s:%s?' % (exper,unit),
                    request.path + 'C')
 
@@ -993,6 +988,12 @@ def session_set(animal, date):
 			return Reload()
 	return redirect(r['_back'])
 
+def smooth(x, y, k=1):
+    k = (2 * k) + 1
+    ny = np.convolve(y, np.ones(k)/k, mode='valid')
+    n = (len(y) - len(ny)) / 2
+    return x[n:-n],ny
+
 @app.route('/animals/<animal>/weight/plot')
 @requires_auth
 def plot_weight(animal):
@@ -1002,27 +1003,38 @@ def plot_weight(animal):
 
 	plots = []
 	
-	rows = db.query("""SELECT date,weight FROM session WHERE """
+	rows = db.query("""SELECT date,weight,thweight FROM session WHERE """
 					""" animal='%s' AND """
 					""" weight > 0 AND """
-					""" date > DATE_SUB(NOW(), INTERVAL 90 DAY)""" % animal)
+					""" date > DATE_SUB(NOW(), INTERVAL 90 DAY) ORDER BY date""" % animal)
+    
 	if len(rows) > 0:
-		x = [mdates.strpdate2num('%Y-%m-%d')('%s'%r['date']) for r in rows]
-		y = [r['weight'] for r in rows]
+		x = np.array([mdates.strpdate2num('%Y-%m-%d')('%s'%r['date']) for r in rows])
+		y = np.array([r['weight'] for r in rows])
+		t = np.array([safefloat(r['thweight'],0.0) for r in rows])
 		plt.clf()
-		plt.plot_date(x, y)
+		plt.plot_date(x[np.nonzero(t)], t[np.nonzero(t)], 'ro')
+		plt.plot_date(x, y, 'bo')
+        x, y = smooth(x, y)
+        plt.plot_date(x, y, 'b-')
+        
 		plt.title('%s: last 90d' % animal);
 		plt.ylabel('Weight (kg)')
 		plots.append(('dummy%d'%len(plots), json.dumps(mpld3.fig_to_dict(plt.gcf()))))
 
-	rows = db.query("""SELECT date,weight FROM session WHERE """
+	rows = db.query("""SELECT date,weight,thweight FROM session WHERE """
 					""" animal='%s' AND """
-					""" weight > 0""" % animal)
+					""" weight > 0 ORDER BY date""" % animal)
 	if len(rows) > 0:
-		x = [mdates.strpdate2num('%Y-%m-%d')('%s'%r['date']) for r in rows]
-		y = [r['weight'] for r in rows]
+		x = np.array([mdates.strpdate2num('%Y-%m-%d')('%s'%r['date']) for r in rows])
+		y = np.array([r['weight'] for r in rows])
+		t = np.array([safefloat(r['thweight'],0.0) for r in rows])
 		plt.clf()
-		plt.plot_date(x, y)
+		plt.plot_date(x[np.nonzero(t)], t[np.nonzero(t)], 'ro')
+		plt.plot_date(x, y, 'bo')
+        x, y = smooth(x, y)
+        plt.plot_date(x, y, 'b-')
+        
 		plt.title('%s: all data' % animal);
 		plt.ylabel('Weight (kg)')
 		plots.append(('dummy%d'%len(plots), json.dumps(mpld3.fig_to_dict(plt.gcf()))))
@@ -1045,39 +1057,51 @@ def plot_fluid(animal):
 	rows = db.query("""SELECT date,water_sup,water_work,fruit_ml """
 					""" FROM session """
 					""" WHERE animal='%s' AND """
-					""" date > DATE_SUB(NOW(), INTERVAL 90 DAY)""" % animal)
+					""" date > DATE_SUB(NOW(), INTERVAL 90 DAY) ORDER BY date """ % animal)
 	if len(rows) > 0:
-		x = [mdates.strpdate2num('%Y-%m-%d')('%s'%r['date']) for r in rows]
-		y1 = [safefloat(r['water_work']) +
+		x = np.array([mdates.strpdate2num('%Y-%m-%d')('%s'%r['date']) for r in rows])
+		y1 = np.array([safefloat(r['water_work']) +
 			  safefloat(r['water_sup']) +
-			  safefloat(r['fruit_ml']) for r in rows]
-		y2 = [safefloat(r['water_work']) for r in rows]
+			  safefloat(r['fruit_ml']) for r in rows])
+		y2 = np.array([safefloat(r['water_work']) for r in rows])
 		plt.clf()
+        sx, sy = smooth(x, y1)
 		plt.plot(x, y1, 'ro', label='total')
+        plt.plot(sx, sy, 'r-')
+        sx, sy = smooth(x, y2)
 		plt.plot(x, y2, 'bo', label='work')
+        plt.plot(sx, sy, 'b-')
 		plt.legend()			  #<- bug wrap around...
 		plt.gca().xaxis_date()
 		plt.title('%s: last 90d' % animal)
 		plt.ylabel('Fluid Intake (ml)')
-		plots.append(('dummy%d'%len(plots), json.dumps(mpld3.fig_to_dict(plt.gcf()))))
+		plots.append(('dummy%d'%len(plots),
+                      json.dumps(mpld3.fig_to_dict(plt.gcf()))))
 		
 	rows = db.query("""SELECT * FROM session WHERE """
-					""" animal='%s'""" % animal)
+					""" animal='%s' ORDER BY date""" % animal)
 
 	if len(rows) > 0:
-		x = [mdates.strpdate2num('%Y-%m-%d')('%s'%r['date']) for r in rows]
-		y1 = [safefloat(r['water_work']) +
-			  safefloat(r['water_sup']) +
-			  safefloat(r['fruit_ml']) for r in rows]
-		y2 = [safefloat(r['water_work']) for r in rows]
+		x = np.array([mdates.strpdate2num('%Y-%m-%d')('%s'%r['date']) for r in rows])
+		y1 = np.array([safefloat(r['water_work']) +
+                       safefloat(r['water_sup']) +
+                       safefloat(r['fruit_ml']) for r in rows])
+		y2 = np.array([safefloat(r['water_work']) for r in rows])
 		plt.clf()
-		plt.plot(x, np.array(y1), 'ro', label='total')
-		plt.plot(x, np.array(y2)-1., 'bo', label='work')
+        sx, sy = smooth(x, y1)
+		plt.plot(x, y1, 'ro', label='total')
+        plt.plot(sx, sy, 'r-')
+
+        sx, sy = smooth(x, y2)
+		plt.plot(x, y2-1.0, 'bo', label='work')
+        plt.plot(sx, sy-1.0, 'r-')
+        
 		plt.legend()			  #<- bug wrap around...
 		plt.gca().xaxis_date()
 		plt.title('%s: all data' % animal)
 		plt.ylabel('Fluid Intake (ml)')
-		plots.append(('dummy%d'%len(plots), json.dumps(mpld3.fig_to_dict(plt.gcf()))))
+		plots.append(('dummy%d'%len(plots),
+                      json.dumps(mpld3.fig_to_dict(plt.gcf()))))
 
 	
 	return render_template("plotview.html",
