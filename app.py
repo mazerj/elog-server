@@ -532,7 +532,6 @@ def session_today(animal):
 
 	t = today()
 	rows = db.query("""SELECT date FROM session WHERE date='%s' AND animal='%s'""" % (t, animal))
-    print 'rows', rows
 	if rows is not None and len(rows) > 0:
 		return redirect('/animals/%s/sessions/%s' % (animal, t,))
 	else:
