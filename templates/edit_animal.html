@@ -37,7 +37,7 @@
 	<fieldset>
 	  {# <legend>Notes: Don't change pseudo links!</legend> #}
 	  <textarea style="width:100%;" rows="20"
-		    id="animal-note" name="note">{{row['note']}}</textarea>
+		    id="{{boxid}}" name="note">{{row['note']}}</textarea>
 	</fieldset>
 	{% include "donesavecancel.html" %}
       </form>

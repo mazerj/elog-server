@@ -23,7 +23,7 @@
                name="crap" {{ 'checked' if row['crap'] }}>
 
 	<textarea style="width:100%;" rows="7"
-		  id="dfile-note" name="note">{{row['note']}}</textarea>
+		  id="{{boxid}}" name="note">{{row['note']}}</textarea>
 	
 	{% include "donesavecancel.html" %}
       </form>

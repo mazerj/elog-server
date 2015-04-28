@@ -22,7 +22,7 @@
 	  <label for="exper">title</label><input title id="title" name="title" value="{{row['title']}}">
 	</p>
 	<textarea style="width:100%;" rows="7"
-		  id="attachment-note" name="note">{{row['note']}}</textarea>
+		  id="{{boxid}}" name="note">{{row['note']}}</textarea>
 	
 	<img src="data:image/jpg;base64,{{row['data']|safe}}"
 	     style="max-width: 700px;">
