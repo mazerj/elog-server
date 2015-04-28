@@ -19,10 +19,12 @@
 	  <h1>{{title}}</h1>
 	</div>
 	<div class="panel panel-body">
-	  {% for (id, json) in plots %}
-	    {% if id != plots[0][0] %}<hr>{% endif %}
-	    <div id="{{id}}"></div>
-	  {% endfor %}
+	    {% for (id, json) in plots %}
+	      <div class="thumbnail">
+	        <div id="{{id}}"></div>
+	      </div>
+	    {% endfor %}
+	  </div>
 	</div>
       </div>
     </div>
