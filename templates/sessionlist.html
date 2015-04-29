@@ -49,9 +49,7 @@
                       <div class="btn-group-vertical" role="group">
                         {% for (label, session) in toc[year][month] %}
                           <ul>
-                            <a href="{{session}}">
-                              <button class="btn btn-default">{{label|safe}}</button>
-                            </a>
+                            <a class="btn btn-default" href="{{session}}">{{label|safe}}</a>
                           </ul>
                         {% endfor %}
                       </div>

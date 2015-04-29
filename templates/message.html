@@ -16,9 +16,7 @@
 	  {{message}}
 
 	{% if goto|length > 1 %}
-	  <a href="{{goto[1]}}">
-	    <button>{{goto[0]}}</button>
-	  </a>
+	  <a class="btn btn-default" href="{{goto[1]}}">{{goto[0]}}</a>
 	{% endif %}
 	</div>
       </div>

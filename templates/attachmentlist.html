@@ -59,16 +59,15 @@
 			   style="max-height: 100px;">
 		    </a>
 		    <div class="caption">
-		      <button class="copy-button"
-			      data-clipboard-text="&lt;elog:attach={{r['attachmentID']}}&gt;">copy</button>
-		      <a href="/search/attach={{'%d'|format(r['attachmentID'])}}">
-			<button>find</button>
+		      <a class="btn btn-primary copy-button"
+			      data-clipboard-text="&lt;elog:attach={{r['attachmentID']}}&gt;">copy</a>
+		      <a class="btn btn-primary" href="/search/attach={{'%d'|format(r['attachmentID'])}}">
+			find
 		      </a>
-		      <a href="/attachments/{{'%d'|format(r['attachmentID'])}}/delete">
-			<button>delete</button>
+		      <a class="btn btn-primary" href="/attachments/{{'%d'|format(r['attachmentID'])}}/delete">
+			delete
 		      </a>
-		      (#{{'%d'|format(r['attachmentID'])}})
-		      <h3>{{r['title']}}</h3>
+		      <h4>{{r['title']}} (#{{'%d'|format(r['attachmentID'])}})</h4>
 		      {{r['note']}}
 		    </div>
 		  </div>

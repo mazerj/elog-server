@@ -4,6 +4,7 @@
 // stick the data in the 'idata' hidden element and generate a submit
 // event. Note: need to iterate over all clipboardData.items and find
 // any images inside -- image might not be first item..
+
 $(document).ready(function() {
   $('#pastebox').bind('paste', function(e) {
     $('#pastebox').val("");
@@ -15,7 +16,6 @@ $(document).ready(function() {
         fr.onloadend = function() {
           $('#idata').val(fr.result);
           $('#paste').submit();
-          $.jGrowl("inserted new attachment")
         };
         fr.readAsDataURL(data);
       }
@@ -40,7 +40,7 @@ $(document).ready(function() {
 
       <div id="navbar" class="navbar-collapse collapse">
         <ul class="nav navbar-nav">
-          <li><a href="/"><span class="glyphicon glyphicon-home"></spam> Home</a> </li>
+          <li><a href="/"><span class="glyphicon glyphicon-home"></span> Home</a> </li>
           <li><a href="/report/pick">Reports</a> </li>
           <li><a href="/about">About</a></li>
           <li><a href="/logout">Logout</a></li>
@@ -68,10 +68,9 @@ $(document).ready(function() {
                        style="background-color: lightgreen;"
                        placeholder="paste images here">
               </div>
-              <button type="button" class="btn btn-default"
-                      onClick="window.open('/attachments/showlist','','resizable,height=500,width="100%"); return false;">
-                <a href="/attachments/showlist" target="_blank">Attachments</a>
-              </button>
+              <a type="button" class="btn btn-default"
+                      onClick="window.open('/attachments/showlist','','resizable',height=500,width='100%'); return false;">
+		<span class="glyphicon glyphicon-chevron-right"></span>Attachments<span class="glyphicon glyphicon-chevron-right"></span></a>
             </form>
 	  </li>
         </ul>

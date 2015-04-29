@@ -4,12 +4,12 @@
   <div class="panel panel-info">
     <div class="panel panel-heading">
       {% if RW %}
-      <a class="hidden-print" href="/animals/{{animal}}/sessions/{{date}}/edit">
-        <button type="button" class="btn btn-primary hidden-print">Edit Session</button>
+      <a class="hidden-print btn btn-primary" href="/animals/{{animal}}/sessions/{{date}}/edit">
+        Edit Session
       </a>
-      <a class="hidden-print"
+      <a class="hidden-print btn btn-primary"
 	 href="/animals/{{animal}}/sessions/{{date}}/newexper">
-	<button type="button" class="btn btn-primary hidden-print">New Exper</button>
+	New Exper
       </a>
       {% endif %}
       {{date}} {{animal}}

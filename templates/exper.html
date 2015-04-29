@@ -3,12 +3,8 @@
 <div class="panel panel-default panel-exper">
   <div class="panel panel-heading">
     {% if RW %}
-      <a class="hidden-print" href="/expers/{{exper}}/edit">
-        <button type="button" class="btn btn-primary hidden-print">Edit Exper</button>
-      </a>
-      <a class="hidden-print" href="/expers/{{exper}}/newunit">
-        <button type="button" class="btn btn-primary hidden-print">New Unit</button>
-      </a>
+      <a class="hidden-print btn btn-primary" href="/expers/{{exper}}/edit">Edit Exper</a>
+      <a class="hidden-print btn btn-primary" href="/expers/{{exper}}/newunit">New Unit</a>
     {% endif %}
     {{exper}}
   </div>
@@ -27,15 +23,10 @@
       <div class="panel panel-default panel-unit">
         <div class="panel panel-heading">
           {% if RW %}
-            <a class="hidden-print" 
-               href="/expers/{{exper}}/units/{{unit['unit']}}/edit">
-              <button type="button" class="btn btn-primary hidden-print">Edit Unit</button>
-            </a>
-            <a class="hidden-print"
-               href="/expers/{{exper}}/units/{{unit['unit']}}/delete">
-              <button type="button"
-                      class="btn btn-danger pull-right hidden-print">Delete Unit</button>
-            </a>
+            <a class="btn btn-primary hidden-print" 
+               href="/expers/{{exper}}/units/{{unit['unit']}}/edit">Edit Unit</a>
+            <a class="btn btn-danger pull-right hidden-print"
+               href="/expers/{{exper}}/units/{{unit['unit']}}/delete">Delete Unit</a>
           {% endif %}
           {{exper}}:{{unit['unit']}}
         </div>
@@ -124,10 +115,7 @@
         {% for d in dfiles %}
           <li class="list-group-item">
             {% if RW %}
-              <a class="hidden-print" href="/dfile/{{d['dfileID']}}/edit">
-                <button type="button"
-			class="btn btn-primary hidden-print">Edit</button>
-              </a>
+              <a class="btn btn-primary hidden-print" href="/dfile/{{d['dfileID']}}/edit">Edit</a>
             {% endif %}
 	    {% if d['crap'] %}
               <strike>{{d['src']}}</strike>
