@@ -101,6 +101,22 @@ def expandattachment(id):
 	else:
 		return red("[WARNING: bad attachment link to #%s]\n" % id)
 
+
+def wasmodified(table, idname, idval, lastval=None):
+    """Check to see if record modified since last read or update mod time"""
+    import time
+    
+	db = getdb()
+    if lastval:
+        rows = db.query("""SELECT lastmod FROM %s WHERE %s=%s """ %
+                        (table, idname, idval))
+        return lastval == rows[0]['lastmod']
+    else:
+        ts = int(10.0*time.time())
+        db.query("""UPDATE %s SET lastmod=%d WHERE %s=%s """ %
+                 (table, ts, idname, idval))
+        return None
+    
 def expandexper(exper):
 	env = baseenv()
 	db = getdb()

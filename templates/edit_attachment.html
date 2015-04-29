@@ -17,6 +17,7 @@
       <div class="well"><h1>Editing Attachment</h2></div>
 
       <form class="cmxform" id="editForm" method="post" action="{{action}}">
+	<input type="hidden" name="lastmod" value="{{row['lastmod']}}">
 	<input type="hidden" name="attachmentID" value="{{row['attachmentID']}}">
 	<p>
 	  <label for="exper">title</label><input title id="title" name="title" value="{{row['title']}}">

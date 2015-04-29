@@ -18,6 +18,8 @@
       <div class="well"><h1>Editing Unit</h1></div>
       
       <form class="cmxform" id="editForm" method="post" action="{{action}}">
+	<input type="hidden" name="lastmod" value="{{row['lastmod']}}">
+	<input type="hidden" name="unitID" value="{{row['unitID']}}">
 	<input type="hidden" name="animal" value="{{row['animal']}}">
 	<input type="hidden" name="date" value="{{row['date']}}">
 	<input type="hidden" name="exper" value="{{row['exper']}}">
