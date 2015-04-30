@@ -29,14 +29,5 @@
 
 <link rel="stylesheet" href="/static/x/codemirror.css">
 <script src="/static/x/codemirror-compressed.js"></script>
-
-<script>
-<!-- this adds a simple 'elog' mode to the standard codemirror editor-->
-$( document ).ready( function () {
-  CodeMirror.defineSimpleMode("elog", {
-    start: [ {regex: /<elog:.*=.*>/, token: "strikethrough"} ]
-  });
-});
-</script>
-
+<script src="/static/x/searchcursor.js"></script>
 
