@@ -379,7 +379,7 @@ def login():
 def index():
 	env = baseenv()
 	env['ANIMALS'] = getanimals()
-	return render_template("index.html", **env)
+	return render_template("animals.html", **env)
 
 @app.route('/logout')
 def logout():

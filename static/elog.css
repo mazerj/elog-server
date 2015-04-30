@@ -38,6 +38,21 @@ h4 { font-size: 11px; }
     margin-left: 20px;
 }
 
+.pbox-l {
+    border: solid;
+    border-width: 1px;
+    line-height: 1.7;
+    text-align: right;
+}
+
+.pbox-r {
+    border: solid;
+    border-width: 1px;
+    line-height: 1.7;
+    text-right: right;
+    background-color: #f0f0f0;
+}
+
 /**********************************
 
 Use: cmxform template

@@ -31,71 +31,47 @@
           {{exper}}:{{unit['unit']}}
         </div>
         <div class="panel panel-body">
-          <div class="col-sm-3">
-            <table class="table table-striped table-bordered">
-              <tr>
-                <td class="text-right" width="50%"><strong>date</strong></td>
-                <td>{{unit['date']}}</td>
-              </tr>
-              <tr>
-                <td class="text-right" width="50%"><strong>well</strong></td>
-                <td>{{unit['well']}}</td>
-              </tr>
-              <tr>
-                <td class="text-right" width="50%"><strong>well loc</strong></td>
-                <td>{{unit['wellloc']}}</td>
-              </tr>
-            </table>
-          </div>
-          <div class="col-sm-3">
-            <table class="table table-striped table-bordered">
-              <tr>
-                <td class="text-right" width="50%"><strong>area</strong></td>
-                <td>{{unit['area']}}</td>
-              </tr>
-              <tr>
-                <td class="text-right" width="50%"><strong>hemi</strong></td>
-                <td>{{unit['hemi']}}</td>
-              </tr>
-              <tr>
-                <td class="text-right" width="50%"><strong>depth</strong></td>
-                <td>{{unit['depth']}}um</td>
-              </tr>
-            </table>
-          </div>
-          <div class="col-sm-3">
-            <table class="table table-striped table-bordered">
-              <tr>
-                <td class="text-right" width="50%"><strong>isol qual</strong></td>
-                <td>{{unit['quality']}}/10</td>
-              </tr>
-              <tr>
-                <td class="text-right" width="50%"><strong>ori</strong></td>
-                <td>{{unit['ori']}}</td>
-              </tr>
-              <tr>
-                <td class="text-right" width="50%"><strong>color</strong></td>
-                <td>{{unit['color']}}</td>
-              </tr>
-            </table>
-          </div>
-          <div class="col-sm-3">
-            <table class="table table-striped table-bordered">
-              <tr>
-                <td class="text-right" width="50%"><strong>rf loc</strong></td>
-                <td>({{unit['rfx']|int}},{{unit['rfy']|int}})</td>
-              </tr>
-              <tr>
-                <td class="text-right" width="50%"><strong>rf rad</strong></td>
-                <td>{{unit['rfr']|int}}px</td>
-              </tr>
-              <tr>
-                <td class="text-right" width="50%"><strong>lat</strong></td>
-                <td>{{unit['latency']}}ms</td>
-              </tr>
-            </table>
-          </div>
-        </div>
+
+	  <div class="panel panel-default col-sm-2">
+	    <div class="pbox-l col-sm-6">date</div>
+	    <div class="pbox-r col-sm-6">{{unit['date']}}&nbsp</div>
+
+	    <div class="pbox-l col-sm-6">well</div>
+	    <div class="pbox-r col-sm-6">{{unit['well']}}&nbsp</div>
+
+	    <div class="pbox-l col-sm-6">well loc</div>
+	    <div class="pbox-r col-sm-6">{{unit['wellloc']}}&nbsp</div>
+	  </div>
+	  <div class="panel panel-default col-sm-2">
+	    <div class="pbox-l col-sm-6">area</div>
+	    <div class="pbox-r col-sm-6">{{unit['area']}}&nbsp</div>
+
+	    <div class="pbox-l col-sm-6">hemi</div>
+	    <div class="pbox-r col-sm-6">{{unit['hemi']}}&nbsp</div>
+
+	    <div class="pbox-l col-sm-6">depth</div>
+	    <div class="pbox-r col-sm-6">{{unit['depth']}}um&nbsp</div>
+	  </div>
+	  <div class="panel panel-default col-sm-2">
+	    <div class="pbox-l col-sm-6">isol qual</div>
+	    <div class="pbox-r col-sm-6">{{unit['quality']}}/10&nbsp</div>
+
+	    <div class="pbox-l col-sm-6">ori</div>
+	    <div class="pbox-r col-sm-6">{{unit['ori']}}&nbsp</div>
+
+	    <div class="pbox-l col-sm-6">color</div>
+	    <div class="pbox-r col-sm-6">{{unit['color']}}&nbsp</div>
+	  </div>
+	  <div class="panel panel-default col-sm-2">
+	    <div class="pbox-l col-sm-6">rf loc</div>
+	    <div class="pbox-r col-sm-6">({{unit['rfx']|int}},{{unit['rfy']|int}})&nbsp</div>
+
+	    <div class="pbox-l col-sm-6">rf rad</div>
+	    <div class="pbox-r col-sm-6">{{unit['rfr']|int}}px&nbsp</div>
+
+	    <div class="pbox-l col-sm-6">lat</div>
+	    <div class="pbox-r col-sm-6">{{unit['latency']}}ms&nbsp</div>
+	  </div>
 
         <!-- general notes -->
         {% for (code, content) in unit['note'] %}

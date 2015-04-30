@@ -2,6 +2,7 @@
 
 <div class="container-fluid">
   <div class="panel panel-info">
+
     <div class="panel panel-heading">
       {% if RW %}
       <a class="hidden-print btn btn-primary" href="/animals/{{animal}}/sessions/{{date}}/edit">
@@ -14,89 +15,63 @@
       {% endif %}
       {{date}} {{animal}}
     </div>
+
     <div class="panel panel-body">
-      <div class="col-sm-3">
-        <table class="table table-striped table-bordered">
-          <tr>
-            <td class="text-right" width="50%"><strong>animal</strong></td>
-            <td>{{animal}}</td>
-          </tr>
-          <tr>
-            <td class="text-right" width="50%"><strong>date</strong></td>
-            <td>{{date}}</td>
-          </tr>
-          <tr>
-            <td class="text-right" width="50%"><strong>user</strong></td>
-            <td>{{user}}@{{computer}}</td>
-          </tr>
-          <tr>
-            <td class="text-right" width="50%"><strong>rst,tst</strong></td>
-            <td>{{restricted|safe}} {{tested|safe}}</td>
-          </tr>
-        </table>
+      <div class="panel panel-default col-sm-2">
+	<div class="pbox-l col-sm-6">animal</div>
+	<div class="pbox-r col-sm-6">{{animal}}&nbsp</div>
+
+	<div class="pbox-l col-sm-6">date</div>
+	<div class="pbox-r col-sm-6">{{date}}&nbsp</div>
+
+	<div class="pbox-l col-sm-6">user</div>
+	<div class="pbox-r col-sm-6">{{user}}@{{computer}}</div>
+
+	<div class="pbox-l col-sm-6">rst,tst</div>
+	<div class="pbox-r col-sm-6">{{restricted|safe}} {{tested|safe}}</div>
       </div>
-      <div class="col-sm-3">
-        <table class="table table-striped table-bordered">
-          <tr>
-            <td class="text-right" width="50%"><strong>ncorr</strong></td>
-            <td>{{ncorrect}}</td>
-          </tr>
-          <tr>
-            <td class="text-right" width="50%"><strong>ntrials</strong></td>
-            <td>{{ntrials}}</td>
-          </tr>
-          <tr>
-            <td class="text-right" width="50%"><strong>water</strong></td>
-            <td>{{water_work}}+{{water_sup}}+{{fruit_ml}}ml</td>
-          </tr>
-          <tr>
-            <td class="text-right" width="50%"><em>totalfluid</em></td>
-            <td>{{totalfluid}}ml</td>
-          </tr>
-        </table>
+      <div class="panel panel-default col-sm-2">
+	<div class="pbox-l col-sm-6">ncorr</div>
+	<div class="pbox-r col-sm-6">{{ncorrect}}&nbsp</div>
+
+	<div class="pbox-l col-sm-6">ntrials</div>
+	<div class="pbox-r col-sm-6">{{ntrials}}&nbsp</div>
+
+	<div class="pbox-l col-sm-6">water</div>
+	<div class="pbox-r col-sm-6">{{water_work}}+{{water_sup}}+{{fruit_ml}}ml</div>
+
+	<div class="pbox-l col-sm-6">totalfluid</div>
+	<div class="pbox-r col-sm-6">{{totalfluid}}ml</div>
+
       </div>
-      <div class="col-sm-3">
-        <table class="table table-striped table-bordered">
-          <tr>
-            <td class="text-right" width="50%"><strong>weight</strong></td>
-            <td>{{weight}}kg</td>
-          </tr>
-          <tr>
-            <td class="text-right" width="50%"><strong>thweight</strong></td>
-            <td>{{thweight}}kg</td>
-          </tr>
-          <tr>
-            <td class="text-right" width="50%"><strong>food</strong></td>
-            <td>{{food}} biscs</td>
-          </tr>
-          <tr>
-            <td class="text-right" width="50%"><strong>fruit</strong></td>
-            <td>{{fruit}}</td>
-          </tr>
-        </table>
+      <div class="panel panel-default col-sm-2">
+	<div class="pbox-l col-sm-6">weight</div>
+	<div class="pbox-r col-sm-6">{{weight}}kg</div>
+
+	<div class="pbox-l col-sm-6">thweight</div>
+	<div class="pbox-r col-sm-6">{{thweight}}kg</div>
+
+	<div class="pbox-l col-sm-6">food</div>
+	<div class="pbox-r col-sm-6">{{food}} biscs</div>
+
+	<div class="pbox-l col-sm-6">fruit</div>
+	<div class="pbox-r col-sm-6">{{fruit}}&nbsp;</div>
       </div>
-      <div class="col-sm-3">
-        <table class="table table-striped table-bordered">
-          <tr>
-            <td class="text-right" width="50%"><strong>dtb</strong></td>
-            <td>{{dtb_ml}}ml [{{dtb}}ml/kg]</td>
-          </tr>
-          <tr>
-            <td class="text-right" width="50%"><strong>xdtb</strong></td>
-            <td>{{xdtb}}ml [{{xdtb}}ml/kg]</td>
-          </tr>
-          <tr>
-            <td class="text-right" width="50%"><strong>st/ur/sk/pcv</strong></td>
-            <td>
-	      {{health_stool|safe}}
-	      {{health_urine|safe}}
-	      {{health_skin|safe}}
-	      {{health_pcv|safe}}
-	    </td>
-          </tr>
-        </table>
+      <div class="panel panel-default col-sm-2">
+	<div class="pbox-l col-sm-6">dtb</div>
+	<div class="pbox-r col-sm-6">{{dtb_ml}}ml [{{dtb}}ml/kg]</div>
+
+	<div class="pbox-l col-sm-6">xdtb</div>
+	<div class="pbox-r col-sm-6">{{xdtb}}ml [{{xdtb}}ml/kg]</div>
+
+	<div class="pbox-l col-sm-6">st/ur/sk/pcv</div>
+	<div class="pbox-r col-sm-6">
+	  {{health_stool|safe}} {{health_urine|safe}} {{health_skin|safe}} {{health_pcv|safe}}
+	</div>
       </div>
     </div>
+
+
 
     {% for (code, content) in note %}
       {% if code == 0 %}

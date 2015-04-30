@@ -24,87 +24,29 @@
 	<input type="hidden" name="date" value="{{row['date']}}">
 	<input type="hidden" name="exper" value="{{row['exper']}}">
 	<fieldset>
-	    <label for="exper">exper</label>
-	    <input disabled id="exper" name="exper" value="{{row['exper']}}">
-	    <label></label>
+	  <div class="panel panel-default col-sm-3" style="border: none;">
+	    <p><label for="exper">exper</label><input disabled id="exper" name="exper" value="{{row['exper']}}"><p>
+	    <p><label for="unit">unit</label><input id="unit" name="unit" value="{{row['unit']}}"></p>
+	    <p><label for="well">well</label><input id="well" name="well" value="{{row['well']}}"></p>
+	    <p><label for="wellloc">well loc</label><input id="wellloc" name="wellloc" value="{{row['wellloc']}}"></p>
+	    <p><label for="hemi">hemi</label><input id="hemi" name="hemi" value="{{row['hemi']}}"></p>
+	    <p><label for="area">area</label> <input id="area" name="area" value="{{row['area']}}"></p>
+	  </div>
+	  <div class="panel panel-default col-sm-3" style="border: none;">
+	    <p><label for="depth">depth</label><input id="depth" type="number" name="depth" value="{{row['depth']}}"><label for="depth"  style="text-align: left;">um</label></p>
+	    <p><label for="qual">quality</label><input id="qual" type="number" name="qual" value="{{row['qual']}}"><label for="qual"  style="text-align: left;">/10</label></p>
+	    <p><label for="latency">latency</label><input id="latency" type="number" name="latency" value="{{row['latency']}}"><label for="latency"  style="text-align: left;">ms</label></p>
+	    <p><label for="rfx">rfx</label><input id="rfx" type="number" name="rfx" value="{{row['rfx']}}"><label for="rfx"  style="text-align: left;">px</label></p>
+	    <p><label for="rfy">rfy</label><input id="rfy" type="number" name="rfy" value="{{row['rfy']}}"><label for="rfy"  style="text-align: left;">px</label></p>
+	    <p><label for="rfr">rfr</label><input id="rfr" type="number" name="rfr" value="{{row['rfr']}}"><label for="depth"  style="text-align: left;">px</label></p>
+	  </div>
+	  <div class="panel panel-default col-sm-3" style="border: none;">
+	    <p><label for="ori">ori</label><input id="ori" name="ori" value="{{row['ori']}}"><label for="ori"  style="text-align: left;">deg</label></p>
+	    <p><label for="color">color</label><input id="color" name="color" value="{{row['color']}}"><label></label></p>
+	  </div>
 	</fieldset>
 	<fieldset>
-	  <p>
-	    <label for="unit">unit</label>
-	    <input id="unit"
-		   name="unit" value="{{row['unit']}}">
-	    <label></label>
-	  </p>
-	  <p>
-	    <label for="well">well</label>
-	    <input id="well"
-		   name="well" value="{{row['well']}}">
-	  </p>
-	  <p>
-	    <label for="wellloc">well loc</label>
-	    <input id="wellloc"
-		   name="wellloc" value="{{row['wellloc']}}">
-	    <label></label>
-
-	    <label for="hemi">hemi</label>
-	    <input id="hemi"
-		   name="hemi" value="{{row['hemi']}}">
-	    <label></label>
-
-	    <label for="area">area</label>
-	    <input id="area"
-		   name="area" value="{{row['area']}}">
-	    <label></label>
-
-	  </p>
-	  <p>
-	    <label for="depth">depth</label>
-	    <input id="depth" type="number"
-		   name="depth" value="{{row['depth']}}">
-	    <label for="depth"  style="text-align: left;">um</label>
-
-	    <label for="qual">quality</label>
-	    <input id="qual" type="number"
-		   name="qual" value="{{row['qual']}}">
-	    <label for="qual"  style="text-align: left;">/10</label>
-
-	    <label for="latency">latency</label>
-	    <input id="latency" type="number"
-		   name="latency" value="{{row['latency']}}">
-	    <label for="latency"  style="text-align: left;">ms</label>
-	  </p>
-	  <p>
-	    <label for="rfx">rfx</label>
-	    <input id="rfx" type="number"
-		   name="rfx" value="{{row['rfx']}}">
-	    <label for="rfx"  style="text-align: left;">px</label>
-
-	    <label for="rfy">rfy</label>
-	    <input id="rfy" type="number"
-		   name="rfy" value="{{row['rfy']}}">
-	    <label for="rfy"  style="text-align: left;">px</label>
-
-	    <label for="rfr">rfr</label>
-	    <input id="rfr" type="number"
-		   name="rfr" value="{{row['rfr']}}">
-	    <label for="depth"  style="text-align: left;">px</label>
-	  </p>
-	  <p>
-	    <label for="ori">ori</label>
-	    <input id="ori"
-		   name="ori" value="{{row['ori']}}">
-	    <label for="ori"  style="text-align: left;">deg</label>
-
-	    <label for="color">color</label>
-	    <input id="color"
-		   name="color" value="{{row['color']}}">
-	    <label></label>
-	  </p>
-	</fieldset>
-	<fieldset>
-	  {# <legend>Notes: Don't change pseudo links!</legend> #}
-	  <textarea style="width:100%;" rows="7"
-		    id="{{boxid}}" name="note">{{row['note']}}</textarea>
+	  <textarea style="width:100%;" rows="7" id="{{boxid}}" name="note">{{row['note']}}</textarea>
 	</fieldset>
 
 	{% include "donesavecancel.html" %}

@@ -22,16 +22,12 @@
 	<input type="hidden" name="experID" value="{{row['experID']}}">
 	<input type="hidden" name="exper" value="{{row['exper']}}">
 	<fieldset>
-	  <div>
-	    <p>
-	      <label for="exper">exper </label>
-	      <input disabled id="exper" name="exper" value="{{row['exper']}}">
-	    </p>
+	  <div class="panel panel-default col-sm-3" style="border: none;">
+	    <p><label for="exper">exper </label><input disabled id="exper" name="exper" value="{{row['exper']}}"></p>
 	  </div>
 	</fieldset>
 	<fieldset>
-	  <textarea style="width:100%;" rows="7"
-		    id="{{boxid}}" name="note">{{row['note']}}</textarea>
+	  <textarea style="width:100%;" rows="7" id="{{boxid}}" name="note">{{row['note']}}</textarea>
 	</fieldset>
 	
 	{% include "donesavecancel.html" %}
