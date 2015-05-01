@@ -26,7 +26,8 @@
             <a class="btn btn-primary hidden-print" 
                href="/expers/{{exper}}/units/{{unit['unit']}}/edit">Edit Unit</a>
             <a class="btn btn-danger pull-right hidden-print"
-               href="/expers/{{exper}}/units/{{unit['unit']}}/delete">Delete Unit</a>
+	       onClick="bootbox.confirm('Really delete {{exper}}:{{unit['unit']}}?',
+			function(r) {if (r) window.location.href='/expers/{{exper}}/units/{{unit['unit']}}/deleteC';})">Delete Unit</a>
           {% endif %}
           {{exper}}:{{unit['unit']}}
         </div>

@@ -59,14 +59,12 @@
 			   style="max-height: 100px;">
 		    </a>
 		    <div class="caption">
-		      <a class="btn btn-primary copy-button"
+		      <a class="btn-sm btn-primary copy-button"
 			      data-clipboard-text="&lt;elog:attach={{r['attachmentID']}}&gt;">copy</a>
-		      <a class="btn btn-primary" href="/search/attach={{'%d'|format(r['attachmentID'])}}">
-			find
-		      </a>
-		      <a class="btn btn-primary" href="/attachments/{{'%d'|format(r['attachmentID'])}}/delete">
-			delete
-		      </a>
+		      <a class="btn-sm btn-primary" href="/search/attach={{'%d'|format(r['attachmentID'])}}">find</a>
+		      <a class="btn-sm btn-danger"
+			 onClick="bootbox.confirm('Really delete attachment?',
+				  function(r) {if (r) window.location.href='/attachments/{{'%d'|format(r['attachmentID'])}}/deleteC'})">delete</a>
 		      <h4>{{r['title']}} (#{{'%d'|format(r['attachmentID'])}})</h4>
 		      {{r['note']}}
 		    </div>

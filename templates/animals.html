@@ -43,7 +43,8 @@
 					       href="/animals/{{a}}/edit">Edit Animal</a></li>
 		    <li role="presentation" class="divider"></li>
 		    <li role="presentation"><a role="menuitem" tabindex="-1"
-					       href="/animals/{{a}}/delete">{{"Delete"|red|safe}}</a></li>
+					       onClick="bootbox.confirm('Really delete {{a}}?',
+							function(r) {if (r) window.location.href='/animals/{{a}}/deleteC';})">{{"Delete"|red|safe}}</a></li>
 		  </ul>
 	      </div>
 	    </ul>
