@@ -83,7 +83,7 @@ def report(date0):
                 else:
                     tr.append(' ')
             else:
-                link = """<button href="/animals/%s/sessions/%s/new">%s</button>""" % \
+                link = """<a class="btn-sm btn-danger" href="/animals/%s/sessions/%s/new">%s</a>""" % \
                   (animal, date, glyph('flag'))
                 tr = ([datestr, link] + [' '] * 7)
             t.append(tr)
