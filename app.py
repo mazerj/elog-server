@@ -1017,7 +1017,7 @@ def session_set(animal, date):
 			return Reload()
 	return redirect(r['_back'])
 
-def smooth(x, y, k=1):
+def smooth(x, y, k=3):
     k = (2 * k) + 1
     ny = np.convolve(y, np.ones(k)/k, mode='valid')
     n = (len(y) - len(ny)) / 2
@@ -1139,12 +1139,15 @@ def plot_fluid(animal):
 			  safefloat(r['fruit_ml']) for r in rows])
 		y2 = np.array([safefloat(r['water_work']) for r in rows])
 		plt.clf()
-        sx, sy = smooth(x, y1)
-		plt.plot(x, y1, 'ro', label='total')
-        plt.plot(sx, sy, 'r-')
+        
         sx, sy = smooth(x, y2)
-		plt.plot(x, y2, 'bo', label='work')
-        plt.plot(sx, sy, 'b-')
+		plt.plot(x, y2, 'bo')
+        plt.plot(sx, sy, 'b-', label='work')
+
+        sx, sy = smooth(x, y1)
+		plt.plot(x, y1, 'ro')
+        plt.plot(sx, sy, 'r-', label='total')
+        
 
         plt.plot(m[np.greater(m[:,0], x[0]), 0],
                  m[np.greater(m[:,0], x[0]), 2], 'g-', label='dtb10ml')
@@ -1153,7 +1156,7 @@ def plot_fluid(animal):
                  m[np.greater(m[:,0], x[0]), 4], 'g:', label='dtb00ml')
 
         
-		plt.legend()			  #<- bug wrap around...
+		plt.legend(loc='upper left')
 		plt.gca().xaxis_date()
 		plt.title('%s: last 90d' % animal)
 		plt.ylabel('Fluid Intake (ml)')
@@ -1171,17 +1174,17 @@ def plot_fluid(animal):
 		y2 = np.array([safefloat(r['water_work']) for r in rows])
 		plt.clf()
         sx, sy = smooth(x, y1)
-		plt.plot(x, y1, 'ro', label='total')
-        plt.plot(sx, sy, 'r-')
+		plt.plot(x, y1, 'ro')
+        plt.plot(sx, sy, 'r-', label='total')
 
         sx, sy = smooth(x, y2)
-		plt.plot(x, y2-1.0, 'bo', label='work')
-        plt.plot(sx, sy-1.0, 'r-')
+		plt.plot(x, y2-1.0, 'bo')
+        plt.plot(sx, sy-1.0, 'b-', label='work')
 
         plt.plot(m[:,0], m[:,2], 'g-', label='dtb10ml')
         plt.plot(m[:,0], m[:,4], 'g-', label='dtb00ml')
         
-		plt.legend()			  #<- bug wrap around...
+		plt.legend(loc='upper left')
 		plt.gca().xaxis_date()
 		plt.title('%s: all data' % animal)
 		plt.ylabel('Fluid Intake (ml)')
