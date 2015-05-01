@@ -364,16 +364,6 @@ def confirm(message, target):
 
 app = Flask(__name__)
 
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-	if request.method == 'GET':
-		return render_template("login.html")
-	form = getform()
-	if check_auth(form['username'], form['password']):
-		return redirect('/')
-	else:
-		return Reload()
-
 @app.route('/')
 @requires_auth
 def index():
@@ -541,7 +531,7 @@ def getform(r=None):
 	return r
 	
 @app.route('/animals/<animal>/sessions/today')
-
+@requires_auth
 def session_today(animal):
 	db = getdb()
 	animal = animal.encode()
@@ -562,6 +552,31 @@ def session_new_today(animal):
 	date = form['date']
 	date = string.join([date.split('/')[n] for n in [2,0,1]], '-')
 	return session_new(animal, date)
+
+@app.route('/animals/<animal>/sessions/<date>/next')
+@requires_auth
+def next_session(animal, date):
+	db = getdb()
+	animal = animal.encode()
+	rows = db.query("""SELECT date FROM session WHERE date > '%s' AND animal='%s' ORDER BY date LIMIT 1""" % (date, animal))
+    print 'rows', rows
+    if rows and len(rows) > 0:
+        return redirect('/animals/%s/sessions/%s' % (animal, rows[0]['date']))
+	else:
+		return Reload()
+        
+
+@app.route('/animals/<animal>/sessions/<date>/prev')
+@requires_auth
+def prev_session(animal, date):
+	db = getdb()
+	animal = animal.encode()
+	rows = db.query("""SELECT date FROM session WHERE date < '%s' AND animal='%s' ORDER BY date DESC LIMIT 1""" % (date, animal))
+    print 'rows', rows
+    if rows and len(rows) > 0:
+        return redirect('/animals/%s/sessions/%s' % (animal, rows[0]['date']))
+	else:
+		return Reload()
 
 @app.route('/animals/<animal>/sessions/<date>')
 @requires_auth
@@ -823,7 +838,7 @@ def attachments_deleteC(id):
         db = getdb()
         rows = db.query("""DELETE FROM attachment WHERE """
                         """ attachmentID=%s""" % (id,))
-        return Message("""Deleted attachment.""")
+        return redirect('/attachments/showlist')
     
 @app.route('/attachments/<id>/set', methods=['POST'])
 @requires_auth
@@ -929,14 +944,12 @@ def unit_new(exper):
 @app.route('/expers/<exper>/units/<unit>/delete')
 @requires_auth
 def unit_delete(exper, unit):
-    # stage2: ask for confirmation
     return confirm('Are you sure you want to delete unit %s:%s?' % (exper,unit),
                    request.path + 'C')
 
 @app.route('/expers/<exper>/units/<unit>/deleteC')
 @requires_auth
 def unit_deleteC(exper, unit):
-    # stage2: actually delete..
 	db = getdb()
 	r = db.query("""SELECT animal,date FROM exper WHERE exper='%s'""" % (exper))[0]
 	db.query("""DELETE FROM unit WHERE """

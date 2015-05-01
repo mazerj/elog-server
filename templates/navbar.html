@@ -6,21 +6,22 @@
 // any images inside -- image might not be first item..
 
 $(document).ready(function() {
-  $('#pastebox').bind('paste', function(e) {
-    $('#pastebox').val("");
-    d = e.originalEvent.clipboardData.items;
-    for (n=0; n < d.length; n++) {
-      if (/image\/.*/.test(d[n].type)) {
-        var data = d[n].getAsFile();
-        var fr = new FileReader;
-        fr.onloadend = function() {
-          $('#idata').val(fr.result);
-          $('#paste').submit();
-        };
-        fr.readAsDataURL(data);
-      }
-    }
-  });
+    var pasteReciever = function(e) {
+	$('#pastebox').val("");
+	d = e.originalEvent.clipboardData.items;
+	for (n=0; n < d.length; n++) {
+	    if (/image\/.*/.test(d[n].type)) {
+		var data = d[n].getAsFile();
+		var fr = new FileReader;
+		fr.onloadend = function() {
+		    $('#idata').val(fr.result);
+		    $('#paste').submit();
+		};
+		fr.readAsDataURL(data);
+	    }
+	}
+    };
+    $('#pastebox').bind('paste', pasteReciever);
 });
 
 </script>
@@ -40,7 +41,8 @@ $(document).ready(function() {
 
       <div id="navbar" class="navbar-collapse collapse">
         <ul class="nav navbar-nav">
-          <li><a href="/"><span class="glyphicon glyphicon-home"></span> Home</a> </li>
+          <li><a href="/"><span class="glyphicon glyphicon-home"></span> Home</a></li>
+          <li><a href="/attachments/showlist">Attachments</a></li>
           <li><a href="/report/pick">Reports</a> </li>
           <li><a href="/about">About</a></li>
           <li><a href="/logout">Logout</a></li>
@@ -53,8 +55,8 @@ $(document).ready(function() {
               <div class="form-group">
                 <input type="text" class="form-control" 
                      placeholder="exper, date, text" name="pattern">
+		<button type="submit" class="btn btn-default">Search</button>
               </div>
-              <button type="submit" class="btn btn-default">Search</button>
             </form>
           </li>
 
@@ -67,10 +69,8 @@ $(document).ready(function() {
                        type="text" class="form-control"
                        style="background-color: lightgreen;"
                        placeholder="paste images here">
+		<button type="submit" class="hidden"></button>
               </div>
-              <a type="button" class="btn btn-default"
-                      onClick="window.open('/attachments/showlist','','resizable',height=500,width='100%'); return false;">
-		<span class="glyphicon glyphicon-chevron-right"></span>Attachments<span class="glyphicon glyphicon-chevron-right"></span></a>
             </form>
 	  </li>
         </ul>
