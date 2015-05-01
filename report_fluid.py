@@ -50,10 +50,20 @@ def report(date0):
                 datestr = """<font color='blue'>%s</font>""" % x
             else:
                 datestr = x
+            datestr = ("""<a class="hidden-print btn-sm btn-primary" """
+                       """href="/animals/%s/sessions/%s"> """
+                       """<span class="glyphicon glyphicon-chevron-right"></span></a> %s""") % (animal, date, datestr)
+            
             rows = db.query("""SELECT * """
                             """ FROM session WHERE """
                             """ date='%s' AND """
                             """ animal LIKE "%s" """ % (date, animal))
+            
+            if rows is None or len(rows) == 0:
+                link = """ <a class="btn-sm btn-danger hidden-print pull-right" href="/animals/%s/sessions/%s/new">%s</a>""" % \
+                  (animal, date, glyph('flag'))
+                datestr = datestr + link
+
             if len(rows):
                 tr = [datestr,]
                 tr.append(ps('%s' % rows[0]['user']))
@@ -83,9 +93,7 @@ def report(date0):
                 else:
                     tr.append(' ')
             else:
-                link = """<a class="btn-sm btn-danger" href="/animals/%s/sessions/%s/new">%s</a>""" % \
-                  (animal, date, glyph('flag'))
-                tr = ([datestr, link] + [' '] * 7)
+                tr = ([datestr,] + [' '] * 8)
             t.append(tr)
         env['data'][animal] = t
     env['header'] = ['date', 'user', 'wt (kg)', 'rstrct', 'test', \
