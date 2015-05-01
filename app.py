@@ -1060,6 +1060,49 @@ def plot_weight(animal):
 						   title='%s weight history' % animal,
 						   plots=plots)
 
+
+def dtbhist(animal, INTERVAL=7):
+    """Generate matrix of DTB data for this animal"""
+    
+    import numpy as np
+	import matplotlib.dates as mdates
+    
+    db = getdb()
+    
+    rs = db.query("""SELECT * FROM session WHERE """
+                  """  animal='%s' """
+                  """  ORDER BY date """ % (animal,))
+
+    dates = np.array([mdates.strpdate2num('%Y-%m-%d')('%s'%r['date']) for r in rs])
+    
+    m = np.zeros((len(rs), 5))
+    for n in range(0, len(rs)):
+        v = []
+        for k in range(n-1, 0, -1):
+            r = rs[k]
+            if r['water_work'] and r['weight'] and \
+              r['tested'] and r['restricted']:
+                v.append(r['water_work']/r['weight'])
+            if len(v) >= INTERVAL:
+                break
+        v = np.array(v)
+        dtb = max(10.0, np.mean(v) - (2 * np.std(v)))
+        if rs[n]['weight']:
+            dtb_ml = round(dtb * rs[n]['weight'])
+        else:
+            dtb_ml = np.nan
+        xdtb = max(0.0, np.mean(v) - (2 * np.std(v)))
+        if rs[n]['weight']:
+            xdtb_ml = round(xdtb * rs[n]['weight'])
+        else:
+            xdtb_ml = np.nan
+
+        m[n, 0] = dates[n]
+        m[n, 1] = dtb
+        m[n, 2] = dtb_ml
+        m[n, 3] = xdtb
+        m[n, 4] = xdtb_ml
+    return m
 	
 @app.route('/animals/<animal>/fluid/plot')
 @requires_auth
@@ -1074,6 +1117,8 @@ def plot_fluid(animal):
 					""" FROM session """
 					""" WHERE animal='%s' AND """
 					""" date > DATE_SUB(NOW(), INTERVAL 90 DAY) ORDER BY date """ % animal)
+    m = dtbhist(animal)
+    
 	if len(rows) > 0:
 		x = np.array([mdates.strpdate2num('%Y-%m-%d')('%s'%r['date']) for r in rows])
 		y1 = np.array([safefloat(r['water_work']) +
@@ -1087,6 +1132,14 @@ def plot_fluid(animal):
         sx, sy = smooth(x, y2)
 		plt.plot(x, y2, 'bo', label='work')
         plt.plot(sx, sy, 'b-')
+
+        plt.plot(m[np.greater(m[:,0], x[0]), 0],
+                 m[np.greater(m[:,0], x[0]), 2], 'g-', label='dtb10ml')
+
+        plt.plot(m[np.greater(m[:,0], x[0]), 0],
+                 m[np.greater(m[:,0], x[0]), 4], 'g:', label='dtb00ml')
+
+        
 		plt.legend()			  #<- bug wrap around...
 		plt.gca().xaxis_date()
 		plt.title('%s: last 90d' % animal)
@@ -1111,6 +1164,9 @@ def plot_fluid(animal):
         sx, sy = smooth(x, y2)
 		plt.plot(x, y2-1.0, 'bo', label='work')
         plt.plot(sx, sy-1.0, 'r-')
+
+        plt.plot(m[:,0], m[:,2], 'g-', label='dtb10ml')
+        plt.plot(m[:,0], m[:,4], 'g-', label='dtb00ml')
         
 		plt.legend()			  #<- bug wrap around...
 		plt.gca().xaxis_date()
