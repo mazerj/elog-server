@@ -66,6 +66,8 @@ def writeaccess():
 
 def baseenv(**env):
 	env['RW'] = writeaccess()
+	env['session'] = session
+	env['prefs'] = session['prefs']
 	return env
 
 def getanimals():
@@ -312,6 +314,7 @@ def check_auth(username, password):
 	if pam:
         if pam.pam().authenticate(username, password):
 			session['username'] = username
+            session['prefs'] = get_userdata(username)
 			return True
 		else:
 			return False
@@ -380,8 +383,14 @@ def logout():
 def about():
 	env = baseenv()
 	env['db'] = getdb()
-	env['session'] = session
 	return render_template("about.html", **env)
+
+@app.route('/prefs/<name>/<value>/set')
+@requires_auth
+def prefs_set(name, value):
+    session['prefs'][name.encode()] = value.encode()
+    set_userdata(session['username'], session['prefs'])
+	return Reload()
 
 @app.route('/animals/<animal>')
 @requires_auth
@@ -559,7 +568,6 @@ def next_session(animal, date):
 	db = getdb()
 	animal = animal.encode()
 	rows = db.query("""SELECT date FROM session WHERE date > '%s' AND animal='%s' ORDER BY date LIMIT 1""" % (date, animal))
-    print 'rows', rows
     if rows and len(rows) > 0:
         return redirect('/animals/%s/sessions/%s' % (animal, rows[0]['date']))
 	else:
@@ -572,7 +580,6 @@ def prev_session(animal, date):
 	db = getdb()
 	animal = animal.encode()
 	rows = db.query("""SELECT date FROM session WHERE date < '%s' AND animal='%s' ORDER BY date DESC LIMIT 1""" % (date, animal))
-    print 'rows', rows
     if rows and len(rows) > 0:
         return redirect('/animals/%s/sessions/%s' % (animal, rows[0]['date']))
 	else:
@@ -1212,6 +1219,49 @@ def insert_glyph(name):
 	<span class="glyphicon glyphicon-%s" aria-hidden="true"></span>
 	""" % name
 
+
+def dserialize(x):
+    import cPickle
+    
+    if type(x) is types.DictionaryType:
+        return cPickle.dumps(x)
+    else:
+        return cPickle.loads(str(x[0]))
+
+def get_userdata(user):
+    import sqlite3
+
+    conn = sqlite3.connect('./userprefs.db')
+    c = conn.cursor()
+
+    try:
+        # test to see if user table/db exists
+        c.execute("""select data from users where name='%s'""" % user)
+        r = c.fetchall()
+        if len(r) > 0:
+            r = dserialize(r[0])
+    except sqlite3.OperationalError:
+        c.execute("""create table users (name text, pw text, data text)""")
+        r = None
+    conn.commit()
+    conn.close()
+    return r
+
+def set_userdata(user, d):
+    import sqlite3
+
+    conn = sqlite3.connect('./users.db')
+    c = conn.cursor()
+    data = dserialize(d)
+    c.execute("""SELECT name FROM users WHERE name='%s'""" % user)
+    if len(c.fetchall()) > 0:
+        c.execute("""UPDATE users SET data=? WHERE name='%s'""" % user, (data,))
+    else:
+        c.execute("""INSERT INTO users (name,data) VALUES (?, ?)""",
+                  (user, data,))
+    conn.commit()
+    conn.close()
+    
 if __name__ == "__main__":
 	try:
 		getanimals()
