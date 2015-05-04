@@ -25,6 +25,7 @@
       <div class="panel-heading">
 	<h3>Attachment Directory: Page {{page}}/{{pages}}</h3>
 
+	<label>newest</label>
 	<a class="btn btn-primary" role="button"
 	   href="/attachments/showlist/1">
 	  <span class="glyphicon glyphicon-fast-backward"></span></a>
@@ -43,6 +44,7 @@
 	<a class="btn btn-primary" role="button"
 	   href="/attachments/showlist/10000">
 	  <span class="glyphicon glyphicon-fast-forward"></span></a>
+	<label>oldest</label>
       </div>
 
       <div class="panel-body">
@@ -59,13 +61,18 @@
 			   style="max-height: 100px;">
 		    </a>
 		    <div class="caption">
-		      <a class="btn-sm btn-primary copy-button"
-			      data-clipboard-text="&lt;elog:attach={{r['attachmentID']}}&gt;">copy</a>
-		      <a class="btn-sm btn-primary" href="/search/attach={{'%d'|format(r['attachmentID'])}}">find</a>
-		      <a class="btn-sm btn-danger"
-			 onClick="bootbox.confirm('Really delete attachment?',
-				  function(r) {if (r) window.location.href='/attachments/{{'%d'|format(r['attachmentID'])}}/deleteC'})">delete</a>
-		      <h4>{{r['title']}} (#{{'%d'|format(r['attachmentID'])}})</h4>
+		      <div class="text-center">
+			  <label>#{{'%d'|format(r['attachmentID'])}}</label>
+			  <a class="btn btn-primary"
+			     href="/attachments/{{'%d'|format(r['attachmentID'])}}/edit">edit</a>
+			  <a class="btn btn-primary copy-button"
+			     data-clipboard-text="&lt;elog:attach={{r['attachmentID']}}&gt;">copy</a>
+			  <a class="btn btn-primary" href="/search/attach={{'%d'|format(r['attachmentID'])}}">find</a>
+			  <a class="btn btn-danger"
+			     onClick="bootbox.confirm('Really delete attachment?',
+				      function(r) {if (r) window.location.href='/attachments/{{'%d'|format(r['attachmentID'])}}/deleteC'})">delete</a>
+		      </div>
+		      <h4>{{r['title']}}</h4>
 		      {{r['note']}}
 		    </div>
 		  </div>
