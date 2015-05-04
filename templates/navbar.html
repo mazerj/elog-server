@@ -1,36 +1,40 @@
 <script>
+  // catch paste event in the pastebox -- if it's really an image, then
+  // stick the data in the 'idata' hidden element and generate a submit
+  // event. Note: need to iterate over all clipboardData.items and find
+  // any images inside -- image might not be first item..
 
-// catch paste event in the pastebox -- if it's really an image, then
-// stick the data in the 'idata' hidden element and generate a submit
-// event. Note: need to iterate over all clipboardData.items and find
-// any images inside -- image might not be first item..
-
-$(document).ready(function() {
+  $(document).ready(function() {
     var pasteReciever = function(e) {
-	$('#pastebox').val("");
-	d = e.originalEvent.clipboardData.items;
-	for (n=0; n < d.length; n++) {
-	    if (/image\/.*/.test(d[n].type)) {
-		var data = d[n].getAsFile();
-		var fr = new FileReader;
-		fr.onloadend = function() {
-		    $('#idata').val(fr.result);
-		    $('#paste').submit();
-		};
-		fr.readAsDataURL(data);
-	    }
-	}
+      e.preventDefault();
+      $('#pastebox').val("");
+      if (e.clipboardData) {
+        d = e.clipboardData.items;
+      } else {
+        d = e.originalEvent.clipboardData.items;
+      }
+      for (n = 0; n < d.length; n++) {
+        if (/image\/.*/.test(d[n].type)) {
+          var data = d[n].getAsFile();
+          var fr = new FileReader;
+          fr.onloadend = function() {
+            $('#idata').val(fr.result);
+            $('#paste').submit();
+          };
+          fr.readAsDataURL(data);
+        }
+      }
     };
     $('#pastebox').bind('paste', pasteReciever);
-});
-
+  });
 </script>
 
 <nav class="navbar navbar-default">
   <div class="container-fluid">
 
     <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
+      aria-expanded="false" aria-controls="navbar">
         {# show the hamburger when collapsed for small display #}
         <span class="glyphicon glyphicon-menu-hamburger"></span></a>
       </button>
@@ -39,41 +43,37 @@ $(document).ready(function() {
       </a>
     </div>
 
-      <div id="navbar" class="navbar-collapse collapse">
-        <ul class="nav navbar-nav">
-          <li><a href="/"><span class="glyphicon glyphicon-home"></span> Home</a></li>
-          <li><a href="/attachments/showlist">Attachments</a></li>
-          <li><a href="/report/pick">Reports</a> </li>
-          <li><a href="/about">About</a></li>
-          <li><a href="/logout">Logout</a></li>
-        </ul>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li><a href="/"><span class="glyphicon glyphicon-home"></span> Home</a></li>
+        <li><a href="/attachments/showlist">Attachments</a></li>
+        <li><a href="/report/pick">Reports</a> </li>
+        <li><a href="/about">About</a></li>
+        <li><a href="/logout">Logout</a></li>
+      </ul>
 
-        <ul class="nav navbar-nav navbar-right">
+      <ul class="nav navbar-nav navbar-right">
 
-          <li>
-            <form id="search" class="navbar-form" role="search" method="post" action="/search">
-              <div class="form-group">
-                <input type="text" class="form-control" 
-                     placeholder="exper, date, text" name="pattern">
-		<button type="submit" class="btn btn-default">Search</button>
-              </div>
-            </form>
-          </li>
+        <li>
+          <form id="search" class="navbar-form" role="search" method="post" action="/search">
+            <div class="form-group">
+              <input type="text" class="form-control" placeholder="exper, date, text" name="pattern">
+              <button type="submit" class="btn btn-default">Search</button>
+            </div>
+          </form>
+        </li>
 
-          <li>
-            <form id="paste" class="navbar-form"
-                  method="post" action="/paste">
-              <div class="form-group">
-                <input id="idata" name="idata" value="" type="hidden">
-                <input id="pastebox" name="pastebox"
-                       type="text" class="form-control"
-                       style="background-color: lightgreen;"
-                       placeholder="paste images here">
-		<button type="submit" class="hidden"></button>
-              </div>
-            </form>
-	  </li>
-        </ul>
-      </div>
+        <li>
+          <form id="paste" class="navbar-form" method="post" action="/paste">
+            <div class="form-group">
+              <input id="idata" name="idata" value="" type="hidden">
+              <input id="pastebox" name="pastebox" type="text" class="form-control" style="background-color: lightgreen;"
+              placeholder="paste images here">
+              <button type="submit" class="hidden"></button>
+            </div>
+          </form>
+        </li>
+      </ul>
+    </div>
   </div>
 </nav>
