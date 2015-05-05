@@ -1,92 +1,90 @@
 {% include "textarea-expand.html" %}
 
-<div class="container-fluid">
-  <div class="panel panel-info">
+<div class="panel panel-info">
 
-    <div class="panel panel-heading">
-      <a class="hidden-print btn btn-primary" href="/animals/{{animal}}/sessions/{{date}}/prev">
-	<span class="glyphicon glyphicon-chevron-left"></span>
-      </a>
-      <a class="hidden-print btn btn-primary" href="/animals/{{animal}}/sessions/{{date}}/next">
-	<span class="glyphicon glyphicon-chevron-right"></span>
-      </a>
+  <div class="panel panel-heading">
+    <a class="hidden-print btn btn-primary" href="/animals/{{animal}}/sessions/{{date}}/prev">
+      <span class="glyphicon glyphicon-chevron-left"></span>
+    </a>
+    <a class="hidden-print btn btn-primary" href="/animals/{{animal}}/sessions/{{date}}/next">
+      <span class="glyphicon glyphicon-chevron-right"></span>
+    </a>
 
-      {% if RW %}
-      <a class="hidden-print btn btn-primary" href="/animals/{{animal}}/sessions/{{date}}/edit">
-        Edit Session
-      </a>
-      <a class="hidden-print btn btn-primary"
-	 href="/animals/{{animal}}/sessions/{{date}}/newexper">
-	New Exper
-      </a>
+    {% if RW %}
+    <a class="hidden-print btn btn-primary" href="/animals/{{animal}}/sessions/{{date}}/edit">
+      Edit Session
+    </a>
+    <a class="hidden-print btn btn-primary"
+       href="/animals/{{animal}}/sessions/{{date}}/newexper">
+      New Exper
+    </a>
 
-      {% endif %}
-      {{date}} {{animal}}
-    </div>
-
-    <div class="panel panel-body">
-      <div class="panel panel-default col-sm-2">
-	<div class="pbox-l col-sm-6">animal</div>
-	<div class="pbox-r col-sm-6">{{animal}}&nbsp</div>
-
-	<div class="pbox-l col-sm-6">date</div>
-	<div class="pbox-r col-sm-6">{{date}}&nbsp</div>
-
-	<div class="pbox-l col-sm-6">user</div>
-	<div class="pbox-r col-sm-6">{{user}}@{{computer}}</div>
-
-	<div class="pbox-l col-sm-6">rst,tst</div>
-	<div class="pbox-r col-sm-6">{{restricted|safe}} {{tested|safe}}</div>
-      </div>
-      <div class="panel panel-default col-sm-2">
-	<div class="pbox-l col-sm-6">ncorr</div>
-	<div class="pbox-r col-sm-6">{{ncorrect}}&nbsp</div>
-
-	<div class="pbox-l col-sm-6">ntrials</div>
-	<div class="pbox-r col-sm-6">{{ntrials}}&nbsp</div>
-
-	<div class="pbox-l col-sm-6">water</div>
-	<div class="pbox-r col-sm-6">{{water_work}}+{{water_sup}}+{{fruit_ml}}ml</div>
-
-	<div class="pbox-l col-sm-6">totalfluid</div>
-	<div class="pbox-r col-sm-6">{{totalfluid}}ml</div>
-
-      </div>
-      <div class="panel panel-default col-sm-2">
-	<div class="pbox-l col-sm-6">weight</div>
-	<div class="pbox-r col-sm-6">{{weight}}kg</div>
-
-	<div class="pbox-l col-sm-6">thweight</div>
-	<div class="pbox-r col-sm-6">{{thweight}}kg</div>
-
-	<div class="pbox-l col-sm-6">food</div>
-	<div class="pbox-r col-sm-6">{{food}} biscs</div>
-
-	<div class="pbox-l col-sm-6">fruit</div>
-	<div class="pbox-r col-sm-6">{{fruit}}&nbsp;</div>
-      </div>
-      <div class="panel panel-default col-sm-2">
-	<div class="pbox-l col-sm-6">dtb</div>
-	<div class="pbox-r col-sm-6">{{dtb_ml}}ml [{{dtb}}ml/kg]</div>
-
-	<div class="pbox-l col-sm-6">xdtb</div>
-	<div class="pbox-r col-sm-6">{{xdtb}}ml [{{xdtb}}ml/kg]</div>
-
-	<div class="pbox-l col-sm-6">st/ur/sk/pcv</div>
-	<div class="pbox-r col-sm-6">
-	  {{health_stool|safe}} {{health_urine|safe}} {{health_skin|safe}} {{health_pcv|safe}}
-	</div>
-      </div>
-    </div>
-
-
-
-    {% for (code, content) in note %}
-      {% if code == 0 %}
-        <textarea class="note" readonly style="width:100%">{{content}}</textarea>
-      {% else %}
-        {{content|safe}}
-      {% endif %}
-    {% endfor %}
+    {% endif %}
+    {{date}} {{animal}}
   </div>
+
+  <div class="panel panel-body">
+    <div class="panel panel-default col-sm-2">
+      <div class="pbox-l col-sm-6">animal</div>
+      <div class="pbox-r col-sm-6">{{animal}}&nbsp</div>
+
+      <div class="pbox-l col-sm-6">date</div>
+      <div class="pbox-r col-sm-6">{{date}}&nbsp</div>
+
+      <div class="pbox-l col-sm-6">user</div>
+      <div class="pbox-r col-sm-6">{{user}}@{{computer}}</div>
+
+      <div class="pbox-l col-sm-6">rst,tst</div>
+      <div class="pbox-r col-sm-6">{{restricted|safe}} {{tested|safe}}</div>
+    </div>
+    <div class="panel panel-default col-sm-2">
+      <div class="pbox-l col-sm-6">ncorr</div>
+      <div class="pbox-r col-sm-6">{{ncorrect}}&nbsp</div>
+
+      <div class="pbox-l col-sm-6">ntrials</div>
+      <div class="pbox-r col-sm-6">{{ntrials}}&nbsp</div>
+
+      <div class="pbox-l col-sm-6">water</div>
+      <div class="pbox-r col-sm-6">{{water_work}}+{{water_sup}}+{{fruit_ml}}ml</div>
+
+      <div class="pbox-l col-sm-6">totalfluid</div>
+      <div class="pbox-r col-sm-6">{{totalfluid}}ml</div>
+
+    </div>
+    <div class="panel panel-default col-sm-2">
+      <div class="pbox-l col-sm-6">weight</div>
+      <div class="pbox-r col-sm-6">{{weight}}kg</div>
+
+      <div class="pbox-l col-sm-6">thweight</div>
+      <div class="pbox-r col-sm-6">{{thweight}}kg</div>
+
+      <div class="pbox-l col-sm-6">food</div>
+      <div class="pbox-r col-sm-6">{{food}} biscs</div>
+
+      <div class="pbox-l col-sm-6">fruit</div>
+      <div class="pbox-r col-sm-6">{{fruit}}&nbsp;</div>
+    </div>
+    <div class="panel panel-default col-sm-2">
+      <div class="pbox-l col-sm-6">dtb</div>
+      <div class="pbox-r col-sm-6">{{dtb_ml}}ml [{{dtb}}ml/kg]</div>
+
+      <div class="pbox-l col-sm-6">xdtb</div>
+      <div class="pbox-r col-sm-6">{{xdtb}}ml [{{xdtb}}ml/kg]</div>
+
+      <div class="pbox-l col-sm-6">st/ur/sk/pcv</div>
+      <div class="pbox-r col-sm-6">
+        {{health_stool|safe}} {{health_urine|safe}} {{health_skin|safe}} {{health_pcv|safe}}
+      </div>
+    </div>
+  </div>
+
+
+
+  {% for (code, content) in note %}
+  {% if code == 0 %}
+  <textarea class="note" readonly style="width:100%">{{content}}</textarea>
+  {% else %}
+  {{content|safe}}
+  {% endif %}
+  {% endfor %}
 </div>
