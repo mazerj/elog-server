@@ -1,25 +1,9 @@
 * {
-   font-size: 11px;
+   font-size: 95%;
    line-height: 1.2;
 }
 
-h1 { font-size: 25px; }
-h2 { font-size: 20px; }
-h3 { font-size: 15px; }
-h4 { font-size: 11px; }
-
-
-.btn {
-    font-size: 11px;
-}
-
-.form-control {
-    font-size: 11px;
-}
-
-.panel {
-    margin-bottom: 5px;
-}
+.panel { margin-bottom: 0px; margin-top: 0px; margin-left: 0px; margin-right: 0px;}
 
 .note {
     width:100%;
@@ -29,22 +13,14 @@ h4 { font-size: 11px; }
     resize: none;
     font-family: monospace;
 }
-
-.panel-exper {
-    margin-left: 20px;
-}
-
-.panel-unit {
-    margin-left: 20px;
-}
-
+.panel-exper { margin-left: 20px; }
+.panel-unit { margin-left: 20px; }
 .pbox-l {
     border: solid;
     border-width: 1px;
     line-height: 1.7;
     text-align: right;
 }
-
 .pbox-r {
     border: solid;
     border-width: 1px;
@@ -53,94 +29,24 @@ h4 { font-size: 11px; }
     background-color: #f0f0f0;
 }
 
-/**********************************
-
-Use: cmxform template
-
-***********************************/
-form.cmxform fieldset {
-	margin-bottom: 10px;
-}
-
-form.cmxform legend {
-	padding: 0 2px;
-	_margin: 0 -7px; /* IE Win */
-}
-
-form.cmxform label {
-	display: inline-block;
-	vertical-align: top;
-	cursor: hand;
-}
-
-form.cmxform fieldset p {
-	list-style: none;
-	padding: 5px;
-	margin: 0;
-}
-
-form.cmxform fieldset fieldset {
-	border: none;
-	margin: 3px 0 0;
-}
-
-form.cmxform fieldset fieldset legend {
-	padding: 0 0 5px;
-}
-
-form.cmxform fieldset fieldset label {
-	display: block;
-	width: auto;
-}
-
+form.cmxform fieldset { margin-bottom: 10px; }
+form.cmxform legend { padding: 0 2px; _margin: 0 -7px; /* IE Win */ }
+form.cmxform label { display: inline-block; vertical-align: top; cursor: hand; }
+form.cmxform fieldset p { list-style: none; padding: 5px; margin: 0; }
+form.cmxform fieldset fieldset { border: none; margin: 3px 0 0; }
+form.cmxform fieldset fieldset legend { padding: 0 0 5px; }
+form.cmxform fieldset fieldset label { display: block; width: auto; }
 form.cmxform label { width: 100px; } /* Width of labels */
 form.cmxform fieldset fieldset label { margin-left: 103px; } /* Width plus 3 (html space) */
-form.cmxform label.error {
-	margin-left: 103px;
-	width: 220px;
-}
-
-form.cmxform input.submit {
-	margin-left: 103px;
-}
-
-/*\*//*/ form.cmxform legend { display: inline-block; } /* IE Mac legend fix */
-
-/**********************************
-
-Name: cmxform Styles
-
-***********************************/
-form.cmxform {
-	width: 100%;
-}
-
-form.cmxform legend {
-	padding-left: 0;
-}
-
-form.cmxform label {
-    text-align: right;
-    padding: 0px 5px 0px;
-}
-
-form.cmxform fieldset {
-	border: none;
-}
-
-form.cmxform fieldset fieldset {
-	background: none;
-}
-
-form.cmxform fieldset p, form.cmxform fieldset fieldset {
-	padding: 2px 10px 2px;
-}
-
-form.cmxform label.error, label.error {
-	/* remove the next line when you have trouble in IE6 with labels in list */
-	color: red;
-	font-style: italic
-}
+form.cmxform label.error { margin-left: 103px; width: 220px; }
+form.cmxform input.submit { margin-left: 103px; }
+form.cmxform { width: 100%; }
+form.cmxform legend { padding-left: 0; }
+form.cmxform label { text-align: right; padding: 0px 5px 0px; }
+form.cmxform fieldset { border: none; }
+form.cmxform fieldset fieldset { background: none; }
+form.cmxform fieldset p, form.cmxform fieldset fieldset { padding: 2px 10px 2px; }
+form.cmxform label.error, label.error { color: red; font-style: italic }
 div.error { display: none; }
 input {	border: 1px solid black; }
 input.checkbox { border: none }
@@ -148,58 +54,27 @@ input:focus { border: 1px dotted black; }
 input.error { border: 1px dotted red; }
 form.cmxform .gray * { color: gray; }
 
-@media xxxprint {
+@media print {
+    * {
+	   font-size: 90%;
+	   line-height: 1.2;
+	}
 
-    .col-sm-1, .col-sm-2, .col-sm-3, .col-sm-4, .col-sm-5, .col-sm-6, .col-sm-7, .col-sm-8, .col-sm-9, .col-sm-10, .col-sm-11, .col-sm-12 {
-	float: left;
-    }
-    .col-sm-12 {
-	width: 100%;
-    }
-    .col-sm-11 {
-	width: 91.66666666666666%;
-    }
-    .col-sm-10 {
-	width: 83.33333333333334%;
-    }
-    .col-sm-9 {
-	width: 75%;
-    }
-    .col-sm-8 {
-	width: 66.66666666666666%;
-    }
-    .col-sm-7 {
-	width: 58.333333333333336%;
-    }
-    .col-sm-6 {
-	width: 50%;
-    }
-    .col-sm-5 {
-	width: 41.66666666666667%;
-    }
-    .col-sm-4 {
-	width: 33.33333333333333%;
-    }
-    .col-sm-3 {
-	width: 25%;
-    }
-    .col-sm-2 {
-	width: 16.666666666666664%;
-    }
-    .col-sm-1 {
-	width: 8.333333333333332%;
-    }
-    
-    .container-fluid, {
-	padding-left: 400px;
-	padding-right: 0px;
-	padding-top: 0px;
-	padding-bottom: 0px;
-    }
-    
-    .panel-body {
-	padding: 0px;
-	padding-right: 0px;
-	padding-top: 0px;
-	padding-bottom: 0px;
+    .col-sm-1, .col-sm-2, .col-sm-3, .col-sm-4, .col-sm-5, .col-sm-6, .col-sm-7, .col-sm-8, .col-sm-9, .col-sm-10, .col-sm-11, .col-sm-12 { float: left; }
+    .col-sm-12 { width: 100%; }
+    .col-sm-11 { width: 91.66666666666666%; }
+    .col-sm-10 { width: 83.33333333333334%; }
+    .col-sm-9 { width: 75%; }
+    .col-sm-8 { width: 66.66666666666666%; }
+    .col-sm-7 { width: 58.333333333333336%; }
+    .col-sm-6 { width: 50%; }
+    .col-sm-5 { width: 41.66666666666667%; }
+    .col-sm-4 { width: 33.33333333333333%; }
+    .col-sm-3 { width: 25%; }
+    .col-sm-2 { width: 16.666666666666664%; }
+    .col-sm-1 { width: 8.333333333333332%; }
+    .panel { margin-bottom: 0px; margin-top: 0px; margin-left: 0px; margin-right: 0px;}
+
+    .pbox-l, .pbox-r { padding-left: 2px; padding-right: 2px;}
+ }
 }

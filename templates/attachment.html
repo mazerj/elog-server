@@ -3,16 +3,14 @@
 <table>
   <tr>
     <td valign="top">
-      <a href="/attachments/{{'%d'|format(attachmentID)}}/edit"
-	 title="edit: #{{'%d'|format(attachmentID)}} {{date}}">
 	<img class="media-object"
 	     src="data:image/jpg;base64,{{data|safe}}"
 	     style="max-width: 700px;">
-	</a>
     </td>
     <td valign="top">
+      <a class="hidden-print btn btn-primary"
+	   href="/attachments/{{'%d'|format(attachmentID)}}/edit">Edit</a>
       <h3>{{title}}</h3>
-
       {% for (code, content) in note %}
         {% if code == 0 %}
           <textarea class="note" readonly>{{content}}</textarea>
