@@ -421,7 +421,7 @@ def animals(animal):
 		env['toc'][y] = yl
 	env['MONTHS'] = [datetime.date(2014,n+1,1).strftime('%B') \
 					 for n in range(12)]
-	return render_template("sessionlist.html", **env)
+	return render_template("sessiondir.html", **env)
 
 @app.route('/animals/new')
 @requires_auth
