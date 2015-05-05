@@ -1,0 +1,5 @@
+#!/bin/sh
+eval "$(elog -db)"
+mysqldump -d -h $HOST -u $USER -p$PASS -P $PORT $DB >schema.sql
+
+
