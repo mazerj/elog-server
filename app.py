@@ -15,6 +15,7 @@ import numpy as np
 
 from apptools import *
 from dbtools import *
+from reports import *
 
 LOGGING  = True
 HOST     = '0.0.0.0'
@@ -680,8 +681,7 @@ def search():
 @app.route('/report/fluids/<int:year>-<int:month>')
 @requires_auth
 def fluids_specific(year, month):
-	from report_fluid import report
-	env = report('%04d-%02d-01' % (year, month))
+	env = monthly_report('%04d-%02d-01' % (year, month))
 	return render_template("report_fluid.html", **env)
 
 @app.route('/report/pick')
@@ -1068,172 +1068,15 @@ def session_set(animal, date):
 @app.route('/animals/<animal>/weight/plot')
 @requires_auth
 def plot_weight(animal):
-	import matplotlib.dates as mdates
-
-	db = getdb()
-
-	plots = []
-	
-	rows = db.query("""SELECT date,weight,thweight FROM session WHERE """
-					""" animal='%s' AND """
-					""" weight > 0 AND """
-					""" date > DATE_SUB(NOW(), INTERVAL 90 DAY) ORDER BY date""" % animal)
-    
-	if len(rows) > 0:
-		x = np.array([mdates.strpdate2num('%Y-%m-%d')('%s'%r['date']) for r in rows])
-		y = np.array([r['weight'] for r in rows])
-		t = np.array([safefloat(r['thweight'],0.0) for r in rows])
-		plt.clf()
-		plt.plot_date(x[np.nonzero(t)], t[np.nonzero(t)], 'ro')
-		plt.plot_date(x, y, 'bo')
-        x, y = smooth(x, y)
-        plt.plot_date(x, y, 'b-')
-        
-		plt.title('%s: last 90d' % animal);
-		plt.ylabel('Weight (kg)')
-		plots.append(('dummy%d'%len(plots), json.dumps(mpld3.fig_to_dict(plt.gcf()))))
-
-	rows = db.query("""SELECT date,weight,thweight FROM session WHERE """
-					""" animal='%s' AND """
-					""" weight > 0 ORDER BY date""" % animal)
-	if len(rows) > 0:
-		x = np.array([mdates.strpdate2num('%Y-%m-%d')('%s'%r['date']) for r in rows])
-		y = np.array([r['weight'] for r in rows])
-		t = np.array([safefloat(r['thweight'],0.0) for r in rows])
-		plt.clf()
-		plt.plot_date(x[np.nonzero(t)], t[np.nonzero(t)], 'ro')
-		plt.plot_date(x, y, 'bo')
-        x, y = smooth(x, y)
-        plt.plot_date(x, y, 'b-')
-        
-		plt.title('%s: all data' % animal);
-		plt.ylabel('Weight (kg)')
-		plots.append(('dummy%d'%len(plots), json.dumps(mpld3.fig_to_dict(plt.gcf()))))
-		
-	
+	plots = weight_report(animal)
 	return render_template("plotview.html",
 						   title='%s weight history' % animal,
 						   plots=plots)
 
-
-def dtbhist(animal, INTERVAL=7):
-    """Generate matrix of DTB data for this animal"""
-    
-    import numpy as np
-	import matplotlib.dates as mdates
-    
-    db = getdb()
-    
-    rs = db.query("""SELECT * FROM session WHERE """
-                  """  animal='%s' """
-                  """  ORDER BY date """ % (animal,))
-
-    dates = np.array([mdates.strpdate2num('%Y-%m-%d')('%s'%r['date']) for r in rs])
-    
-    m = np.zeros((len(rs), 5))
-    for n in range(0, len(rs)):
-        v = []
-        for k in range(n-1, 0, -1):
-            r = rs[k]
-            if r['water_work'] and r['weight'] and \
-              r['tested'] and r['restricted']:
-                v.append(r['water_work']/r['weight'])
-            if len(v) >= INTERVAL:
-                break
-        v = np.array(v)
-        dtb = max(10.0, np.mean(v) - (2 * np.std(v)))
-        if rs[n]['weight']:
-            dtb_ml = round(dtb * rs[n]['weight'])
-        else:
-            dtb_ml = np.nan
-        xdtb = max(0.0, np.mean(v) - (2 * np.std(v)))
-        if rs[n]['weight']:
-            xdtb_ml = round(xdtb * rs[n]['weight'])
-        else:
-            xdtb_ml = np.nan
-
-        m[n, 0] = dates[n]
-        m[n, 1] = dtb
-        m[n, 2] = dtb_ml
-        m[n, 3] = xdtb
-        m[n, 4] = xdtb_ml
-    return m
-	
 @app.route('/animals/<animal>/fluid/plot')
 @requires_auth
 def plot_fluid(animal):
-	import matplotlib.dates as mdates
-
-	plots = []
-	
-	db = getdb()
-
-	rows = db.query("""SELECT date,water_sup,water_work,fruit_ml """
-					""" FROM session """
-					""" WHERE animal='%s' AND """
-					""" date > DATE_SUB(NOW(), INTERVAL 90 DAY) ORDER BY date """ % animal)
-    m = dtbhist(animal)
-    
-	if len(rows) > 0:
-		x = np.array([mdates.strpdate2num('%Y-%m-%d')('%s'%r['date']) for r in rows])
-		y1 = np.array([safefloat(r['water_work']) +
-			  safefloat(r['water_sup']) +
-			  safefloat(r['fruit_ml']) for r in rows])
-		y2 = np.array([safefloat(r['water_work']) for r in rows])
-		plt.clf()
-        
-        sx, sy = smooth(x, y2)
-		plt.plot(x, y2, 'bo')
-        plt.plot(sx, sy, 'b-', label='work')
-
-        sx, sy = smooth(x, y1)
-		plt.plot(x, y1, 'ro')
-        plt.plot(sx, sy, 'r-', label='total')
-        
-
-        plt.plot(m[np.greater(m[:,0], x[0]), 0],
-                 m[np.greater(m[:,0], x[0]), 2], 'g-', label='dtb10ml')
-
-        plt.plot(m[np.greater(m[:,0], x[0]), 0],
-                 m[np.greater(m[:,0], x[0]), 4], 'g:', label='dtb00ml')
-
-        
-		plt.legend(loc='upper left')
-		plt.gca().xaxis_date()
-		plt.title('%s: last 90d' % animal)
-		plt.ylabel('Fluid Intake (ml)')
-		plots.append(('dummy%d'%len(plots),
-                      json.dumps(mpld3.fig_to_dict(plt.gcf()))))
-		
-	rows = db.query("""SELECT * FROM session WHERE """
-					""" animal='%s' ORDER BY date""" % animal)
-
-	if len(rows) > 0:
-		x = np.array([mdates.strpdate2num('%Y-%m-%d')('%s'%r['date']) for r in rows])
-		y1 = np.array([safefloat(r['water_work']) +
-                       safefloat(r['water_sup']) +
-                       safefloat(r['fruit_ml']) for r in rows])
-		y2 = np.array([safefloat(r['water_work']) for r in rows])
-		plt.clf()
-        sx, sy = smooth(x, y1)
-		plt.plot(x, y1, 'ro')
-        plt.plot(sx, sy, 'r-', label='total')
-
-        sx, sy = smooth(x, y2)
-		plt.plot(x, y2-1.0, 'bo')
-        plt.plot(sx, sy-1.0, 'b-', label='work')
-
-        plt.plot(m[:,0], m[:,2], 'g-', label='dtb10ml')
-        plt.plot(m[:,0], m[:,4], 'g-', label='dtb00ml')
-        
-		plt.legend(loc='upper left')
-		plt.gca().xaxis_date()
-		plt.title('%s: all data' % animal)
-		plt.ylabel('Fluid Intake (ml)')
-		plots.append(('dummy%d'%len(plots),
-                      json.dumps(mpld3.fig_to_dict(plt.gcf()))))
-
-	
+	plots = fluid_report(animal)
 	return render_template("plotview.html",
 						   title='%s fluid history' % animal,
 						   plots=plots)
