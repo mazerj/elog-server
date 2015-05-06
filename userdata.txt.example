@@ -1,0 +1,3 @@
+elogger::ro
+test:passwd:ro
+foobar:*:rw
