@@ -13,57 +13,88 @@ import matplotlib.pyplot as plt
 import mpld3
 import numpy as np
 
-# run elog with -dir option to find install dir
-try:
-    elogpath = os.popen('elog -dir 2>/dev/null').read()[:-1]
-except:
-    elogpath = ''
-    
-if elogpath is None:
-	sys.stderr.write("Can't find elog executable/path\n")
-	sys.exit(1)
-else:
-    elogpath = elogpath + '/lib/elog'
-	sys.path.append(elogpath)
-	from elogapi import getdb, GetExper, GetNextExper
-	sys.stderr.write("loaded elogapi from %s\n" % elogpath)
+from apptools import *
+from dbtools import *
 
-from app_tools import *
-
-LOGGING = True
-HOST    = '0.0.0.0'
-PORT    = 5000
+LOGGING  = True
+HOST     = '0.0.0.0'
+PORT     = 5000
+USERS    = {}
 
 try:
 	import pam
 except ImportError:
     pam = None
-	try:
-		USERS = {}
-		USERS_RW = {}
-		for l in open('userdata', 'r').readlines():
-			l = l[:-1].split(':')
-			if len(l) == 3:
-				USERS[l[0]] = l[1]
-				USERS_RW[l[0]] = (l[2].lower() == 'rw')
-	except:
-		sys.stderr.write("Bad or missing 'userdata' file.\n")
-		sys.exit(1)
 
-def writeaccess():
-	if pam:
-        if session['username'] == 'elogger':
-            # 'elogger' user is special -- read only access..
-            return False
-        else:
-            return True
-	else:
-		try:
-			return USERS_RW[session['username']]
-		except KeyError:
-			# if you're not in the userdata file, you get readonly access
-			return False
+def loaduserdata():
+    """
+    userdata file should be list of form:
+         username1:pass2:[rw or ro]
+         username1:pass2:[rw or ro]
+         ...
+    The userdata file is used for authentication only when PAM is not
+    available. However, it is always used for determining if user has
+    write access to database (default is YES).
 
+    loaduserdata() should get called before every authentication to
+    make sure the most current info is used...
+    
+    """
+    
+    try:
+        for l in open('userdata.txt', 'r').readlines():
+            l = l[:-1].split(':')
+            if len(l) == 3:
+                USERS['PW',l[0]] = l[1]
+                USERS['RW', l[0]] = (l[2].lower() == 'rw')
+        return True
+    except IOError:
+        return False
+            
+def writeaccess(username=None):
+    if username is None:
+        username = session['username']
+    try:
+        loaduserdata()
+        return USERS['RW', session['username']]
+	except KeyError:
+		# if you're not in the userdata file, you get readonly access
+		return False
+
+def get_userdata(user):
+    import sqlite3, cPickle
+
+    conn = sqlite3.connect('./userprefs.db')
+    c = conn.cursor()
+
+    try:
+        # test to see if user table/db exists
+        c.execute("""select data from users where name='%s'""" % user)
+        r = c.fetchall()
+        if len(r) > 0:
+            r = cPickle.loads(str(r[0]))
+    except sqlite3.OperationalError:
+        c.execute("""create table users (name text, pw text, data text)""")
+        r = None
+    conn.commit()
+    conn.close()
+    return r
+
+def set_userdata(user, d):
+    import sqlite3,cPickle
+
+    conn = sqlite3.connect('./userprefs.db')
+    c = conn.cursor()
+    data = dserialize(c.Pickel.dumps(d))
+    c.execute("""SELECT name FROM users WHERE name='%s'""" % user)
+    if len(c.fetchall()) > 0:
+        c.execute("""UPDATE users SET data=? WHERE name='%s'""" % user, (data,))
+    else:
+        c.execute("""INSERT INTO users (name,data) VALUES (?, ?)""",
+                  (user, data,))
+    conn.commit()
+    conn.close()
+    
 def baseenv(**env):
 	env['RW'] = writeaccess()
 	env['session'] = session
@@ -78,12 +109,10 @@ def getanimals():
 def safenote(s):
 	# convert note to markdown format link
 	return s
-	#return re.sub('<elog:(.*)=(.*)>', '[elog:\\1=\\2](DO NOT CHANGE)', s)
 
 def unsafenote(s):
 	# markdown format 'speical' link back to elog link
 	return s.replace('\r\n', '\n').replace("'", "\\'")
-	#return re.sub('\[elog:(.*)=(.*)\]\(DO NOT CHANGE\)', '<elog:\\1=\\2>', s)
 
 def expandattachment(id):
 	env = baseenv()
@@ -304,6 +333,8 @@ def columntypes(db):
 	return x
 
 
+# authentication functions
+
 def check_auth(username, password):
 	"""
 	This function is called to check if a username / password combination
@@ -315,25 +346,33 @@ def check_auth(username, password):
         if pam.pam().authenticate(username, password):
 			session['username'] = username
             session['prefs'] = get_userdata(username)
+            app.logger.info('logged in %s rw=%d from %s' %
+                            (username, writeaccess(username),
+                             request.remote_addr))
 			return True
 		else:
 			return False
-
-    if username in USERS and USERS[username] == password:
+    elif loaduserdata() and username in USERS_PW and \
+      (USERS['PW',username] == '*' or USERS['PW',username] == password):
         session['username'] = username
+        session['prefs'] = get_userdata(username)
+        app.logger.info('logged in %s rw=%d from %s' % \
+                        (username, writeaccess(username),
+                         request.remote_addr))
         return True
     else:
         app.logger.info('invalid login attempt from %s.' % \
                         (request.remote_addr))
         session['username'] = 'none'
+        session['username'] = {}
         return False
 
 def authenticate():
-	"""Sends a 401 response that enables basic auth"""
-	
+	"""Sends a 401 response that enables basic auth via browser dialog"""
 	return Response(render_template("logout.html"),
 					401, {'WWW-Authenticate':'Basic realm="elog"'})
 
+# decorator for routes that required authentication
 def requires_auth(f):
 	@wraps(f)
 	def decorated(*args, **kwargs):
@@ -376,7 +415,8 @@ def index():
 
 @app.route('/logout')
 def logout():
-	return (render_template("logout.html"), 401)
+    app.logger.info('logged out %s' % (session['username'],))
+    return (render_template("logout.html"), 401)
 
 @app.route('/about')
 @requires_auth
@@ -814,13 +854,13 @@ def attachments_edit(id):
 		return Error("%s: no matches." % (id,))
 
 def attachment_countlinks(id):
-    ln = '<elog:attach=%s>' % id
+    pattern = '<elog:attach=%s>' % id
     
 	db = getdb()
     n = 0
     for t in ('session', 'exper', 'unit', 'dfile', 'animal'):
         rows = db.query("""SELECT note FROM %s WHERE """
-                        """ note LIKE '%%%s%%'""" % (t, ln))
+                        """ note LIKE '%%%s%%'""" % (t, pattern))
         n = n + len(rows)
     return n
 
@@ -1024,12 +1064,6 @@ def session_set(animal, date):
 			return Reload()
 	return redirect(r['_back'])
 
-def smooth(x, y, k=3):
-    k = (2 * k) + 1
-    ny = np.convolve(y, np.ones(k)/k, mode='valid')
-    n = (len(y) - len(ny)) / 2
-    return x[n:-n],ny
-
 @app.route('/animals/<animal>/weight/plot')
 @requires_auth
 def plot_weight(animal):
@@ -1220,49 +1254,10 @@ def insert_glyph(name):
 	""" % name
 
 
-def dserialize(x):
-    import cPickle
-    
-    if type(x) is types.DictionaryType:
-        return cPickle.dumps(x)
-    else:
-        return cPickle.loads(str(x[0]))
-
-def get_userdata(user):
-    import sqlite3
-
-    conn = sqlite3.connect('./userprefs.db')
-    c = conn.cursor()
-
-    try:
-        # test to see if user table/db exists
-        c.execute("""select data from users where name='%s'""" % user)
-        r = c.fetchall()
-        if len(r) > 0:
-            r = dserialize(r[0])
-    except sqlite3.OperationalError:
-        c.execute("""create table users (name text, pw text, data text)""")
-        r = None
-    conn.commit()
-    conn.close()
-    return r
-
-def set_userdata(user, d):
-    import sqlite3
-
-    conn = sqlite3.connect('./users.db')
-    c = conn.cursor()
-    data = dserialize(d)
-    c.execute("""SELECT name FROM users WHERE name='%s'""" % user)
-    if len(c.fetchall()) > 0:
-        c.execute("""UPDATE users SET data=? WHERE name='%s'""" % user, (data,))
-    else:
-        c.execute("""INSERT INTO users (name,data) VALUES (?, ?)""",
-                  (user, data,))
-    conn.commit()
-    conn.close()
-    
 if __name__ == "__main__":
+    if pam is None and not loaduserdata():
+        sys.stderr.write("Must provide PAM or 'userdata' file\n")
+        
 	try:
 		getanimals()
 	except TypeError:

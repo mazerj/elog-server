@@ -1,5 +1,7 @@
 # -*- Mode: Python; tab-width: 4; py-indent-offset: 4; -*-
 
+from numpy import np
+
 def glyph(name):
     return """<span class="glyphicon glyphicon-%s" aria-hidden="true"></span> """ % name
 
@@ -33,4 +35,10 @@ def str2num(s, fn=int, default=0):
         return default
     
 def uniq(s): return list(set(s))
+
+def smooth(x, y, k=3):
+    k = (2 * k) + 1
+    ny = np.convolve(y, np.ones(k)/k, mode='valid')
+    n = (len(y) - len(ny)) / 2
+    return x[n:-n],ny
 
