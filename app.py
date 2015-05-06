@@ -352,7 +352,7 @@ def check_auth(username, password):
 			return True
 		else:
 			return False
-    elif loaduserdata() and username in USERS_PW and \
+    elif loaduserdata() and USERS.has_key(('passwords', username)) and \
       (USERS['passwords',username] == '*' or \
        USERS['passwords',username] == password):
         session['username'] = username
@@ -416,7 +416,7 @@ def index():
 
 @app.route('/logout')
 def logout():
-    app.logger.info('logged out %s' % (session['username'],))
+    app.logger.info('User %s logged out.' % (session['username'],))
     return (render_template("logout.html"), 401)
 
 @app.route('/about')
