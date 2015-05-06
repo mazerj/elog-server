@@ -96,7 +96,7 @@ def set_userdata(user, d):
     conn.close()
     
 def baseenv(**env):
-	env['rw-access'] = writeaccess()
+	env['RW'] = writeaccess()
 	env['session'] = session
 	env['prefs'] = session['prefs']
 	return env

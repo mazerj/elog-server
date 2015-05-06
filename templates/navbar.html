@@ -1,3 +1,4 @@
+{% if RW %}
 <script>
   // catch paste event in the pastebox -- if it's really an image, then
   // stick the data in the 'idata' hidden element and generate a submit
@@ -28,6 +29,7 @@
     $('#pastebox').bind('paste', pasteReciever);
   });
 </script>
+{% endif %}
 
 <nav class="navbar navbar-default">
   <div class="container-fluid">
@@ -63,16 +65,20 @@
           </form>
         </li>
 
+	{% if RW %}
         <li>
           <form id="paste" class="navbar-form" method="post" action="/paste">
             <div class="form-group">
               <input id="idata" name="idata" value="" type="hidden">
-              <input id="pastebox" name="pastebox" type="text" class="form-control" style="background-color: lightgreen;"
-              placeholder="paste images here">
+              <input id="pastebox" name="pastebox" type="text"
+		     class="form-control" style="background-color: lightgreen;"
+		     placeholder="paste images here">
+	      
               <button type="submit" class="hidden"></button>
             </div>
           </form>
         </li>
+	{% endif %}
       </ul>
     </div>
   </div>
