@@ -1,0 +1,5 @@
+HOST='sql.mydomain.edu'
+USER='eloguser'
+PASS='elogpass'
+DB='elogdata'
+PORT=3306
