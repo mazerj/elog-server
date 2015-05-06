@@ -118,7 +118,7 @@ def expandattachment(id):
 	env = baseenv()
 	db = getdb()
 	rows = db.query("""SELECT * FROM attachment WHERE"""
-					""" attachmentID=%s""" % (id,))
+					""" ID=%s""" % (id,))
 	if len(rows) > 0:
 		rows[0]['date'] = '%s' % rows[0]['date']
 		env.update(rows[0])
@@ -174,7 +174,7 @@ def expandexper(exper):
 	if rows:
 		for d in env['dfiles']:
 			d['note'] = expandnote(d['note'])
-			d['dfileID'] = '%s' % d['dfileID']
+			d['ID'] = '%s' % d['ID']
 		for k in d.keys():
 			if type(d[k]) is types.StringType and len(d[k]) == 0:
 				d[k] = ''
@@ -803,9 +803,9 @@ def paste():
 				""" VALUES (0, '%s','%s','%s','%s','%s', '%s')""" % \
 				(imtype, session['username'], today(),
 				 'no title', 'no note', imdata,))
-	rows = db.query("""SELECT attachmentID FROM attachment"""
-					""" ORDER BY attachmentID DESC LIMIT 1""")
-	id = rows[0]['attachmentID']
+	rows = db.query("""SELECT ID FROM attachment"""
+					""" ORDER BY ID DESC LIMIT 1""")
+	id = rows[0]['ID']
 
 	return redirect('/attachments/%s/edit' % id)
 
@@ -829,7 +829,7 @@ def attachments_showlist_bypage(page):
     offset = min(max(0, ((page-1) * 10)), n)
 
     rows = db.query("""SELECT * FROM attachment """
-					""" ORDER BY attachmentID DESC LIMIT %d,%d""" %
+					""" ORDER BY ID DESC LIMIT %d,%d""" %
                     (offset, PERPAGE))
 	env['page'] = max(1,page)
 	env['pages'] = 1+int(round(n/PERPAGE))
@@ -844,7 +844,7 @@ def attachments_edit(id):
 	
 	db = getdb()
 	rows = db.query("""SELECT * FROM attachment WHERE """
-					""" attachmentID=%s""" % (id,))
+					""" ID=%s""" % (id,))
 	if rows:
 		env = baseenv()
 		env['row'] = rows[0]
@@ -885,7 +885,7 @@ def attachments_deleteC(id):
     else:
         db = getdb()
         rows = db.query("""DELETE FROM attachment WHERE """
-                        """ attachmentID=%s""" % (id,))
+                        """ ID=%s""" % (id,))
         return redirect('/attachments/showlist')
     
 @app.route('/attachments/<id>/set', methods=['POST'])
@@ -900,8 +900,8 @@ def attachment_set(id):
 		r['note'] = unsafenote(r['note'])
 		db.query("""UPDATE attachment SET """
 				 """   note='%s', title='%s' """
-				 """ WHERE attachmentID=%s """ %
-				 (r['note'],r['title'],r['attachmentID']))
+				 """ WHERE ID=%s """ %
+				 (r['note'],r['title'],r['ID']))
 		if not 'done' in r:
 			return Reload()
 	return redirect(r['_back'])
@@ -914,7 +914,7 @@ def dfile_edit(id):
 	
 	db = getdb()
 	rows = db.query("""SELECT * FROM dfile WHERE """
-					""" dfileID=%s""" % (id,))
+					""" ID=%s""" % (id,))
 	if rows:
 		env = baseenv()
 		env['row'] = rows[0]
@@ -938,7 +938,7 @@ def dfile_set(id):
 		r['note'] = unsafenote(r['note'])
 		db.query("""UPDATE dfile SET """
 				 """   note='%s', crap=%s """
-				 """ WHERE dfileID=%s """ %
+				 """ WHERE ID=%s """ %
 				 (r['note'],r['crap'],id,))
 		if not 'done' in r:
 			return Reload()
@@ -983,10 +983,10 @@ def unit_new(exper):
 			
 	db.query("""INSERT INTO unit SET """
 			 """  unit='%s', """
-			 """  experID=%d, """
+			 """  ID=%d, """
 			 """  exper='%s', """
 			 """  animal='%s', """
-			 """  date='%s' """ % (u, r['experID'], exper, r['animal'], r['date']))
+			 """  date='%s' """ % (u, r['ID'], exper, r['animal'], r['date']))
 	return redirect('/expers/%s/units/%s/edit' % (exper, u))
 
 @app.route('/expers/<exper>/units/<unit>/delete')

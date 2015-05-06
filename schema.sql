@@ -23,7 +23,7 @@ DROP TABLE IF EXISTS `animal`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `animal` (
-  `animalID` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `ID` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `animal` varchar(255) DEFAULT NULL,
   `idno` varchar(255) DEFAULT NULL,
   `dob` date DEFAULT NULL,
@@ -33,7 +33,7 @@ CREATE TABLE `animal` (
   `locked` int(11) DEFAULT NULL,
   `tags` varchar(1024) DEFAULT NULL,
   `lastmod` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`animalID`),
+  PRIMARY KEY (`ID`),
   UNIQUE KEY `animal` (`animal`),
   UNIQUE KEY `idno` (`idno`)
 ) ENGINE=MyISAM AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
@@ -47,7 +47,7 @@ DROP TABLE IF EXISTS `attachment`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `attachment` (
-  `attachmentID` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `ID` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `title` varchar(255) DEFAULT NULL,
   `user` varchar(10) DEFAULT NULL,
   `date` date DEFAULT NULL,
@@ -59,7 +59,7 @@ CREATE TABLE `attachment` (
   `locked` int(11) DEFAULT NULL,
   `tags` varchar(1024) DEFAULT NULL,
   `lastmod` varchar(255) DEFAULT NULL,
-  UNIQUE KEY `attachmentID` (`attachmentID`)
+  UNIQUE KEY `attachmentID` (`ID`)
 ) ENGINE=MyISAM AUTO_INCREMENT=709 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -71,7 +71,7 @@ DROP TABLE IF EXISTS `dfile`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `dfile` (
-  `dfileID` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `ID` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `exper` varchar(10) DEFAULT NULL,
   `animal` varchar(10) DEFAULT NULL,
   `date` date DEFAULT NULL,
@@ -87,9 +87,9 @@ CREATE TABLE `dfile` (
   `locked` int(11) DEFAULT NULL,
   `tags` varchar(1024) DEFAULT NULL,
   `lastmod` varchar(255) DEFAULT NULL,
-  UNIQUE KEY `dfileID` (`dfileID`),
+  UNIQUE KEY `dfileID` (`ID`),
   UNIQUE KEY `src` (`src`)
-) ENGINE=MyISAM AUTO_INCREMENT=20291 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=20305 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -100,7 +100,7 @@ DROP TABLE IF EXISTS `exper`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `exper` (
-  `experID` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `ID` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `exper` varchar(10) DEFAULT NULL,
   `animal` varchar(10) DEFAULT NULL,
   `dir` varchar(255) DEFAULT NULL,
@@ -111,8 +111,8 @@ CREATE TABLE `exper` (
   `deleted` int(11) DEFAULT NULL,
   `tags` varchar(1024) DEFAULT NULL,
   `lastmod` varchar(255) DEFAULT NULL,
-  UNIQUE KEY `experID` (`experID`)
-) ENGINE=MyISAM AUTO_INCREMENT=4217 DEFAULT CHARSET=latin1;
+  UNIQUE KEY `experID` (`ID`)
+) ENGINE=MyISAM AUTO_INCREMENT=4218 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -123,7 +123,7 @@ DROP TABLE IF EXISTS `session`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `session` (
-  `sessionID` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `ID` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `animal` varchar(10) DEFAULT NULL,
   `user` varchar(10) DEFAULT NULL,
   `computer` varchar(40) DEFAULT NULL,
@@ -152,8 +152,8 @@ CREATE TABLE `session` (
   `locked` int(11) DEFAULT NULL,
   `tags` varchar(1024) DEFAULT NULL,
   `lastmod` varchar(255) DEFAULT NULL,
-  UNIQUE KEY `noteID` (`sessionID`)
-) ENGINE=MyISAM AUTO_INCREMENT=5305 DEFAULT CHARSET=latin1;
+  UNIQUE KEY `noteID` (`ID`)
+) ENGINE=MyISAM AUTO_INCREMENT=5306 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -164,7 +164,7 @@ DROP TABLE IF EXISTS `unit`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `unit` (
-  `unitID` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `ID` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `experID` int(10) unsigned DEFAULT NULL,
   `exper` varchar(10) DEFAULT NULL,
   `unit` varchar(10) DEFAULT NULL,
@@ -187,9 +187,9 @@ CREATE TABLE `unit` (
   `locked` int(11) DEFAULT NULL,
   `tags` varchar(1024) DEFAULT NULL,
   `lastmod` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`unitID`),
-  UNIQUE KEY `unitID` (`unitID`)
-) ENGINE=MyISAM AUTO_INCREMENT=2059 DEFAULT CHARSET=latin1;
+  PRIMARY KEY (`ID`),
+  UNIQUE KEY `unitID` (`ID`)
+) ENGINE=MyISAM AUTO_INCREMENT=2060 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -201,4 +201,4 @@ CREATE TABLE `unit` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2015-05-05 12:03:26
+-- Dump completed on 2015-05-06 12:41:45

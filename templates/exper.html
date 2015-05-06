@@ -91,7 +91,7 @@
         {% for d in dfiles %}
           <li class="list-group-item">
             {% if RW %}
-              <a class="btn btn-primary hidden-print" href="/dfile/{{d['dfileID']}}/edit">Edit</a>
+              <a class="btn btn-primary hidden-print" href="/dfile/{{d['ID']}}/edit">Edit</a>
             {% endif %}
 	    {% if d['crap'] %}
               <strike>{{d['src']}}</strike>

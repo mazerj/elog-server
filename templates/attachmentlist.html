@@ -55,22 +55,22 @@
 	        {% set r=rows[n+k] %}
 	        <div class="col-sm-6 col-md-3">
 		  <div class="thumbnail">
-		    <a href="/attachments/{{'%d'|format(r['attachmentID'])}}/edit"
-		       title="edit: #{{'%d'|format(r['attachmentID'])}} {{r['date']}}">
+		    <a href="/attachments/{{'%d'|format(r['ID'])}}/edit"
+		       title="edit: #{{'%d'|format(r['ID'])}} {{r['date']}}">
 		      <img src="data:image/jpg;base64,{{r['data']|safe}}"
 			   style="max-height: 100px;">
 		    </a>
 		    <div class="caption">
 		      <div class="text-center">
-			  <label>#{{'%d'|format(r['attachmentID'])}}</label>
+			  <label>#{{'%d'|format(r['ID'])}}</label>
 			  <a class="btn btn-primary"
-			     href="/attachments/{{'%d'|format(r['attachmentID'])}}/edit">edit</a>
+			     href="/attachments/{{'%d'|format(r['ID'])}}/edit">edit</a>
 			  <a class="btn btn-primary copy-button"
-			     data-clipboard-text="&lt;elog:attach={{r['attachmentID']}}&gt;">copy</a>
-			  <a class="btn btn-primary" href="/search/attach={{'%d'|format(r['attachmentID'])}}">find</a>
+			     data-clipboard-text="&lt;elog:attach={{r['ID']}}&gt;">copy</a>
+			  <a class="btn btn-primary" href="/search/attach={{'%d'|format(r['ID'])}}">find</a>
 			  <a class="btn btn-danger"
 			     onClick="bootbox.confirm('Really delete attachment?',
-				      function(r) {if (r) window.location.href='/attachments/{{'%d'|format(r['attachmentID'])}}/deleteC'})">delete</a>
+				      function(r) {if (r) window.location.href='/attachments/{{'%d'|format(r['ID'])}}/deleteC'})">delete</a>
 		      </div>
 		      <h4>{{r['title']}}</h4>
 		      {{r['note']}}
