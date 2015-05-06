@@ -45,8 +45,8 @@ def loaduserdata():
         for l in open('userdata.txt', 'r').readlines():
             l = l[:-1].split(':')
             if len(l) == 3:
-                USERS['PW',l[0]] = l[1]
-                USERS['RW', l[0]] = (l[2].lower() == 'rw')
+                USERS['passwords',l[0]] = l[1]
+                USERS['rw-access', l[0]] = (l[2].lower() == 'rw')
         return True
     except IOError:
         return False
@@ -56,7 +56,7 @@ def writeaccess(username=None):
         username = session['username']
     try:
         loaduserdata()
-        return USERS['RW', session['username']]
+        return USERS['rw-access', session['username']]
 	except KeyError:
 		# if you're not in the userdata file, you get readonly access
 		return False
@@ -96,7 +96,7 @@ def set_userdata(user, d):
     conn.close()
     
 def baseenv(**env):
-	env['RW'] = writeaccess()
+	env['rw-access'] = writeaccess()
 	env['session'] = session
 	env['prefs'] = session['prefs']
 	return env
@@ -353,7 +353,8 @@ def check_auth(username, password):
 		else:
 			return False
     elif loaduserdata() and username in USERS_PW and \
-      (USERS['PW',username] == '*' or USERS['PW',username] == password):
+      (USERS['passwords',username] == '*' or \
+       USERS['passwords',username] == password):
         session['username'] = username
         session['prefs'] = get_userdata(username)
         app.logger.info('logged in %s rw=%d from %s' % \
