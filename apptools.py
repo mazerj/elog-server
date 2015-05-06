@@ -1,6 +1,6 @@
 # -*- Mode: Python; tab-width: 4; py-indent-offset: 4; -*-
 
-from numpy import np
+improt numpy as np
 
 def glyph(name):
     return """<span class="glyphicon glyphicon-%s" aria-hidden="true"></span> """ % name
