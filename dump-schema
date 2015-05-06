@@ -1,5 +1,4 @@
 #!/bin/sh
+# dump the schema for the current version of the database
 eval "$(elog -db)"
 mysqldump -d -h $HOST -u $USER -p$PASS -P $PORT $DB >schema.sql
-
-
