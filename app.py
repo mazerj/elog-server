@@ -7,12 +7,6 @@ import distutils.spawn
 from flask import *
 from functools import wraps
 
-import matplotlib as mpl
-mpl.use('Agg')						  # prevent Tk loading..
-import matplotlib.pyplot as plt
-import mpld3
-import numpy as np
-
 from apptools import *
 from dbtools import *
 from reports import *
