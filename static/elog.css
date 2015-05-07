@@ -1,5 +1,5 @@
 * {
-   font-size: 95%;
+   font-size: 100%;
    line-height: 1.2;
 }
 
@@ -52,7 +52,7 @@ input {	border: 1px solid black; }
 input.checkbox { border: none }
 input:focus { border: 1px dotted black; }
 input.error { border: 1px dotted red; }
-form.cmxform .gray * { color: gray; }
+/* form.cmxform .gray * { color: gray; } */
 
 @media print {
     * {
