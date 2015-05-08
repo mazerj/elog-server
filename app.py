@@ -445,7 +445,7 @@ def animals(animal):
 			rows = db.query("""SELECT date FROM session WHERE """
 							""" animal='%s' AND """
 							""" YEAR(date)=%d and MONTH(date)=%d """
-                            """ ORDER BY DATE DESC""" % \
+                            """ ORDER BY DATE""" % \
 							(animal, y, m))
 			ml = []
 			for r in rows:
