@@ -16,11 +16,10 @@ HOST     = '0.0.0.0'
 PORT     = 5000
 USERS    = {}
 
-pam = None
 try:
 	import pam
 except ImportError:
-	import PAM as pam
+    pam = None
 
 def loaduserdata():
     """
