@@ -341,11 +341,13 @@ def check_auth(username, password):
         if pam.pam().authenticate(username, password):
 			session['username'] = username
             session['prefs'] = get_userdata(username)
-            app.logger.info('logged in %s rw=%d from %s' %
+            app.logger.info('PAM login %s rw=%d from %s' %
                             (username, writeaccess(username),
                              request.remote_addr))
 			return True
 		else:
+            app.logger.info('failed PAM login for %s/%s' %
+                            (username, password))
 			return False
     elif loaduserdata() and USERS.has_key(('passwords', username)) and \
       (USERS['passwords',username] == '*' or \
