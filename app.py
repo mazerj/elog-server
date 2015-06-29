@@ -1039,6 +1039,7 @@ def session_set(animal, date):
 	r['fruit_ml'] = str2num(r['fruit_ml'])
 	r['food'] = str2num(r['food'])
 	r['weight'] = str2num(r['weight'], float)
+	r['thweight'] = str2num(r['thweight'], float)
 
 	r['note'] = unsafenote(r['note'])
 
@@ -1056,6 +1057,7 @@ def session_set(animal, date):
 				 """   fruit_ml=%(fruit_ml)d, """
 				 """   food=%(food)d, """
 				 """   weight=%(weight)f """
+				 """   thweight=%(thweight)f """
 				 """ WHERE animal='%(animal)s' """
 				 """ AND date='%(date)s'""" % r)
 		if not 'done' in r:
