@@ -1056,7 +1056,7 @@ def session_set(animal, date):
 				 """   water_sup=%(water_sup)d, """
 				 """   fruit_ml=%(fruit_ml)d, """
 				 """   food=%(food)d, """
-				 """   weight=%(weight)f """
+				 """   weight=%(weight)f, """
 				 """   thweight=%(thweight)f """
 				 """ WHERE animal='%(animal)s' """
 				 """ AND date='%(date)s'""" % r)
