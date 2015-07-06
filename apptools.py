@@ -36,7 +36,7 @@ def str2num(s, fn=int, default=0):
     
 def uniq(s): return list(set(s))
 
-def smooth(x, y, k=3):
+def smooth(x, y, k=5):
     k = (2 * k) + 1
     ny = np.convolve(y, np.ones(k)/k, mode='valid')
     n = (len(y) - len(ny)) / 2

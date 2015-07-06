@@ -423,6 +423,13 @@ def about():
 	env['db'] = getdb()
 	return render_template("about.html", **env)
 
+@app.route('/guidelines')
+@requires_auth
+def guidelines():
+	env = baseenv()
+	env['db'] = getdb()
+	return render_template("mlab-guidelines.html", **env)
+
 @app.route('/prefs/<name>/<value>/set')
 @requires_auth
 def prefs_set(name, value):
@@ -1075,9 +1082,12 @@ def plot_weight(animal):
 @app.route('/animals/<animal>/fluid/plot')
 @requires_auth
 def plot_fluid(animal):
+	legend = """NB: dtb00 applies under VCS close monitoring"""
+
 	plots = fluid_report(animal)
 	return render_template("plotview.html",
 						   title='%s fluid history' % animal,
+						   notes=legend,
 						   plots=plots)
 
 # some useful filters

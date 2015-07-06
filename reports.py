@@ -122,7 +122,16 @@ def monthly_report(startdate):
     return env
 
 def dtbhist(animal, INTERVAL=7):
-    """Generate matrix of DTB data for this animal"""
+    """Generate matrix of DTB data for this animal.
+
+    DTB is calculated by taking the last 7d of data and calculating
+    the AVERAGE +- 2*STD:
+        (working volume) / (weight)
+    over the sampling interval. The 'regular' DTB is then clipped at
+    10ml/kg (dtb10ml); this doesn't apply when animals are under VCS
+    close monitor (mlab), so the raw DTB clipped to zero is also
+    computed (dtb00ml) and plotted.
+    """
     db = getdb()
     
     rs = db.query("""SELECT * FROM session WHERE """
@@ -176,20 +185,20 @@ def fluid_report(animal):
 	if len(rows) > 0:
 		x = np.array([mdates.strpdate2num('%Y-%m-%d')('%s'%r['date']) \
                       for r in rows])
-		y1 = np.array([safefloat(r['water_work']) +
-			  safefloat(r['water_sup']) +
-			  safefloat(r['fruit_ml']) for r in rows])
-		y2 = np.array([safefloat(r['water_work']) for r in rows])
+		ytotal = np.array([safefloat(r['water_work']) +
+                           safefloat(r['water_sup']) +
+                           safefloat(r['fruit_ml']) for r in rows])
+		ywork = np.array([safefloat(r['water_work']) for r in rows])
 		plt.clf()
-        
-        sx, sy = smooth(x, y2)
-		plt.plot(x, y2, 'bo')
-        plt.plot(sx, sy, 'b-', label='work')
 
-        sx, sy = smooth(x, y1)
-		plt.plot(x, y1, 'ro')
-        plt.plot(sx, sy, 'r-', label='total')
+        # jitter points
+        sx, sy = smooth(x, ytotal)
+		plt.plot(x+.2, ytotal, 'rv')
+        plt.plot(sx+.2, sy, 'r-', label='total')
         
+        sx, sy = smooth(x[np.nonzero(ywork)], ywork[np.nonzero(ywork)])
+		plt.plot(x[np.nonzero(ywork)], ywork[np.nonzero(ywork)], 'bo')
+        plt.plot(sx, sy, 'b-', label='work')
 
         plt.plot(m[np.greater(m[:,0], x[0]), 0],
                  m[np.greater(m[:,0], x[0]), 2], 'g-', label='dtb10ml')
@@ -209,18 +218,22 @@ def fluid_report(animal):
 					""" animal='%s' ORDER BY date""" % animal)
 
 	if len(rows) > 0:
-		x = np.array([mdates.strpdate2num('%Y-%m-%d')('%s'%r['date']) for r in rows])
-		y1 = np.array([safefloat(r['water_work']) +
-                       safefloat(r['water_sup']) +
-                       safefloat(r['fruit_ml']) for r in rows])
-		y2 = np.array([safefloat(r['water_work']) for r in rows])
-		plt.clf()
-        sx, sy = smooth(x, y1)
-		plt.plot(x, y1, 'ro')
-        plt.plot(sx, sy, 'r-', label='total')
+		x = np.array([mdates.strpdate2num('%Y-%m-%d')('%s'%r['date'])
+                      for r in rows])
+		ytotal = np.array([safefloat(r['water_work']) +
+                           safefloat(r['water_sup']) +
+                           safefloat(r['fruit_ml']) for r in rows])
+		ywork = np.array([safefloat(r['water_work']) for r in rows])
 
-        sx, sy = smooth(x, y2)
-		plt.plot(x, y2-1.0, 'bo')
+		plt.clf()
+
+        # jitter points
+        sx, sy = smooth(x, ytotal)
+		plt.plot(x+.2, ytotal, 'rv')
+        plt.plot(sx+.2, sy, 'r-', label='total')
+
+        sx, sy = smooth(x[np.nonzero(ywork)], ywork[np.nonzero(ywork)])
+		plt.plot(x[np.nonzero(ywork)], ywork[np.nonzero(ywork)], 'bo')
         plt.plot(sx, sy-1.0, 'b-', label='work')
 
         plt.plot(m[:,0], m[:,2], 'g-', label='dtb10ml')
@@ -249,7 +262,9 @@ def weight_report(animal):
 		x = np.array([mdates.strpdate2num('%Y-%m-%d')('%s'%r['date']) for r in rows])
 		y = np.array([r['weight'] for r in rows])
 		t = np.array([safefloat(r['thweight'],0.0) for r in rows])
+
 		plt.clf()
+
 		plt.plot_date(x[np.nonzero(t)], t[np.nonzero(t)], 'ro')
 		plt.plot_date(x, y, 'bo')
         x, y = smooth(x, y)
@@ -266,7 +281,9 @@ def weight_report(animal):
 		x = np.array([mdates.strpdate2num('%Y-%m-%d')('%s'%r['date']) for r in rows])
 		y = np.array([r['weight'] for r in rows])
 		t = np.array([safefloat(r['thweight'],0.0) for r in rows])
+
 		plt.clf()
+
 		plt.plot_date(x[np.nonzero(t)], t[np.nonzero(t)], 'ro')
 		plt.plot_date(x, y, 'bo')
         x, y = smooth(x, y)

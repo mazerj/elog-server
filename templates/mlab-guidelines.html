@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  {% include "header.html" %}
+
+  <body>
+
+    {% include "navbar.html" %}
+
+    <div class="panel panel-default col-sm-3">
+      <div class="panel-heading">
+	DTB Guidelines
+      </div>
+      <div class="panel-body">
+The DTB is calculated on each day by computing the average amount of water
+each animal worked for on the previous 7 testing days (mean-2*std),
+divided by the animal's daily weight. For the DTB, as described in the
+policy document, this is then clipped to a minimum value of 10.0 ml/kg.
+
+In our lab, our protocol allows for the DTB to be disregarded (ie,
+animals fluid intake can drop below the DTB and both the lab and VCS
+will monitor animals more closely for problems. Weekly weight and
+health summaries are provided to VCS in compliance with this procedure.
+      </div>
+    </div>
+
+    {% include "footer.html" %}
+    {% include "js.html" %}
+
+  </body>
+
+</html>
