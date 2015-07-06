@@ -26,8 +26,17 @@ def iget(rows, name):
 def ps(s):
     """return string or '-'
     """
-    if len(s): return s
-    else: return '-'
+    if len(s):
+        try:
+            x = float(s)
+        except ValueError:
+            return s
+        if x == 0:
+            return '-'
+        else:
+            return s
+    else:
+        return '-'
 
 def monthly_report(startdate):
     db = getdb()
