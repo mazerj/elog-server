@@ -47,14 +47,17 @@ def loaduserdata():
         return False
             
 def writeaccess(username=None):
+    # Tue Jul 21 14:25:49 2015 mazer 
+    # changed so that default is that if you can log in, you get RW
+    # access -- you must set account to be RO in the userdata file
+    # if you want someone to have RO access..
     if username is None:
         username = session['username']
     try:
         loaduserdata()
         return USERS['rw-access', session['username']]
 	except KeyError:
-		# if you're not in the userdata file, you get readonly access
-		return False
+		return True				# it's up to auth package to let you in (or not)
 
 def get_userdata(user):
     import sqlite3, cPickle
