@@ -806,8 +806,8 @@ def paste():
 	#imtype = imtype.split('/')[1].split(';')[0]
 	
 	db.query("""INSERT INTO attachment"""
-				""" (srcID, type,user,date,title,note,data)"""
-				""" VALUES (0, '%s','%s','%s','%s','%s', '%s')""" % \
+				""" (type,user,date,title,note,data)"""
+				""" VALUES ('%s','%s','%s','%s','%s', '%s')""" % \
 				(imtype, session['username'], today(),
 				 'no title', 'no note', imdata,))
 	rows = db.query("""SELECT ID FROM attachment"""
