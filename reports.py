@@ -237,8 +237,11 @@ def fluid_report(animal):
         plt.plot(sx+.2, sy, 'r-', label='total')
 
         sx, sy = smooth(x[np.nonzero(ywork)], ywork[np.nonzero(ywork)])
-		plt.plot(x[np.nonzero(ywork)], ywork[np.nonzero(ywork)], 'bo')
-        plt.plot(sx, sy-1.0, 'b-', label='work')
+        plt.plot(x[np.nonzero(ywork)], ywork[np.nonzero(ywork)], 'bo')
+        if len(sx) == len(sy):
+            plt.plot(sx, sy-1.0, 'b-', label='work')
+        else
+            plt.plot(x, ywork, 'b-', label='work')
 
         plt.plot(m[:,0], m[:,2], 'g-', label='dtb10ml')
         plt.plot(m[:,0], m[:,4], 'g-', label='dtb00ml')
@@ -271,8 +274,11 @@ def weight_report(animal):
 
 		plt.plot_date(x[np.nonzero(t)], t[np.nonzero(t)], 'ro')
 		plt.plot_date(x, y, 'bo')
-        x, y = smooth(x, y)
-        plt.plot_date(x, y, 'b-')
+        sx, sy = smooth(x, y)
+        if len(sx) == len(sy):
+            plt.plot_date(sx, sy, 'b-')
+        else:
+            plt.plot_date(x, y, 'b-')
         
 		plt.title('%s: last 90d' % animal);
 		plt.ylabel('Weight (kg)')
@@ -290,8 +296,11 @@ def weight_report(animal):
 
 		plt.plot_date(x[np.nonzero(t)], t[np.nonzero(t)], 'ro')
 		plt.plot_date(x, y, 'bo')
-        x, y = smooth(x, y)
-        plt.plot_date(x, y, 'b-')
+        sx, sy = smooth(x, y)
+        if len(sx) == len(sy):
+            plt.plot_date(x, y, 'b-')
+        else:
+            plt.plot_date(x, y, 'b-')
         
 		plt.title('%s: all data' % animal);
 		plt.ylabel('Weight (kg)')
