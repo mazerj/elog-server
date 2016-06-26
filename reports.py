@@ -202,7 +202,7 @@ def fluid_report(animal):
             # if lengths aren't the same, there's not enough to smooth
             plt.plot(sx, sy, 'b-', label='work')
         else:
-            plt.plot(x, y, 'b-', label='work')
+            plt.plot(x, ywork, 'b-', label='work')
 
         plt.plot(m[np.greater(m[:,0], x[0]), 0],
                  m[np.greater(m[:,0], x[0]), 2], 'g-', label='dtb10ml')
