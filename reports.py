@@ -240,7 +240,7 @@ def fluid_report(animal):
         plt.plot(x[np.nonzero(ywork)], ywork[np.nonzero(ywork)], 'bo')
         if len(sx) == len(sy):
             plt.plot(sx, sy-1.0, 'b-', label='work')
-        else
+        else:
             plt.plot(x, ywork, 'b-', label='work')
 
         plt.plot(m[:,0], m[:,2], 'g-', label='dtb10ml')
