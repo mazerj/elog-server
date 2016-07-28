@@ -27,6 +27,7 @@ CREATE TABLE `animal` (
   `animal` varchar(255) DEFAULT NULL,
   `idno` varchar(255) DEFAULT NULL,
   `dob` date DEFAULT NULL,
+  `living` int(1) DEFAULT 1,
   `user` varchar(10) DEFAULT NULL,
   `date` date DEFAULT NULL,
   `note` text,

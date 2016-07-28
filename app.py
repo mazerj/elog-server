@@ -101,7 +101,7 @@ def baseenv(**env):
 
 def getanimals():
 	db = getdb()
-	rows = db.query("""SELECT animal FROM animal WHERE 1 ORDER BY animal""")
+	rows = db.query("""SELECT animal FROM animal WHERE 1 ORDER BY not living""")
 	return [row['animal'] for row in rows]
 
 def safenote(s):
@@ -531,10 +531,11 @@ def animal_set(animal):
 		db.query("""UPDATE animal SET """
 				 """ animal='%s', date='%s', """
 				 """ user='%s', idno='%s', dob='%s', """
-				 """ note='%s' """
+				 """ living='%s', note='%s' """
 				 """ WHERE animal='%s'""" % \
 				 (form['animal'], form['date'],
-				  form['user'], form['idno'], form['dob'],
+				  form['user'], form['idno'],
+                  form['dob'], form['living'],
 				  form['note'], animal))
 		if not 'done' in form:
 			return Reload()
