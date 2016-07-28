@@ -16,38 +16,17 @@
 	</div>
 
 	<div class="panel panel-body">
-	  <div class="btn-group-vertical">
 	    {% for a in ANIMALS %}
-	    <ul>
-	      <div class="dropdown">
-		  <button class="btn btn-primary dropdown-toggle"
-			  type="button" id="dropdownMenu{{animal}}" style="width:100%;"
-			  data-toggle="dropdown" aria-expanded="false">
-		    {{a}} <span class="caret"></span>
-		  </button>
-		  <ul class="dropdown-menu" role="menu"
-		      aria-labelledby="dropdownMenu{{animal}}">
-		    <li role="presentation"><a role="menuitem" tabindex="-1"
-					       href="/animals/{{a}}">Directory</a></li>
-		    <li role="presentation" class="divider"></li>
-		    <li role="presentation"><a role="menuitem" tabindex="-1"
-					       href="/animals/{{a}}/sessions/today">
-			<span class="glyphicon glyphicon-star"></span> {{"Today"|blue|safe}}
-			<span class="glyphicon glyphicon-star"></span></a></li>
-		    <li role="presentation" class="divider"></li>
-		    <li role="presentation"><a role="menuitem" tabindex="-1"
-					       href="/animals/{{a}}/fluid/plot">Fluid History</a></li>
-		    <li role="presentation"><a role="menuitem" tabindex="-1"
-					       href="/animals/{{a}}/weight/plot">Weight History</a></li>
-		    <li role="presentation"><a role="menuitem" tabindex="-1"
-					       href="/animals/{{a}}/edit">Edit Animal</a></li>
-		    <li role="presentation" class="divider"></li>
-		    <li role="presentation"><a role="menuitem" tabindex="-1"
-					       onClick="bootbox.confirm('Really delete {{a}}?',
-							function(r) {if (r) window.location.href='/animals/{{a}}/deleteC';})">{{"Delete"|red|safe}}</a></li>
-		  </ul>
-	      </div>
-	    </ul>
+	    <div class="btn-group-horizontal" style="margin-top:10px;">
+	        <button type="button" class="btn btn-link animal-label">{{a}}</button>
+		<button type="button" class="btn btn-secondary"><a href="/animals/{{a}}/sessions/today">Today</a></button>
+		<button type="button" class="btn btn-secondary"><a href="/animals/{{a}}">Directory</a></button>
+		<button type="button" class="btn btn-warning"><a href="/animals/{{a}}/fluid/plot">Fluids</a></button>
+		<button type="button" class="btn btn-warning"><a href="/animals/{{a}}/weight/plot">Weights</a></button>
+		<button type="button" class="btn btn-info"><a href="/animals/{{a}}/edit">Edit</a></button>
+		<button type="button" class="btn btn-danger" onClick="bootbox.confirm('Really delete {{a}}?',
+			function(r) {if (r) window.location.href='/animals/{{a}}/deleteC';})"><a>Delete</a></button>
+	    </div>
 	    {% endfor %}
 	  </div>
 	</div>
