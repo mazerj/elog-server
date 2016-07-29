@@ -14,7 +14,7 @@
     {% include "navbar.html" %}
 
     <div class="container-fluid">
-      <div class="well"><h1>Editing Animal</h2></div>
+      <div class="well"><h1>Editing `{{row['animal']}}` metadata</h2></div>
 
       <form class="cmxform" id="editForm" method="post" action="{{action}}">
 	<input type="hidden" name="lastmod" value="{{row['lastmod']}}">

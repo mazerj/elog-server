@@ -29,8 +29,6 @@
     background-color: #f0f0f0;
 }
 
-.animal-label { width: 5%; }
-
 form.cmxform fieldset { margin-bottom: 10px; }
 form.cmxform legend { padding: 0 2px; _margin: 0 -7px; /* IE Win */ }
 form.cmxform label { display: inline-block; vertical-align: top; cursor: hand; }

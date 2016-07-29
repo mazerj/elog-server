@@ -461,7 +461,8 @@ def animals(animal):
 							(animal, y, m))
 			ml = []
 			for r in rows:
-                label = '%s' % r['date']
+                dow = r['date'].strftime('%a')
+                label = '%s(%s)' % (r['date'], dow)
                 if label.startswith(tod):
                     label = blue(label)
 				ml.append((label,

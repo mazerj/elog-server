@@ -12,20 +12,30 @@
       <div class="panel panel-default">
 
 	<div class="panel panel-heading">
-	  <h1>Animals in database</h1>
+	  <h1>{{ANIMALS|length}} animals in database</h1>
 	</div>
 
 	<div class="panel panel-body">
 	    {% for a in ANIMALS %}
-	    <div class="btn-group-horizontal" style="margin-top:10px;">
-	        <button type="button" class="btn btn-link animal-label">{{a}}</button>
-		<button type="button" class="btn btn-secondary"><a href="/animals/{{a}}/sessions/today">Today</a></button>
-		<button type="button" class="btn btn-secondary"><a href="/animals/{{a}}">Directory</a></button>
-		<button type="button" class="btn btn-warning"><a href="/animals/{{a}}/fluid/plot">Fluids</a></button>
-		<button type="button" class="btn btn-warning"><a href="/animals/{{a}}/weight/plot">Weights</a></button>
-		<button type="button" class="btn btn-info"><a href="/animals/{{a}}/edit">Edit</a></button>
-		<button type="button" class="btn btn-danger" onClick="bootbox.confirm('Really delete {{a}}?',
-			function(r) {if (r) window.location.href='/animals/{{a}}/deleteC';})"><a>Delete</a></button>
+	      <span class="label label-success" style="font-size:120%">{{a}}</span>
+	    <div class="btn-group-horizontal" style="margin-bottom:10px;margin-left:10px;">
+	      <button type="button" class="btn btn-default">
+		<a href="/animals/{{a}}/sessions/today">Today</a></button>
+	      <button type="button" class="btn btn-default">
+		<a href="/animals/{{a}}">Directory</a></button>
+	      <button type="button" class="btn btn-default"
+		style="margin-left:20px;">
+		<a href="/animals/{{a}}/fluid/plot">Fluids</a></button>
+	      <button type="button" class="btn btn-default">
+		<a href="/animals/{{a}}/weight/plot">Weights</a></button>
+	      <button type="button" class="btn btn-default"
+		style="margin-left:20px;">
+		<a href="/animals/{{a}}/edit">Edit</a></button>
+	      <button type="button" class="btn btn-default"
+		      style="margin-left:20px;"
+		      onClick="bootbox.confirm('Really delete {{a}}?',
+			       function(r) {if (r) window.location.href='/animals/{{a}}/deleteC';})">
+		<a>Delete</a></button>
 	    </div>
 	    {% endfor %}
 	  </div>
