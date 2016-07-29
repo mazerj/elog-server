@@ -13,11 +13,9 @@
 	  {{message}}
 	</div>
 	<div class="panel panel-body">
-	  <div class="btn-group-vertical" role="group">
+	  <div class="btn-group-horizontal" role="group">
 	    {% for item in items %}
-              <ul>
-		<a class="btn btn-default" href="{{item}}">{{item}}</a>
-	      </ul>
+	    <button class="btn btn-default"><a href="{{item}}">{{item}}</a></button>
 	    {% endfor %}
 	  </div>
 	</div>

@@ -1087,12 +1087,12 @@ def plot_weight(animal):
 @app.route('/animals/<animal>/fluid/plot')
 @requires_auth
 def plot_fluid(animal):
-	legend = """NB: dtb00 applies under VCS close monitoring"""
+	note = """NB: dtb00 applies under VCS close monitoring"""
 
 	plots = fluid_report(animal)
 	return render_template("plotview.html",
 						   title='%s fluid history' % animal,
-						   notes=legend,
+						   notes=note,
 						   plots=plots)
 
 # some useful filters

@@ -69,7 +69,7 @@ def monthly_report(startdate):
                 datestr = x
             datestr = ("""<a class="hidden-print btn-sm btn-primary" """
                        """href="/animals/%s/sessions/%s"> """
-                       """<span class="glyphicon glyphicon-chevron-right"></span></a> %s""") % (animal, date, datestr)
+                       """<span class="glyphicon glyphicon-eye-open"></span></a> %s""") % (animal, date, datestr)
             
             rows = db.query("""SELECT * """
                             """ FROM session WHERE """
@@ -77,7 +77,8 @@ def monthly_report(startdate):
                             """ animal LIKE "%s" """ % (date, animal))
             
             if rows is None or len(rows) == 0:
-                link = """ <a class="btn-sm btn-danger hidden-print pull-right" href="/animals/%s/sessions/%s/new">%s</a>""" % \
+                link = (""" <a class="btn-sm btn-danger hidden-print pull-right" """
+                    """href="/animals/%s/sessions/%s/new">%s</a>""") % \
                   (animal, date, glyph('flag'))
                 datestr = datestr + link
 
@@ -211,10 +212,12 @@ def fluid_report(animal):
                  m[np.greater(m[:,0], x[0]), 4], 'g:', label='dtb00ml')
 
         
-		plt.legend(loc='upper left')
+		plt.legend(loc='upper left')      # <- THIS CAUSES None in LL!
 		plt.gca().xaxis_date()
 		plt.title('%s: last 90d' % animal)
 		plt.ylabel('Fluid Intake (ml)')
+		plt.xlabel('Date')
+        
 		plots.append(('dummy%d'%len(plots),
                       json.dumps(mpld3.fig_to_dict(plt.gcf()))))
 		
@@ -246,10 +249,11 @@ def fluid_report(animal):
         plt.plot(m[:,0], m[:,2], 'g-', label='dtb10ml')
         plt.plot(m[:,0], m[:,4], 'g-', label='dtb00ml')
         
-		plt.legend(loc='upper left')
+		plt.legend(loc='upper left')      # <- THIS CAUSES None in LL!
 		plt.gca().xaxis_date()
 		plt.title('%s: all data' % animal)
 		plt.ylabel('Fluid Intake (ml)')
+		plt.xlabel('Date')
 		plots.append(('dummy%d'%len(plots),
                       json.dumps(mpld3.fig_to_dict(plt.gcf()))))
 
@@ -282,11 +286,13 @@ def weight_report(animal):
         
 		plt.title('%s: last 90d' % animal);
 		plt.ylabel('Weight (kg)')
+		plt.xlabel('Date')
 		plots.append(('dummy%d'%len(plots), json.dumps(mpld3.fig_to_dict(plt.gcf()))))
 
 	rows = db.query("""SELECT date,weight,thweight FROM session WHERE """
 					""" animal='%s' AND """
 					""" weight > 0 ORDER BY date""" % animal)
+    
 	if len(rows) > 0:
 		x = np.array([mdates.strpdate2num('%Y-%m-%d')('%s'%r['date']) for r in rows])
 		y = np.array([r['weight'] for r in rows])
@@ -304,6 +310,7 @@ def weight_report(animal):
         
 		plt.title('%s: all data' % animal);
 		plt.ylabel('Weight (kg)')
+		plt.xlabel('Date')
 		plots.append(('dummy%d'%len(plots), json.dumps(mpld3.fig_to_dict(plt.gcf()))))
-		
+
     return plots

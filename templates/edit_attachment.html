@@ -24,10 +24,10 @@
 	    <p><label for="exper">title</label><input title id="title" name="title" value="{{row['title']}}"></p>
 	  </div>
 	</fieldset>
-	<textarea style="width:100%;" rows="7"
-		  id="{{boxid}}" name="note">{{row['note']}}</textarea>
-	
+	<textarea id="{{boxid}}" name="note">{{row['note']}}</textarea>
+
 	<img src="data:image/jpg;base64,{{row['data']|safe}}" style="max-width: 250px;">
+	<span class="badge">thumb</span>
 
 	{% include "donesavecancel.html" %}
 

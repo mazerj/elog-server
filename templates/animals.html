@@ -16,34 +16,35 @@
 	</div>
 
 	<div class="panel panel-body">
-	    {% for a in ANIMALS %}
-	      <span class="label label-success" style="font-size:120%">{{a}}</span>
-	    <div class="btn-group-horizontal" style="margin-bottom:10px;margin-left:10px;">
-	      <button type="button" class="btn btn-default">
-		<a href="/animals/{{a}}/sessions/today">Today</a></button>
-	      <button type="button" class="btn btn-default">
-		<a href="/animals/{{a}}">Directory</a></button>
-	      <button type="button" class="btn btn-default"
-		style="margin-left:20px;">
-		<a href="/animals/{{a}}/fluid/plot">Fluids</a></button>
-	      <button type="button" class="btn btn-default">
-		<a href="/animals/{{a}}/weight/plot">Weights</a></button>
-	      <button type="button" class="btn btn-default"
-		style="margin-left:20px;">
-		<a href="/animals/{{a}}/edit">Edit</a></button>
-	      <button type="button" class="btn btn-default"
-		      style="margin-left:20px;"
-		      onClick="bootbox.confirm('Really delete {{a}}?',
-			       function(r) {if (r) window.location.href='/animals/{{a}}/deleteC';})">
-		<a>Delete</a></button>
-	    </div>
-	    {% endfor %}
+	  {% for a in ANIMALS %}
+	  <div class="panel btn-group-horizontal">
+	    <label class="badge" style="width:70px;">{{a}}</label>
+	    <button class="btn-default"
+		    style="margin-left:10px;">
+	      <a href="/animals/{{a}}/sessions/today">today</a></button>
+	    <button class="btn-default">
+	      <a href="/animals/{{a}}">all</a></button>
+	    <button class="btn-default"
+		    style="margin-left:10px;">
+	      <a href="/animals/{{a}}/fluid/plot">fluids</a></button>
+	    <button class="btn-default">
+	      <a href="/animals/{{a}}/weight/plot">weights</a></button>
+	    <button class="btn-default"
+		    style="margin-left:10px;">
+	      <a href="/animals/{{a}}/edit">edit</a></button>
+	    <button type="button" class="btn-warning"
+		    style="margin-left:10px;"
+		    onClick="bootbox.confirm('Really delete {{a}}?',
+			     function(r) {if (r) window.location.href='/animals/{{a}}/deleteC';})">
+	      <a>Delete</a></button>
 	  </div>
+	  {% endfor %}
 	</div>
+      </div>
 
-	<div class="panel panel-footer">
-	  <a href="/animals/new" class="btn btn-default">Add New Animal</a>
-	</div>
+      <div class="panel panel-footer">
+	<a href="/animals/new" class="btn btn-default">Add New Animal</a>
+      </div>
 
       </div>
     </div>
