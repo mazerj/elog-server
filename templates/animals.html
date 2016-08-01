@@ -16,9 +16,20 @@
 	</div>
 
 	<div class="panel panel-body">
-	  {% for a in ANIMALS %}
+	  {% for (a,l) in ANIMALS %}
 	  <div class="panel btn-group-horizontal">
-	    <label class="badge" style="width:70px;">{{a}}</label>
+	    {% if l == 1 %}
+	      <label class="badge" style="width:90px; text-align: left;">
+		<span class="glyphicon glyphicon-heart"></span>
+		{{a}}
+	      </label>
+	    {% else %}
+	      <label class="badge btn-default"
+		     style="width:90px; text-align:left;">
+		<span class="glyphicon glyphicon-heart-empty"></span>
+		{{a}}
+	      </label>
+	    {% endif %}
 	    <button class="btn-default"
 		    style="margin-left:10px;">
 	      <a href="/animals/{{a}}/sessions/today">today</a></button>

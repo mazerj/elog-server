@@ -101,8 +101,9 @@ def baseenv(**env):
 
 def getanimals():
 	db = getdb()
-	rows = db.query("""SELECT animal FROM animal WHERE 1 ORDER BY not living""")
-	return [row['animal'] for row in rows]
+	rows = db.query(("""SELECT animal,living FROM animal """
+                     """WHERE 1 ORDER BY not living"""))
+	return [(row['animal'], row['living'],) for row in rows]
 
 def safenote(s):
 	# convert note to markdown format link

@@ -11,13 +11,12 @@
       {% for animal in animals %}
         <div class="panel panel-default" style="page-break-after: always;">
           <div class="panel panel-heading">
-            <strong>
-	      Monthly Fluid/Health Records -- {{date0}} -- {{animal}}
-	    </strong>
+            <h4>Monthly Report: {{animal}} {{startdate[:-3]}}</h4>
           </div>
 
           <div class="panel panel-body">
-            <table class="table table-striped table-bordered" style="font-family:monospace">
+            <table class="table table-striped table-bordered"
+		   style="font-family:monospace">
               <tr>
 	        {% for e in header %}
                   <th><strong>{{e|safe}}</strong></th>
