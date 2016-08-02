@@ -3,15 +3,15 @@
 <table>
   <tr>
     <td valign="top">
-	<img class="media-object"
-	     src="data:image/jpg;base64,{{data|safe}}"
-	     style="max-width: 700px;">
-	<span class="badge">thumb</span>
-	
+        <img class="media-object"
+             src="data:image/jpg;base64,{{data|safe}}"
+             style="max-width: 700px;">
+        <span class="badge">thumb</span>
+        
     </td>
     <td valign="top">
       <a class="hidden-print btn btn-primary"
-	   href="/attachments/{{'%d'|format(ID)}}/edit">Edit</a>
+           href="/attachments/{{'%d'|format(ID)}}/edit">Edit</a>
       <h3>{{title}}</h3>
       {% for (code, content) in note %}
         {% if code == 0 %}

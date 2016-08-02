@@ -9,16 +9,16 @@
 
     <div class="container-fluid">
       <div class="panel panel-warning">
-	<div class="panel panel-heading">
-	  {{header}}
-	</div>
-	<div class="panel panel-body">
-	  {{message}}
+        <div class="panel panel-heading">
+          {{header}}
+        </div>
+        <div class="panel panel-body">
+          {{message}}
 
-	{% if goto|length > 1 %}
-	  <a class="btn btn-default" href="{{goto[1]}}">{{goto[0]}}</a>
-	{% endif %}
-	</div>
+        {% if goto|length > 1 %}
+          <a class="btn btn-default" href="{{goto[1]}}">{{goto[0]}}</a>
+        {% endif %}
+        </div>
       </div>
     </div>
 

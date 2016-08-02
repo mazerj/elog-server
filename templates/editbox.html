@@ -2,19 +2,19 @@
 <script>
 $( document ).ready( function () {
     var editor = CodeMirror.fromTextArea(document.getElementById("{{boxid}}"), {
-	//mode: "elog",
-	lineNumbers: true,
+        //mode: "elog",
+        lineNumbers: true,
     });
     var mark_ro = function() {
-	var pat = /<elog:.*=.*>/;
-	var cur = editor.getSearchCursor(pat, false, true);
-	while (cur.findNext()) {
-	    editor.markText(cur.pos.from, cur.pos.to, 
-			    {readyOnly:true, atomic:true, css:'color: red'});
-	}
+        var pat = /<elog:.*=.*>/;
+        var cur = editor.getSearchCursor(pat, false, true);
+        while (cur.findNext()) {
+            editor.markText(cur.pos.from, cur.pos.to, 
+                            {readyOnly:true, atomic:true, css:'color: red'});
+        }
     };
     editor.on("change", function(chObj) {
-	mark_ro();
+        mark_ro();
     }); 
     mark_ro();
     editor.setSize("60em", 200); {# roughly 80 char #}

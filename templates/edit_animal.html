@@ -17,22 +17,22 @@
       <div class="well"><h1>Editing `{{row['animal']}}` metadata</h2></div>
 
       <form class="cmxform" id="editForm" method="post" action="{{action}}">
-	<input type="hidden" name="lastmod" value="{{row['lastmod']}}">
-	<input type="hidden" name="ID" value="{{row['ID']}}">
-	<fieldset>
-	  <div class="panel panel-default col-sm-3" style="border: none;">
-	    <p><label for="animal">animal</label><input id="animal" name="animal" value="{{row['animal']}}"></p>
-	    <p><label for="idno">idno</label><input id="idno" name="idno" value="{{row['idno']}}"></p>
-	    <p><label for="dob">dob</label><input id="dob" name="dob" type="date" value="{{row['dob']}}"></p>
-	    <p><label for="living">living</label><input id="living" name="living" type="number" value="{{row['living']}}"></p>
-	    <p><label for="user">user</label><input id="user" name="user" value="{{row['user']}}"></p>
-	    <p><label for="date">date</label><input id="date" name="date" type="date" value="{{row['date']}}"></p>
-	  </div>
-	</fieldset>
-	<fieldset>
-	  <textarea id="{{boxid}}" name="note">{{row['note']}}</textarea>
-	</fieldset>
-	{% include "donesavecancel.html" %}
+        <input type="hidden" name="lastmod" value="{{row['lastmod']}}">
+        <input type="hidden" name="ID" value="{{row['ID']}}">
+        <fieldset>
+          <div class="panel panel-default col-sm-3" style="border: none;">
+            <p><label for="animal">animal</label><input id="animal" name="animal" value="{{row['animal']}}"></p>
+            <p><label for="idno">idno</label><input id="idno" name="idno" value="{{row['idno']}}"></p>
+            <p><label for="dob">dob</label><input id="dob" name="dob" type="date" value="{{row['dob']}}"></p>
+            <p><label for="living">living</label><input id="living" name="living" type="number" value="{{row['living']}}"></p>
+            <p><label for="user">user</label><input id="user" name="user" value="{{row['user']}}"></p>
+            <p><label for="date">date</label><input id="date" name="date" type="date" value="{{row['date']}}"></p>
+          </div>
+        </fieldset>
+        <fieldset>
+          <textarea id="{{boxid}}" name="note">{{row['note']}}</textarea>
+        </fieldset>
+        {% include "donesavecancel.html" %}
       </form>
     </div>
 

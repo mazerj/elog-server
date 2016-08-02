@@ -17,19 +17,19 @@
       <div class="well"><h1>Editing Attachment</h2></div>
 
       <form class="cmxform" id="editForm" method="post" action="{{action}}">
-	<input type="hidden" name="lastmod" value="{{row['lastmod']}}">
-	<input type="hidden" name="ID" value="{{row['ID']}}">
-	<fieldset>
-	  <div class="panel panel-default col-sm-3" style="border: none;">
-	    <p><label for="exper">title</label><input title id="title" name="title" value="{{row['title']}}"></p>
-	  </div>
-	</fieldset>
-	<textarea id="{{boxid}}" name="note">{{row['note']}}</textarea>
+        <input type="hidden" name="lastmod" value="{{row['lastmod']}}">
+        <input type="hidden" name="ID" value="{{row['ID']}}">
+        <fieldset>
+          <div class="panel panel-default col-sm-3" style="border: none;">
+            <p><label for="exper">title</label><input title id="title" name="title" value="{{row['title']}}"></p>
+          </div>
+        </fieldset>
+        <textarea id="{{boxid}}" name="note">{{row['note']}}</textarea>
 
-	<img src="data:image/jpg;base64,{{row['data']|safe}}" style="max-width: 250px;">
-	<span class="badge">thumb</span>
+        <img src="data:image/jpg;base64,{{row['data']|safe}}" style="max-width: 250px;">
+        <span class="badge">thumb</span>
 
-	{% include "donesavecancel.html" %}
+        {% include "donesavecancel.html" %}
 
       </form>
     </div>
