@@ -20,7 +20,8 @@
           <div class="panel btn-group-horizontal">
             {% if l == 1 %}
               <label class="badge"
- 		     style="width:90px; text-align: left; margin-right:10px;">
+ 		     style="background-color: green;
+			    width:90px; text-align: left; margin-right:10px;">
                 <span class="glyphicon glyphicon-heart-empty"></span>
                 {{a}}
               </label>
@@ -44,12 +45,20 @@
               <a href="/animals/{{a}}/weight/plot">weights</a></button>
             <button class="btn-default"
                     style="margin-left:10px;">
-              <a href="/animals/{{a}}/edit">edit</a></button>
-            <button type="button" class="btn-warning"
-                    style="margin-left:10px;"
+              <a href="/animals/{{a}}/edit">
+		<span class="glyphicon glyphicon-info-sign"></span>
+		edit
+	      </a>
+	    </button>
+            <button type="button"
+                    style="background-color: pink; margin-left:10px;"
                     onClick="bootbox.confirm('Really delete {{a}}?',
                              function(r) {if (r) window.location.href='/animals/{{a}}/deleteC';})">
-              <a>Delete</a></button>
+              <a>
+		<span class="glyphicon glyphicon-warning-sign"></span>
+		Delete
+	      </a>
+	    </button>
           </div>
           {% endfor %}
         </div>
