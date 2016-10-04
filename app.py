@@ -604,6 +604,12 @@ def session_today(animal):
 	else:
 		return session_new(animal, t)
 
+@app.route('/animals/<animal>/gotodate')
+@requires_auth
+def session_gotodate(animal):
+	env = baseenv(ANIMAL=animal)
+    return render_template("gotodate.html", **env)
+    
 @app.route('/animals/<animal>/sessions/new', methods=['POST'])
 @requires_auth
 def session_new_today(animal):

@@ -19,22 +19,24 @@
           {% for (a,l) in ANIMALS %}
           <div class="panel btn-group-horizontal">
             {% if l == 1 %}
-              <label class="badge" style="width:90px; text-align: left;">
-                <span class="glyphicon glyphicon-heart"></span>
+              <label class="badge"
+ 		     style="width:90px; text-align: left; margin-right:10px;">
+                <span class="glyphicon glyphicon-heart-empty"></span>
                 {{a}}
               </label>
             {% else %}
               <label class="badge btn-default"
-                     style="width:90px; text-align:left;">
-                <span class="glyphicon glyphicon-heart-empty"></span>
+                     style="width:90px; text-align:left;margin-right:10px;">
+                <span class="glyphicon glyphicon-remove"></span>
                 {{a}}
               </label>
             {% endif %}
-            <button class="btn-default"
-                    style="margin-left:10px;">
-              <a href="/animals/{{a}}/sessions/today">today</a></button>
             <button class="btn-default">
-              <a href="/animals/{{a}}">all</a></button>
+              <a href="/animals/{{a}}">TOC</a></button>
+            <button class="btn-default">
+              <a href="/animals/{{a}}/gotodate">goto</a></button>
+            <button class="btn-default">
+              <a href="/animals/{{a}}/sessions/today">today</a></button>
             <button class="btn-default"
                     style="margin-left:10px;">
               <a href="/animals/{{a}}/fluid/plot">fluids</a></button>
