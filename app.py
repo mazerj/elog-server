@@ -15,6 +15,7 @@ LOGGING  = True
 HOST     = '0.0.0.0'
 PORT     = 5000
 USERS    = {}
+USE_SSL  = False                        # requires valid SSL certificate
 
 try:
 	import pam
@@ -1133,7 +1134,10 @@ if __name__ == "__main__":
 		import logging
 		log = logging.getLogger('werkzeug')
 		log.setLevel(logging.ERROR)
-		
-	app.secret_key = 'aslLKJLjkasdf90u8s(&*(&assdfslkjfasLKJdf8'
-	app.run(debug=True, host=HOST, port=PORT,
-			ssl_context=('server.crt', 'server.key'))
+
+    app.secret_key = 'aslLKJLjkasdf90u8s(&*(&assdfslkjfasLKJdf8'
+    if USE_SSL:
+        app.run(debug=True, host=HOST, port=PORT,
+                ssl_context=('server.crt', 'server.key'))
+    else:
+        app.run(debug=True, host=HOST, port=PORT)
