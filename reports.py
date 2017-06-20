@@ -176,6 +176,125 @@ def fluid_report(animal):
 	
 	db = getdb()
 
+	rows = db.query("""SELECT date,water_sup,water_work,fruit_ml,weight """
+					""" FROM session """
+					""" WHERE animal='%s' AND """
+					""" date > DATE_SUB(NOW(), INTERVAL 90 DAY) """
+                    """ ORDER BY date """ % animal)
+    m = dtbhist(animal)
+    
+	if len(rows) > 0:
+		x = np.array([mdates.strpdate2num('%Y-%m-%d')('%s'%r['date']) \
+                      for r in rows])
+
+
+		ytotal = np.array([safefloat(r['water_work']) +
+                           safefloat(r['water_sup']) +
+                           safefloat(r['fruit_ml']) for r in rows])
+		ywork = np.array([safefloat(r['water_work']) for r in rows])
+
+		plt.figure(figsize=(7,3))
+		plt.clf()
+		plt.plot(x[np.nonzero(ytotal)], ytotal[np.nonzero(ytotal)], 'ro')
+		plt.plot(x[np.nonzero(ywork)], ywork[np.nonzero(ywork)], 'bv')
+		for n in range(len(x)):
+			if ywork[n] > 0:
+				plt.plot((x[n], x[n]), (ywork[n], ytotal[n]), 'r-')
+				plt.plot((x[n], x[n]), (ywork[n], 0), 'b-')
+			else:
+				plt.plot((x[n], x[n]), (0, ytotal[n]), 'r-')
+
+
+        sx, sy = smooth(x[np.nonzero(ytotal)], ytotal[np.nonzero(ytotal)])
+		plt.plot(sx, sy, 'r-')
+		sx, sy = smooth(x[np.nonzero(ywork)], ywork[np.nonzero(ywork)]);
+		plt.plot(sx, sy, 'b-')
+
+		plt.gca().xaxis_date()
+		plt.title('%s: last 90d' % animal)
+		plt.ylabel('Fluid Intake (ml)')
+		plt.xlabel('Date')
+        
+		plots.append(('dummy%d'%len(plots),
+                      json.dumps(mpld3.fig_to_dict(plt.gcf()))))
+
+
+		ytotal = ytotal / safefloat(r['weight'])
+		ywork = ywork / safefloat(r['weight'])
+
+		plt.figure(figsize=(7,3))
+		plt.clf()
+		plt.plot(x[np.nonzero(ytotal)], ytotal[np.nonzero(ytotal)], 'ro')
+		plt.plot(x[np.nonzero(ywork)], ywork[np.nonzero(ywork)], 'bv')
+		for n in range(len(x)):
+			if ywork[n] > 0:
+				plt.plot((x[n], x[n]), (ywork[n], ytotal[n]), 'r-')
+				plt.plot((x[n], x[n]), (ywork[n], 0), 'b-')
+			else:
+				plt.plot((x[n], x[n]), (0, ytotal[n]), 'r-')
+
+
+        sx, sy = smooth(x[np.nonzero(ytotal)], ytotal[np.nonzero(ytotal)])
+		plt.plot(sx, sy, 'r-')
+		sx, sy = smooth(x[np.nonzero(ywork)], ywork[np.nonzero(ywork)]);
+		plt.plot(sx, sy, 'b-')
+
+		plt.plot((x[0], x[-1]), (10, 10), 'k:')
+
+
+		plt.gca().xaxis_date()
+		plt.title('%s: last 90d' % animal)
+		plt.ylabel('Fluid Intake (mg/kg)')
+		plt.xlabel('Date')
+        
+		plots.append(('dummy%d'%len(plots),
+                      json.dumps(mpld3.fig_to_dict(plt.gcf()))))
+
+		
+	rows = db.query("""SELECT * FROM session WHERE """
+					""" animal='%s' ORDER BY date""" % animal)
+
+	if len(rows) > 0:
+		x = np.array([mdates.strpdate2num('%Y-%m-%d')('%s'%r['date'])
+                      for r in rows])
+		ytotal = np.array([safefloat(r['water_work']) +
+                           safefloat(r['water_sup']) +
+                           safefloat(r['fruit_ml']) for r in rows])
+		ywork = np.array([safefloat(r['water_work']) for r in rows])
+
+		plt.figure(figsize=(7,5))
+		plt.clf()
+
+        # jitter points
+        sx, sy = smooth(x, ytotal)
+		plt.plot(x+.2, ytotal, 'rv:')
+        #plt.plot(sx+.2, sy, 'r-', label='total')
+
+        sx, sy = smooth(x[np.nonzero(ywork)], ywork[np.nonzero(ywork)])
+        plt.plot(x[np.nonzero(ywork)], ywork[np.nonzero(ywork)], 'bo:')
+        if len(sx) == len(sy):
+            plt.plot(sx, sy-1.0, 'b-', label='work')
+        else:
+            plt.plot(x, ywork, 'b-', label='work')
+
+        plt.plot(m[:,0], m[:,2], 'g-', label='dtb10ml')
+        plt.plot(m[:,0], m[:,4], 'g-', label='dtb00ml')
+        
+		plt.legend(loc='upper left')      # <- THIS CAUSES None in LL!
+		plt.gca().xaxis_date()
+		plt.title('%s: all data' % animal)
+		plt.ylabel('Fluid Intake (ml)')
+		plt.xlabel('Date')
+		plots.append(('dummy%d'%len(plots),
+                      json.dumps(mpld3.fig_to_dict(plt.gcf()))))
+
+    return plots
+
+def orig_fluid_report(animal):
+	plots = []
+	
+	db = getdb()
+
 	rows = db.query("""SELECT date,water_sup,water_work,fruit_ml """
 					""" FROM session """
 					""" WHERE animal='%s' AND """
@@ -190,15 +309,16 @@ def fluid_report(animal):
                            safefloat(r['water_sup']) +
                            safefloat(r['fruit_ml']) for r in rows])
 		ywork = np.array([safefloat(r['water_work']) for r in rows])
+
 		plt.clf()
 
         # jitter points
         sx, sy = smooth(x, ytotal)
-		plt.plot(x+.2, ytotal, 'rv')
-        plt.plot(sx+.2, sy, 'r-', label='total')
+		plt.plot(x+.2, ytotal, 'rv:')
+        #plt.plot(sx+.2, sy, 'r-', label='total')
         
         sx, sy = smooth(x[np.nonzero(ywork)], ywork[np.nonzero(ywork)])
-		plt.plot(x[np.nonzero(ywork)], ywork[np.nonzero(ywork)], 'bo')
+		plt.plot(x[np.nonzero(ywork)], ywork[np.nonzero(ywork)], 'bo:')
         if len(sx) == len(sy):
             # if lengths aren't the same, there's not enough to smooth
             plt.plot(sx, sy, 'b-', label='work')
@@ -217,6 +337,7 @@ def fluid_report(animal):
 		plt.title('%s: last 90d' % animal)
 		plt.ylabel('Fluid Intake (ml)')
 		plt.xlabel('Date')
+
         
 		plots.append(('dummy%d'%len(plots),
                       json.dumps(mpld3.fig_to_dict(plt.gcf()))))
@@ -236,11 +357,11 @@ def fluid_report(animal):
 
         # jitter points
         sx, sy = smooth(x, ytotal)
-		plt.plot(x+.2, ytotal, 'rv')
-        plt.plot(sx+.2, sy, 'r-', label='total')
+		plt.plot(x+.2, ytotal, 'rv:')
+        #plt.plot(sx+.2, sy, 'r-', label='total')
 
         sx, sy = smooth(x[np.nonzero(ywork)], ywork[np.nonzero(ywork)])
-        plt.plot(x[np.nonzero(ywork)], ywork[np.nonzero(ywork)], 'bo')
+        plt.plot(x[np.nonzero(ywork)], ywork[np.nonzero(ywork)], 'bo:')
         if len(sx) == len(sy):
             plt.plot(sx, sy-1.0, 'b-', label='work')
         else:
@@ -276,8 +397,8 @@ def weight_report(animal):
 
 		plt.clf()
 
-		plt.plot_date(x[np.nonzero(t)], t[np.nonzero(t)], 'ro')
-		plt.plot_date(x, y, 'bo')
+		plt.plot_date(x[np.nonzero(t)], t[np.nonzero(t)], 'ro:')
+		plt.plot_date(x, y, 'bo:')
         sx, sy = smooth(x, y)
         if len(sx) == len(sy):
             plt.plot_date(sx, sy, 'b-')
@@ -300,8 +421,8 @@ def weight_report(animal):
 
 		plt.clf()
 
-		plt.plot_date(x[np.nonzero(t)], t[np.nonzero(t)], 'ro')
-		plt.plot_date(x, y, 'bo')
+		plt.plot_date(x[np.nonzero(t)], t[np.nonzero(t)], 'ro:')
+		plt.plot_date(x, y, 'bo:')
         sx, sy = smooth(x, y)
         if len(sx) == len(sy):
             plt.plot_date(x, y, 'b-')
