@@ -204,17 +204,27 @@ def fluid_report(animal):
 			else:
 				plt.plot((x[n], x[n]), (0, ytotal[n]), 'r-')
 
+        dtbx = []
+        dtby = []
+        for n in range(m.shape[0]):
+            if m[n,0] > x[0]:
+                dtbx.append(m[n,0])
+                dtby.append(m[n,4])
+        plt.plot(dtbx, dtby, 'go', label='dtb')
+                
 
         sx, sy = smooth(x[np.nonzero(ytotal)], ytotal[np.nonzero(ytotal)])
-		plt.plot(sx, sy, 'r-')
+		plt.plot(sx, sy, 'r-', label='total')
 		sx, sy = smooth(x[np.nonzero(ywork)], ywork[np.nonzero(ywork)]);
-		plt.plot(sx, sy, 'b-')
+		plt.plot(sx, sy, 'b-', label='work')
 
 		plt.gca().xaxis_date()
-		plt.title('%s: last 90d' % animal)
+		plt.title('%s: last 90d - ml' % animal)
 		plt.ylabel('Fluid Intake (ml)')
 		plt.xlabel('Date')
         
+		plt.legend(loc='upper left')      # <- THIS CAUSES None in LL!
+
 		plots.append(('dummy%d'%len(plots),
                       json.dumps(mpld3.fig_to_dict(plt.gcf()))))
 
@@ -235,17 +245,27 @@ def fluid_report(animal):
 
 
         sx, sy = smooth(x[np.nonzero(ytotal)], ytotal[np.nonzero(ytotal)])
-		plt.plot(sx, sy, 'r-')
+		plt.plot(sx, sy, 'r-', label='total')
 		sx, sy = smooth(x[np.nonzero(ywork)], ywork[np.nonzero(ywork)]);
-		plt.plot(sx, sy, 'b-')
+		plt.plot(sx, sy, 'b-', label='work')
 
-		plt.plot((x[0], x[-1]), (10, 10), 'k:')
+        dtbx = []
+        dtby = []
+        for n in range(m.shape[0]):
+            if m[n,0] > x[0]:
+                dtbx.append(m[n,0])
+                dtby.append(m[n,3])
+        plt.plot(dtbx, dtby, 'go', label='dtb')
+                
+		#plt.plot((x[0], x[-1]), (10, 10), 'k:')
 
 
 		plt.gca().xaxis_date()
-		plt.title('%s: last 90d' % animal)
+		plt.title('%s: last 90d - ml/kg' % animal)
 		plt.ylabel('Fluid Intake (mg/kg)')
 		plt.xlabel('Date')
+
+		plt.legend(loc='upper left')      # <- THIS CAUSES None in LL!
         
 		plots.append(('dummy%d'%len(plots),
                       json.dumps(mpld3.fig_to_dict(plt.gcf()))))
@@ -277,8 +297,8 @@ def fluid_report(animal):
         else:
             plt.plot(x, ywork, 'b-', label='work')
 
-        plt.plot(m[:,0], m[:,2], 'g-', label='dtb10ml')
-        plt.plot(m[:,0], m[:,4], 'g-', label='dtb00ml')
+        #plt.plot(m[:,0], m[:,2], 'g-', label='dtb10 (ml)')
+        plt.plot(m[:,0], m[:,4], 'g-', label='dtb (ml)')
         
 		plt.legend(loc='upper left')      # <- THIS CAUSES None in LL!
 		plt.gca().xaxis_date()
@@ -399,11 +419,11 @@ def weight_report(animal):
 
 		plt.plot_date(x[np.nonzero(t)], t[np.nonzero(t)], 'ro:')
 		plt.plot_date(x, y, 'bo:')
-        sx, sy = smooth(x, y)
-        if len(sx) == len(sy):
-            plt.plot_date(sx, sy, 'b-')
-        else:
-            plt.plot_date(x, y, 'b-')
+        #sx, sy = smooth(x, y)
+        #if len(sx) == len(sy):
+        #    plt.plot_date(sx, sy, 'b-')
+        #else:
+        #    plt.plot_date(x, y, 'b-')
         
 		plt.title('%s: last 90d' % animal);
 		plt.ylabel('Weight (kg)')
