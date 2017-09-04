@@ -11,89 +11,89 @@ from apptools import *
 from dbtools import *
 from reports import *
 
-LOGGING  = True
-HOST     = '0.0.0.0'
-PORT     = 5000
-USERS    = {}
-USE_SSL  = False                        # requires valid SSL certificate
+LOGGING	 = True
+HOST	 = '0.0.0.0'
+PORT	 = 5000
+USERS	 = {}
+USE_SSL	 = False						# requires valid SSL certificate
 
 try:
 	import pam
 except ImportError:
-    pam = None
+	pam = None
 
 def loaduserdata():
-    """
-    userdata file should be list of form:
-         username1:pass2:[rw or ro]
-         username1:pass2:[rw or ro]
-         ...
-    The userdata file is used for authentication only when PAM is not
-    available. However, it is always used for determining if user has
-    write access to database (default is YES).
+	"""
+	userdata file should be list of form:
+		 username1:pass2:[rw or ro]
+		 username1:pass2:[rw or ro]
+		 ...
+	The userdata file is used for authentication only when PAM is not
+	available. However, it is always used for determining if user has
+	write access to database (default is YES).
 
-    loaduserdata() should get called before every authentication to
-    make sure the most current info is used...
-    
-    """
-    
-    try:
-        for l in open('userdata.txt', 'r').readlines():
-            l = l[:-1].split(':')
-            if len(l) == 3:
-                USERS['passwords',l[0]] = l[1]
-                USERS['rw-access', l[0]] = (l[2].lower() == 'rw')
-        return True
-    except IOError:
-        return False
-            
+	loaduserdata() should get called before every authentication to
+	make sure the most current info is used...
+	
+	"""
+	
+	try:
+		for l in open('userdata.txt', 'r').readlines():
+			l = l[:-1].split(':')
+			if len(l) == 3:
+				USERS['passwords',l[0]] = l[1]
+				USERS['rw-access', l[0]] = (l[2].lower() == 'rw')
+		return True
+	except IOError:
+		return False
+			
 def writeaccess(username=None):
-    # Tue Jul 21 14:25:49 2015 mazer 
-    # changed so that default is that if you can log in, you get RW
-    # access -- you must set account to be RO in the userdata file
-    # if you want someone to have RO access..
-    if username is None:
-        username = session['username']
-    try:
-        loaduserdata()
-        return USERS['rw-access', session['username']]
+	# Tue Jul 21 14:25:49 2015 mazer 
+	# changed so that default is that if you can log in, you get RW
+	# access -- you must set account to be RO in the userdata file
+	# if you want someone to have RO access..
+	if username is None:
+		username = session['username']
+	try:
+		loaduserdata()
+		return USERS['rw-access', session['username']]
 	except KeyError:
 		return True				# it's up to auth package to let you in (or not)
 
 def get_userdata(user):
-    import sqlite3, cPickle
+	import sqlite3, cPickle
 
-    conn = sqlite3.connect('./userprefs.db')
-    c = conn.cursor()
+	conn = sqlite3.connect('./userprefs.db')
+	c = conn.cursor()
 
-    try:
-        # test to see if user table/db exists
-        c.execute("""select data from users where name='%s'""" % user)
-        r = c.fetchall()
-        if len(r) > 0:
-            r = cPickle.loads(str(r[0]))
-    except sqlite3.OperationalError:
-        c.execute("""create table users (name text, pw text, data text)""")
-        r = None
-    conn.commit()
-    conn.close()
-    return r
+	try:
+		# test to see if user table/db exists
+		c.execute("""select data from users where name='%s'""" % user)
+		r = c.fetchall()
+		if len(r) > 0:
+			r = cPickle.loads(str(r[0]))
+	except sqlite3.OperationalError:
+		c.execute("""create table users (name text, pw text, data text)""")
+		r = None
+	conn.commit()
+	conn.close()
+	return r
 
 def set_userdata(user, d):
-    import sqlite3,cPickle
+	import sqlite3,cPickle
 
-    conn = sqlite3.connect('./userprefs.db')
-    c = conn.cursor()
-    data = dserialize(c.Pickel.dumps(d))
-    c.execute("""SELECT name FROM users WHERE name='%s'""" % user)
-    if len(c.fetchall()) > 0:
-        c.execute("""UPDATE users SET data=? WHERE name='%s'""" % user, (data,))
-    else:
-        c.execute("""INSERT INTO users (name,data) VALUES (?, ?)""",
-                  (user, data,))
-    conn.commit()
-    conn.close()
-    
+	conn = sqlite3.connect('./userprefs.db')
+	c = conn.cursor()
+	data = dserialize(c.Pickel.dumps(d))
+	c.execute("""SELECT name FROM users WHERE name='%s'""" % user)
+	if len(c.fetchall()) > 0:
+		c.execute("""UPDATE users SET data=? WHERE name='%s'""" % user, (data,))
+	else:
+		c.execute("""INSERT INTO users (name,data) VALUES (?, ?)""",
+				  (user, data,))
+	conn.commit()
+	conn.close()
+	
 def baseenv(**env):
 	env['RW'] = writeaccess()
 	env['session'] = session
@@ -103,7 +103,7 @@ def baseenv(**env):
 def getanimals():
 	db = getdb()
 	rows = db.query(("""SELECT animal,living FROM animal """
-                     """WHERE 1 ORDER BY not living"""))
+					 """WHERE 1 ORDER BY not living"""))
 	return [(row['animal'], row['living'],) for row in rows]
 
 def safenote(s):
@@ -134,20 +134,20 @@ def expandattachment(id):
 
 
 def wasmodified(table, idname, idval, lastval=None):
-    """Check to see if record modified since last read or update mod time"""
-    import time
-    
+	"""Check to see if record modified since last read or update mod time"""
+	import time
+	
 	db = getdb()
-    if lastval:
-        rows = db.query("""SELECT lastmod FROM %s WHERE %s=%s """ %
-                        (table, idname, idval))
-        return lastval == rows[0]['lastmod']
-    else:
-        ts = int(10.0*time.time())
-        db.query("""UPDATE %s SET lastmod=%d WHERE %s=%s """ %
-                 (table, ts, idname, idval))
-        return None
-    
+	if lastval:
+		rows = db.query("""SELECT lastmod FROM %s WHERE %s=%s """ %
+						(table, idname, idval))
+		return lastval == rows[0]['lastmod']
+	else:
+		ts = int(10.0*time.time())
+		db.query("""UPDATE %s SET lastmod=%d WHERE %s=%s """ %
+				 (table, ts, idname, idval))
+		return None
+	
 def expandexper(exper):
 	env = baseenv()
 	db = getdb()
@@ -237,8 +237,8 @@ def expandnote(note):
 			txt = note[k0:k]
 		else:
 			txt = note[k0:]
-        if len(txt) > 0:
-            n.append((0, txt))
+		if len(txt) > 0:
+			n.append((0, txt))
 		if l:
 			ltype = l.split(' ')[2].split('/')[1]
 			lid = l.split(' ')[2].split('/')[2]
@@ -343,32 +343,32 @@ def check_auth(username, password):
 	'userdata' file fille be read. At least one has to be available..
 	"""
 	if pam:
-        if pam.pam().authenticate(username, password):
+		if pam.pam().authenticate(username, password):
 			session['username'] = username
-            session['prefs'] = get_userdata(username)
-            app.logger.info('PAM login %s rw=%d from %s' %
-                            (username, writeaccess(username),
-                             request.remote_addr))
+			session['prefs'] = get_userdata(username)
+			app.logger.info('PAM login %s rw=%d from %s' %
+							(username, writeaccess(username),
+							 request.remote_addr))
 			return True
 		else:
-            app.logger.info('failed PAM login for %s/%s' %
-                            (username, password))
+			app.logger.info('failed PAM login for %s/%s' %
+							(username, password))
 			return False
-    elif loaduserdata() and USERS.has_key(('passwords', username)) and \
-      (USERS['passwords',username] == '*' or \
-       USERS['passwords',username] == password):
-        session['username'] = username
-        session['prefs'] = get_userdata(username)
-        app.logger.info('logged in %s rw=%d from %s' % \
-                        (username, writeaccess(username),
-                         request.remote_addr))
-        return True
-    else:
-        app.logger.info('invalid login attempt from %s.' % \
-                        (request.remote_addr))
-        session['username'] = 'none'
-        session['username'] = {}
-        return False
+	elif loaduserdata() and USERS.has_key(('passwords', username)) and \
+	  (USERS['passwords',username] == '*' or \
+	   USERS['passwords',username] == password):
+		session['username'] = username
+		session['prefs'] = get_userdata(username)
+		app.logger.info('logged in %s rw=%d from %s' % \
+						(username, writeaccess(username),
+						 request.remote_addr))
+		return True
+	else:
+		app.logger.info('invalid login attempt from %s.' % \
+						(request.remote_addr))
+		session['username'] = 'none'
+		session['username'] = {}
+		return False
 
 def authenticate():
 	"""Sends a 401 response that enables basic auth via browser dialog"""
@@ -388,19 +388,19 @@ def requires_auth(f):
 
 def Error(msg, goto=[]):
 	return render_template("message.html", header="Error",
-                           message=msg, goto=goto)
+						   message=msg, goto=goto)
 
 def Message(msg):
 	return render_template("message.html", header="Message",
-                           message=msg)
+						   message=msg)
 
 def Reload():
 	return ('', 204)
 
 def confirm(message, target):
-    return render_template("confirm.html",
-                           message=message,
-                           ok=target, cancel=request.referrer)
+	return render_template("confirm.html",
+						   message=message,
+						   ok=target, cancel=request.referrer)
 
 
 ########################################################################
@@ -418,8 +418,8 @@ def index():
 
 @app.route('/logout')
 def logout():
-    app.logger.info('User %s logged out.' % (session['username'],))
-    return (render_template("logout.html"), 401)
+	app.logger.info('User %s logged out.' % (session['username'],))
+	return (render_template("logout.html"), 401)
 
 @app.route('/about')
 @requires_auth
@@ -438,8 +438,8 @@ def guidelines():
 @app.route('/prefs/<name>/<value>/set')
 @requires_auth
 def prefs_set(name, value):
-    session['prefs'][name.encode()] = value.encode()
-    set_userdata(session['username'], session['prefs'])
+	session['prefs'][name.encode()] = value.encode()
+	set_userdata(session['username'], session['prefs'])
 	return Reload()
 
 @app.route('/animals/<animal>')
@@ -450,7 +450,7 @@ def animals(animal):
 	db = getdb()
 	rows = db.query("""SELECT date FROM session WHERE animal='%s'""" % animal)
 
-    tod = today()
+	tod = today()
 	env['toc'] = {}
 	env['years'] = sorted(uniq([r['date'].year for r in rows]))[::-1]
 	for y in env['years']:
@@ -459,16 +459,16 @@ def animals(animal):
 			rows = db.query("""SELECT date FROM session WHERE """
 							""" animal='%s' AND """
 							""" YEAR(date)=%d and MONTH(date)=%d """
-                            """ ORDER BY DATE""" % \
+							""" ORDER BY DATE""" % \
 							(animal, y, m))
 			ml = []
 			for r in rows:
-                dow = r['date'].strftime('%a')
-                label = '%s(%s)' % (r['date'], dow)
-                if label.startswith(tod):
-                    label = blue(label)
+				dow = r['date'].strftime('%a')
+				label = '%s(%s)' % (r['date'], dow)
+				if label.startswith(tod):
+					label = blue(label)
 				ml.append((label,
-                           '/animals/%s/sessions/%s' % (animal, r['date'])))
+						   '/animals/%s/sessions/%s' % (animal, r['date'])))
 			yl.append(ml[::-1])
 		env['toc'][y] = yl
 	env['MONTHS'] = [datetime.date(2014,n+1,1).strftime('%B') \
@@ -480,7 +480,7 @@ def animals(animal):
 def animal_new():
 	if not writeaccess():
 		return Error("No write access!")
-    
+	
 	db = getdb()
 	r = { 'animal':'CHANGE-ME', 'date':today(), 'user':session['username'] }
 	db.query("""INSERT INTO animal (%s) VALUES %s""" % \
@@ -506,8 +506,8 @@ def animal_edit(animal):
 @app.route('/animals/<animal>/delete')
 @requires_auth
 def animal_delete(animal):
-    return confirm('Are you sure you want to delete animal %s?' % (animal),
-                   request.path + 'C')
+	return confirm('Are you sure you want to delete animal %s?' % (animal),
+				   request.path + 'C')
 
 @app.route('/animals/<animal>/deleteC')
 @requires_auth
@@ -518,14 +518,14 @@ def animal_deleteC(animal):
 		return Error("""Can't delete %s""" % animal)
 	else:
 		db.query("""DELETE FROM animal WHERE animal='%s'""" % animal)
-    return redirect("/")
+	return redirect("/")
 
 @app.route('/animals/<animal>/set', methods=['POST'])
 @requires_auth
 def animal_set(animal):
 	if not writeaccess():
 		return Error("No write access!")
-    
+	
 	db = getdb()
 	form = getform()
 
@@ -538,7 +538,7 @@ def animal_set(animal):
 				 """ WHERE animal='%s'""" % \
 				 (form['animal'], form['date'],
 				  form['user'], form['idno'],
-                  form['dob'], form['living'],
+				  form['dob'], form['living'],
 				  form['note'], animal))
 		if not 'done' in form:
 			return Reload()
@@ -551,7 +551,7 @@ def session_new(animal, date):
 	if not writeaccess():
 		return Error("No write access!")
 
-    animal = animal.encode()
+	animal = animal.encode()
 	date = date.encode()
 	
 	db = getdb()
@@ -609,8 +609,8 @@ def session_today(animal):
 @requires_auth
 def session_gotodate(animal):
 	env = baseenv(ANIMAL=animal)
-    return render_template("gotodate.html", **env)
-    
+	return render_template("gotodate.html", **env)
+	
 @app.route('/animals/<animal>/sessions/new', methods=['POST'])
 @requires_auth
 def session_new_today(animal):
@@ -627,11 +627,11 @@ def next_session(animal, date):
 	db = getdb()
 	animal = animal.encode()
 	rows = db.query("""SELECT date FROM session WHERE date > '%s' AND animal='%s' ORDER BY date LIMIT 1""" % (date, animal))
-    if rows and len(rows) > 0:
-        return redirect('/animals/%s/sessions/%s' % (animal, rows[0]['date']))
+	if rows and len(rows) > 0:
+		return redirect('/animals/%s/sessions/%s' % (animal, rows[0]['date']))
 	else:
 		return Reload()
-        
+		
 
 @app.route('/animals/<animal>/sessions/<date>/prev')
 @requires_auth
@@ -639,8 +639,8 @@ def prev_session(animal, date):
 	db = getdb()
 	animal = animal.encode()
 	rows = db.query("""SELECT date FROM session WHERE date < '%s' AND animal='%s' ORDER BY date DESC LIMIT 1""" % (date, animal))
-    if rows and len(rows) > 0:
-        return redirect('/animals/%s/sessions/%s' % (animal, rows[0]['date']))
+	if rows and len(rows) > 0:
+		return redirect('/animals/%s/sessions/%s' % (animal, rows[0]['date']))
 	else:
 		return Reload()
 
@@ -693,7 +693,7 @@ def globalsearch(pattern):
 @requires_auth
 def search():
 	form = getform()
-    return globalsearch(form['pattern'])
+	return globalsearch(form['pattern'])
 
 @app.route('/report/fluids/<int:year>-<int:month>')
 @requires_auth
@@ -709,7 +709,7 @@ def pick():
 	rows = db.query("""SELECT date FROM session WHERE 1""")
 	l = sorted(uniq(['/report/fluids/%s' % d[:7]
 					 for d in ['%s' % r['date'] for r in rows]]))[::-1]
-    env = baseenv()
+	env = baseenv()
 	return render_template("searchresult.html",
 						   message="Select month",
 						   items=l, **env)
@@ -810,7 +810,7 @@ def exper_units_set(exper, unit):
 def paste():
 	if not writeaccess():
 		return Error("No write access!")
-    
+	
 	db = getdb()
 	imtype, imdata = request.form['idata'].split(',')
 	#imtype = imtype.split('/')[1].split(';')[0]
@@ -835,19 +835,19 @@ def attachments_showlist():
 @app.route('/attachments/showlist/<page>')
 @requires_auth
 def attachments_showlist_bypage(page):
-    PERPAGE = 12
+	PERPAGE = 12
 	env = baseenv()
 	db = getdb()
-    page = int(page)
+	page = int(page)
 
-    rows = db.query("""SELECT date FROM attachment """)
-    n = len(rows)
-    page = max(1, min(page, int(n/PERPAGE)+1))
-    offset = min(max(0, ((page-1) * 10)), n)
+	rows = db.query("""SELECT date FROM attachment """)
+	n = len(rows)
+	page = max(1, min(page, int(n/PERPAGE)+1))
+	offset = min(max(0, ((page-1) * 10)), n)
 
-    rows = db.query("""SELECT * FROM attachment """
+	rows = db.query("""SELECT * FROM attachment """
 					""" ORDER BY ID DESC LIMIT %d,%d""" %
-                    (offset, PERPAGE))
+					(offset, PERPAGE))
 	env['page'] = max(1,page)
 	env['pages'] = 1+int(round(n/PERPAGE))
 	env['rows'] = rows
@@ -872,21 +872,21 @@ def attachments_edit(id):
 		return Error("%s: no matches." % (id,))
 
 def attachment_countlinks(id):
-    pattern = '<elog:attach=%s>' % id
-    
+	pattern = '<elog:attach=%s>' % id
+	
 	db = getdb()
-    n = 0
-    for t in ('session', 'exper', 'unit', 'dfile', 'animal'):
-        rows = db.query("""SELECT note FROM %s WHERE """
-                        """ note LIKE '%%%s%%'""" % (t, pattern))
-        n = n + len(rows)
-    return n
+	n = 0
+	for t in ('session', 'exper', 'unit', 'dfile', 'animal'):
+		rows = db.query("""SELECT note FROM %s WHERE """
+						""" note LIKE '%%%s%%'""" % (t, pattern))
+		n = n + len(rows)
+	return n
 
 @app.route('/attachments/<id>/delete')
 @requires_auth
 def attachments_delete(id):
-    return confirm('Are you sure you want to delete attachment %s?' % (id),
-                   request.path + 'C')
+	return confirm('Are you sure you want to delete attachment %s?' % (id),
+				   request.path + 'C')
 
 @app.route('/attachments/<id>/deleteC')
 @requires_auth
@@ -894,17 +894,17 @@ def attachments_deleteC(id):
 	if not writeaccess():
 		return Error("No write access!")
 
-    n = attachment_countlinks(id)
-    if n > 0:
-        return Error("""One or more links in notes.\n""",
-                     ("Search for them?",
-                      "/search/attach=%s" % id))
-    else:
-        db = getdb()
-        rows = db.query("""DELETE FROM attachment WHERE """
-                        """ ID=%s""" % (id,))
-        return redirect('/attachments/showlist')
-    
+	n = attachment_countlinks(id)
+	if n > 0:
+		return Error("""One or more links in notes.\n""",
+					 ("Search for them?",
+					  "/search/attach=%s" % id))
+	else:
+		db = getdb()
+		rows = db.query("""DELETE FROM attachment WHERE """
+						""" ID=%s""" % (id,))
+		return redirect('/attachments/showlist')
+	
 @app.route('/attachments/<id>/set', methods=['POST'])
 @requires_auth
 def attachment_set(id):
@@ -1009,8 +1009,8 @@ def unit_new(exper):
 @app.route('/expers/<exper>/units/<unit>/delete')
 @requires_auth
 def unit_delete(exper, unit):
-    return confirm('Are you sure you want to delete unit %s:%s?' % (exper,unit),
-                   request.path + 'C')
+	return confirm('Are you sure you want to delete unit %s:%s?' % (exper,unit),
+				   request.path + 'C')
 
 @app.route('/expers/<exper>/units/<unit>/deleteC')
 @requires_auth
@@ -1084,21 +1084,22 @@ def session_set(animal, date):
 			return Reload()
 	return redirect(r['_back'])
 
-@app.route('/animals/<animal>/weight/plot')
-@requires_auth
-def plot_weight(animal):
-	plots = weight_report(animal)
-	return render_template("plotview.html",
-						   title='%s weight history' % animal,
-						   plots=plots)
-
 @app.route('/animals/<animal>/fluid/plot')
 @requires_auth
 def plot_fluid(animal):
-	plots = fluid_report(animal)
-	return render_template("plotview.html",
-						   title='%s: fluid history' % animal,
-						   plots=plots)
+	h = fluid_report(animal)
+    return h
+
+    #this isn't quite right:
+    # env = baseenv()
+    # env['plot'] = h
+    # return render_template("plotview2.html", **env)
+
+@app.route('/animals/<animal>/weight/plot')
+@requires_auth
+def plot_weight(animal):
+	h = weight_report(animal)
+    return h
 
 # some useful filters
 
@@ -1118,9 +1119,9 @@ def insert_glyph(name):
 
 
 if __name__ == "__main__":
-    if pam is None and not loaduserdata():
-        sys.stderr.write("Must provide PAM or 'userdata' file\n")
-        
+	if pam is None and not loaduserdata():
+		sys.stderr.write("Must provide PAM or 'userdata' file\n")
+		
 	try:
 		getanimals()
 	except TypeError:
@@ -1132,9 +1133,9 @@ if __name__ == "__main__":
 		log = logging.getLogger('werkzeug')
 		log.setLevel(logging.ERROR)
 
-    app.secret_key = 'aslLKJLjkasdf90u8s(&*(&assdfslkjfasLKJdf8'
-    if USE_SSL:
-        app.run(debug=True, host=HOST, port=PORT,
-                ssl_context=('server.crt', 'server.key'))
-    else:
-        app.run(debug=True, host=HOST, port=PORT)
+	app.secret_key = 'aslLKJLjkasdf90u8s(&*(&assdfslkjfasLKJdf8'
+	if USE_SSL:
+		app.run(debug=True, host=HOST, port=PORT,
+				ssl_context=('server.crt', 'server.key'))
+	else:
+		app.run(debug=True, host=HOST, port=PORT)

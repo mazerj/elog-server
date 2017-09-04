@@ -37,9 +37,12 @@ def str2num(s, fn=int, default=0):
 def uniq(s): return list(set(s))
 
 def smooth(x, y, k=5):
-    if len(x) > k:
+    j = len(x)
+    if j > k:
+        y = np.concatenate((y[::-1], y, y[::-1]))
         k = (2 * k) + 1
         ny = np.convolve(y, np.ones(k)/k, mode='same')
+        ny = ny[j:(2*j)]
         return x,ny
     else:
         return x,y
