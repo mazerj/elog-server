@@ -1075,6 +1075,7 @@ def session_set(animal, date):
 				 """   water_work=%(water_work)d, """
 				 """   water_sup=%(water_sup)d, """
 				 """   fruit_ml=%(fruit_ml)d, """
+				 """   fruit='%(fruit)s', """
 				 """   food=%(food)d, """
 				 """   weight=%(weight)f, """
 				 """   thweight=%(thweight)f """
