@@ -435,6 +435,41 @@ def guidelines():
 	env['db'] = getdb()
 	return render_template("mlab-guidelines.html", **env)
 
+@app.route('/ytd/<year>')
+@requires_auth
+def ytdrep(year):
+    from ytdrep import ytd_rep_stream
+
+    # yrd_rep_stream creates .xlsx file as stream that flask
+    # can serve to the user.
+    
+	db = getdb()
+    h =  ytd_rep_stream(db, year)
+    yearno = int(year)
+    return send_file(h, attachment_filename='elog-%04d.xlsx' % yearno, \
+                         as_attachment=True)
+
+@app.route('/ytd/pick')
+@requires_auth
+def ytdpick():
+	db = getdb()
+
+	rows = db.query("""SELECT date FROM session WHERE 1""")
+    
+	l = sorted(uniq(['/ytd/%s' % d[:4]
+					 for d in ['%s' % r['date'] for r in rows]]))[::-1]
+	env = baseenv()
+	return render_template("searchresult.html",
+						   message="Select year",
+						   items=l, **env)
+def annrep(year):
+	db = getdb()
+    h = streamrep(db, year)
+    yearno = int(year)
+    return send_file(h, attachment_filename='elog-%04d.xlsx' % yearno, \
+                         as_attachment=True)
+
+
 @app.route('/prefs/<name>/<value>/set')
 @requires_auth
 def prefs_set(name, value):
@@ -703,7 +738,7 @@ def fluids_specific(year, month):
 
 @app.route('/report/pick')
 @requires_auth
-def pick():
+def rpick():
 	db = getdb()
 
 	rows = db.query("""SELECT date FROM session WHERE 1""")
