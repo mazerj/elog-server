@@ -2,7 +2,6 @@
 
 import sys, os, types, string
 import re, textwrap, datetime
-import distutils.spawn
 
 from flask import *
 from functools import wraps
@@ -462,13 +461,6 @@ def ytdpick():
 	return render_template("searchresult.html",
 						   message="Select year",
 						   items=l, **env)
-def annrep(year):
-	db = getdb()
-    h = streamrep(db, year)
-    yearno = int(year)
-    return send_file(h, attachment_filename='elog-%04d.xlsx' % yearno, \
-                         as_attachment=True)
-
 
 @app.route('/prefs/<name>/<value>/set')
 @requires_auth
