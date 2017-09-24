@@ -1118,11 +1118,6 @@ def plot_fluid(animal):
 	h = fluid_report(animal)
     return h
 
-    #this isn't quite right:
-    # env = baseenv()
-    # env['plot'] = h
-    # return render_template("plotview2.html", **env)
-
 @app.route('/animals/<animal>/weight/plot')
 @requires_auth
 def plot_weight(animal):
