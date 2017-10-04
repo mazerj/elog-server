@@ -36,8 +36,27 @@
               <a href="/animals/{{a}}">TOC</a></button>
             <button class="btn-default">
               <a href="/animals/{{a}}/gotodate">goto</a></button>
+
+	    <!-- DOESN'T WORK YET	    
+	    <div class="btn-default dropdown">
+	      <button class="btn-default"
+		      type="button" id="dropdownMenuButton"
+		      data-toggle="dropdown">
+		jump to
+	      </button>
+	      <div class="dropdown-menu">
+		<a class="dropdown-item" href="/animals/{{a}}/sessions/today/0">today</a>
+		<a class="dropdown-item" href="/animals/{{a}}/sessions/today/1">yesterday</a>
+		<a class="dropdown-item" href="/animals/{{a}}/sessions/today/2">day before yesterday</a>
+	      </div>
+	    </div>
+	    -->
             <button class="btn-default">
-              <a href="/animals/{{a}}/sessions/today">today</a></button>
+              <a href="/animals/{{a}}/sessions/today/0">today</a></button>
+            <button class="btn-default">
+              <a href="/animals/{{a}}/sessions/today/1">yesterday</a></button>
+            <button class="btn-default">
+              <a href="/animals/{{a}}/sessions/today/2">day before</a></button>
             <button class="btn-default"
                     style="margin-left:10px;">
               <a href="/animals/{{a}}/fluid/plot" target="_blank">

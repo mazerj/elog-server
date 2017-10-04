@@ -619,13 +619,13 @@ def getform(r=None):
 			r[k] = r[k].encode()
 	return r
 	
-@app.route('/animals/<animal>/sessions/today')
+@app.route('/animals/<animal>/sessions/today/<ndays>')
 @requires_auth
-def session_today(animal):
+def session_today(animal, ndays):
 	db = getdb()
 	animal = animal.encode()
 
-	t = today()
+	t = today(int(ndays))
 	rows = db.query("""SELECT date FROM session WHERE date='%s' AND animal='%s'""" % (t, animal))
 	if rows is not None and len(rows) > 0:
 		return redirect('/animals/%s/sessions/%s' % (animal, t,))
