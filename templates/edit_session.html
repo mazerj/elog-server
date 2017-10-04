@@ -23,24 +23,22 @@
     <input type="hidden" name="animal" value="{{row['animal']}}">
     <input type="hidden" name="date" value="{{row['date']}}">
     <fieldset>
-      <div class="panel panel-default col-sm-3" style="border: none;">
-        <p><b>General</b></p>
+      <div class="form-group col-sm-3">
         <p><label for="animal">animal</label><input disabled id="animal" name="animal" value="{{row['animal']}}"></p>
-        <p><label for="date">date</label><input disabled id="date" name="date" type="date" value="{{row['date']}}"></p>
-        <p><label for="weight">wt</label><input id="weight" type="number" name="weight" value="{{row['weight']}}"></p>
-        <p><label for="thweight">th-wt</label><input id="thweight" type="number" name="thweight" value="{{row['thweight']}}"></p>
-        <p><label for="food">#bisc</label><input id="food" type="digits" name="food" value="{{row['food']}}"></p>
-        <p><b>Water (ml)</b></p>
-        <p><label for="water_work">work</label><input id="water_work" type="digits" name="water_work" value="{{row['water_work']}}"></p>
-        <p><label for="water_sup">sup</label><input id="water_sup" type="digits" name="water_sup" value="{{row['water_sup']}}"></p>
-        <p><label for="fruit_ml">ml-fruit</label><input id="fruit_ml" type="digits" name="fruit_ml" value="{{row['fruit_ml']}}"></p>
-        <p><label for="fruit">fruits</label><input id="fruit" name="fruit" value="{{row['fruit']}}"></p>
+        <p><label for="date">date</label><input disabled id="date" name="date" value="{{row['date']}}"></p>
+        <p><label for="weight">wt (kg)</label><input id="weight" type="number" name="weight" value="{{row['weight']}}"></p>
+        <p><label for="thweight">th-wt (kg)</label><input id="thweight" type="number" name="thweight" value="{{row['thweight']}}"></p>
+        <p><label for="food"># bisc</label><input id="food" type="digits" name="food" value="{{row['food']}}"></p>
       </div>
-      <div class="panel panel-default col-sm-3" style="border: none;">
-        <p><b>Status</b></p>
+      <div class="form-group col-sm-3">
+        <p><label for="water_work">work (ml)</label><input id="water_work" type="digits" name="water_work" value="{{row['water_work']}}"></p>
+        <p><label for="water_sup">supp (ml)</label><input id="water_sup" type="digits" name="water_sup" value="{{row['water_sup']}}"></p>
+        <p><label for="fruit_ml">fruit (ml)</label><input id="fruit_ml" type="digits" name="fruit_ml" value="{{row['fruit_ml']}}"></p>
+        <p><label for="fruit">fruit descr</label><input id="fruit" name="fruit" value="{{row['fruit']}}"></p>
+      </div>
+      <div class="form-group col-sm-2">
         <p><label for="restricted">restricted</label><input id="restricted" type="checkbox" name="restricted" {{ 'checked' if row['restricted'] }}></p>
         <p><label for="tested">tested</label><input id="tested" type="checkbox" name="tested" {{ 'checked' if row['tested'] }}></p>
-        <p><b>Health</b></p>
         <p><label for="health_stool">stool</label><input id="health_stool" type="checkbox" name="health_stool" {{ 'checked' if row['health_stool'] }}></p>
         <p><label for="health_urine">urine</label><input id="health_urine" type="checkbox" name="health_urine" {{ 'checked' if row['health_urine'] }}></p>
         <p><label for="health_skin">skin</label><input id="health_skin" type="checkbox" name="health_skin" {{ 'checked' if row['health_skin'] }}></p>
