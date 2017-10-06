@@ -15,36 +15,37 @@
 
     <div class="container-fluid">
       
-      <div class="well"><h1>Editing Unit</h1></div>
+      <div class="well"><h3>Editing: {{row['exper']}} {{row['unit']}}</h3></div>
       
       <form class="cmxform" id="editForm" method="post" action="{{action}}">
-        <input type="hidden" name="lastmod" value="{{row['lastmod']}}">
-        <input type="hidden" name="ID" value="{{row['ID']}}">
-        <input type="hidden" name="animal" value="{{row['animal']}}">
-        <input type="hidden" name="date" value="{{row['date']}}">
-        <input type="hidden" name="exper" value="{{row['exper']}}">
         <fieldset>
+          <input type="hidden" name="lastmod" value="{{row['lastmod']}}">
+          <input type="hidden" name="ID" value="{{row['ID']}}">
+          <input type="hidden" name="animal" value="{{row['animal']}}">
+          <input type="hidden" name="date" value="{{row['date']}}">
+          <input type="hidden" name="exper" value="{{row['exper']}}">
           <div class="panel panel-default col-sm-3" style="border: none;">
-            <p><label for="exper">exper</label><input disabled id="exper" name="exper" value="{{row['exper']}}"><p>
-            <p><label for="unit">unit</label><input id="unit" name="unit" value="{{row['unit']}}"></p>
-            <p><label for="well">well</label><input id="well" name="well" value="{{row['well']}}"></p>
-            <p><label for="wellloc">well loc</label><input id="wellloc" name="wellloc" value="{{row['wellloc']}}"></p>
-            <p><label for="hemi">hemi</label><input id="hemi" name="hemi" value="{{row['hemi']}}"></p>
-            <p><label for="area">area</label> <input id="area" name="area" value="{{row['area']}}"></p>
+            <label for="exper">exper</label><input disabled id="exper" name="exper" value="{{row['exper']}}"><br>
+            <label for="unit">unit</label><input id="unit" name="unit" value="{{row['unit']}}"><br>
+            <label for="well">well</label><input id="well" name="well" value="{{row['well']}}"><br>
+            <label for="wellloc">well loc</label><input id="wellloc" name="wellloc" value="{{row['wellloc']}}"><br>
+            <label for="hemi">hemi</label><input id="hemi" name="hemi" value="{{row['hemi']}}"><br>
+            <label for="area">area</label> <input id="area" name="area" value="{{row['area']}}"><br>
           </div>
           <div class="panel panel-default col-sm-3" style="border: none;">
-            <p><label for="depth">um depth</label><input id="depth" type="number" name="depth" value="{{row['depth']}}"></p>
-            <p><label for="qual">qual (1-10)</label><input id="qual" type="number" name="qual" value="{{row['qual']}}"></p>
-            <p><label for="latency">ms lat</label><input id="latency" type="number" name="latency" value="{{row['latency']}}"></p>
+            <label for="depth">&mu;m depth</label><input id="depth" type="number" name="depth" value="{{row['depth']}}"><br>
+            <label for="qual">qual (1-10)</label><input id="qual" type="number" name="qual" value="{{row['qual']}}"><br>
+            <label for="latency">ms lat</label><input id="latency" type="number" name="latency" value="{{row['latency']}}"><br>
           </div>
           <div class="panel panel-default col-sm-3" style="border: none;">
-            <p><label for="rfx">rfx</label><input id="rfx" type="number" name="rfx" value="{{row['rfx']}}"></p>
-            <p><label for="rfy">rfy</label><input id="rfy" type="number" name="rfy" value="{{row['rfy']}}"></p>
-            <p><label for="rfr">rfr</label><input id="rfr" type="number" name="rfr" value="{{row['rfr']}}"></p>
-            <p><label for="ori">ori</label><input id="ori" name="ori" value="{{row['ori']}}"></p>
-            <p><label for="color">color</label><input id="color" name="color" value="{{row['color']}}"></p>
+            <label for="rfx">rfx</label><input id="rfx" type="number" name="rfx" value="{{row['rfx']}}"><br>
+            <label for="rfy">rfy</label><input id="rfy" type="number" name="rfy" value="{{row['rfy']}}"><br>
+            <label for="rfr">rfr</label><input id="rfr" type="number" name="rfr" value="{{row['rfr']}}"><br>
+            <label for="ori">ori</label><input id="ori" name="ori" value="{{row['ori']}}"><br>
+            <label for="color">color</label><input id="color" name="color" value="{{row['color']}}"><br>
           </div>
         </fieldset>
+	
         <fieldset>
           <textarea style="width:100%;" rows="7" id="{{boxid}}" name="note">{{row['note']}}</textarea>
         </fieldset>

@@ -15,21 +15,21 @@
 
     <div class="container-fluid">
 
-      <div class="well"><h1>Editing Experiment</h2></div>
+      <div class="well"><h3>Editing: {{row['exper']}}</h3></div>
 
       <form class="cmxform" id="editForm" method="post" action="{{action}}">
-        <input type="hidden" name="lastmod" value="{{row['lastmod']}}">
-        <input type="hidden" name="ID" value="{{row['ID']}}">
-        <input type="hidden" name="exper" value="{{row['exper']}}">
-        <fieldset>
+	<fieldset>
+          <input type="hidden" name="lastmod" value="{{row['lastmod']}}">
+          <input type="hidden" name="ID" value="{{row['ID']}}">
+          <input type="hidden" name="exper" value="{{row['exper']}}">
           <div class="panel panel-default col-sm-3" style="border: none;">
-            <p><label for="exper">exper </label><input disabled id="exper" name="exper" value="{{row['exper']}}"></p>
+            <label for="exper">exper </label><input disabled id="exper" name="exper" value="{{row['exper']}}"><br>
           </div>
-        </fieldset>
-        <fieldset>
+	</fieldset>
+
+	<fieldset>
           <textarea id="{{boxid}}" name="note">{{row['note']}}</textarea>
         </fieldset>
-        
         {% include "donesavecancel.html" %}
       </form>
     </div>
