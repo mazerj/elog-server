@@ -606,8 +606,8 @@ def session_new(animal, date):
 					 (string.join(r.keys(), ','), tuple([r[k] for k in r.keys()]),))
 		if x is None:
 			return Error("Can't insert %s/%s" % (animal, date))
-	
-	return redirect("/animals/%s/sessions/%s" % (animal, date))
+
+	return redirect("/animals/%s/sessions/%s/edit" % (animal, date))
 
 
 def getform(r=None):
@@ -628,7 +628,7 @@ def session_today(animal, ndays):
 	t = today(int(ndays))
 	rows = db.query("""SELECT date FROM session WHERE date='%s' AND animal='%s'""" % (t, animal))
 	if rows is not None and len(rows) > 0:
-		return redirect('/animals/%s/sessions/%s' % (animal, t,))
+		return redirect('/animals/%s/sessions/%s/edit' % (animal, t,))
 	else:
 		return session_new(animal, t)
 
