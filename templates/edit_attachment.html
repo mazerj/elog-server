@@ -13,17 +13,21 @@
     {% include "navbar.html" %}
 
     <div class="container-fluid">
-      <div class="well"><h3>Edit: Attachment ID={{row['ID']}}</h3></div>
+
+      <div class="well"><h3>Editing: Attachment {{row['ID']}}</h3></div>
 
       <form class="cmxform" id="editForm" method="post" action="{{action}}">
-        <input type="hidden" name="lastmod" value="{{row['lastmod']}}">
-        <input type="hidden" name="ID" value="{{row['ID']}}">
-        <fieldset>
+	<fieldset>
+          <input type="hidden" name="lastmod" value="{{row['lastmod']}}">
+          <input type="hidden" name="ID" value="{{row['ID']}}">
           <div class="panel panel-default col-sm-3" style="border: none;">
-            <p><label for="exper">title</label><input title id="title" name="title" value="{{row['title']}}"></p>
+            <label for="title">title</label><input title id="title" name="title" value="{{row['title']}}"><br>
           </div>
-        </fieldset>
-        <textarea id="{{boxid}}" name="note">{{row['note']}}</textarea>
+	</fieldset>
+	
+	<fieldset>
+          <textarea id="{{boxid}}" name="note">{{row['note']}}</textarea>
+	</fieldset>
 
         <img src="data:image/jpg;base64,{{row['data']|safe}}" style="max-width: 250px;">
         <span class="badge">thumb</span>

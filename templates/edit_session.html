@@ -3,58 +3,55 @@
 
   <head>
     {% include "header2.html" %}
-
+    
     {% set boxid="session-note" %}
     {% include "editbox.html" %}
-
-  </head>
-
-  <body>
-
-    {% include "navbar.html" %}
-
-<div class="container-fluid">
-
-  <div class="well"><h3>Edit: {{row['animal']}} {{row['date']}}</h3></div>
-
-  <form class="cmxform" id="editForm" method="post" action="{{action}}">
-    <input type="hidden" name="lastmod" value="{{row['lastmod']}}">
-    <input type="hidden" name="ID" value="{{row['ID']}}">
-    <input type="hidden" name="animal" value="{{row['animal']}}">
-    <input type="hidden" name="date" value="{{row['date']}}">
-    <fieldset>
-      <div class="form-group col-sm-3">
-        <p><label for="animal">animal</label><input disabled id="animal" name="animal" value="{{row['animal']}}"></p>
-        <p><label for="date">date</label><input disabled id="date" name="date" value="{{row['date']}}"></p>
-        <p><label for="weight">wt (kg)</label><input id="weight" type="number" name="weight" value="{{row['weight']}}"></p>
-        <p><label for="thweight">th-wt (kg)</label><input id="thweight" type="number" name="thweight" value="{{row['thweight']}}"></p>
-        <p><label for="food"># bisc</label><input id="food" type="digits" name="food" value="{{row['food']}}"></p>
-      </div>
-      <div class="form-group col-sm-3">
-        <p><label for="water_work">work (ml)</label><input id="water_work" type="digits" name="water_work" value="{{row['water_work']}}"></p>
-        <p><label for="water_sup">supp (ml)</label><input id="water_sup" type="digits" name="water_sup" value="{{row['water_sup']}}"></p>
-        <p><label for="fruit_ml">fruit (ml)</label><input id="fruit_ml" type="digits" name="fruit_ml" value="{{row['fruit_ml']}}"></p>
-        <p><label for="fruit">fruit descr</label><input id="fruit" name="fruit" value="{{row['fruit']}}"></p>
-      </div>
-      <div class="form-group col-sm-2">
-        <p><label for="restricted">restricted</label><input id="restricted" type="checkbox" name="restricted" {{ 'checked' if row['restricted'] }}></p>
-        <p><label for="tested">tested</label><input id="tested" type="checkbox" name="tested" {{ 'checked' if row['tested'] }}></p>
-        <p><label for="health_stool">stool</label><input id="health_stool" type="checkbox" name="health_stool" {{ 'checked' if row['health_stool'] }}></p>
-        <p><label for="health_urine">urine</label><input id="health_urine" type="checkbox" name="health_urine" {{ 'checked' if row['health_urine'] }}></p>
-        <p><label for="health_skin">skin</label><input id="health_skin" type="checkbox" name="health_skin" {{ 'checked' if row['health_skin'] }}></p>
-        <p><label for="health_pcv">pcv</label><input id="health_pcv" type="checkbox" name="health_pcv" {{ 'checked' if row['health_pcv'] }}></p>
-      </div>
-    </fieldset>
-    <fieldset>
-      <textarea id="{{boxid}}" name="note">{{row['note']}}</textarea>
-    </fieldset>
     
-    {% include "donesavecancel.html" %}
-  </form>
-</div>
+  </head>
+  
+  <body>
+    
+    {% include "navbar.html" %}
+    
+    <div class="well"><h3>Editing: {{row['animal']}} {{row['date']}}</h3></div>
 
-<script>
-  $("#editForm").validate();
-</script>
-
-</body>
+    <form class="cmxform" id="editForm" method="post" action="{{action}}">
+      <fieldset>
+	<input type="hidden" name="lastmod" value="{{row['lastmod']}}">
+	<input type="hidden" name="ID" value="{{row['ID']}}">
+	<input type="hidden" name="animal" value="{{row['animal']}}">
+	<input type="hidden" name="date" value="{{row['date']}}">
+	<div class="form-group panel col-sm-3">
+          <label for="animal">animal</label><input disabled id="animal" name="animal" value="{{row['animal']}}"><br>
+          <label for="date">date</label><input disabled id="date" name="date" value="{{row['date']}}"><br>
+          <label for="weight">wt (kg)</label><input id="weight" type="number" name="weight" value="{{row['weight']}}"><br>
+          <label for="thweight">th-wt (kg)</label><input id="thweight" type="number" name="thweight" value="{{row['thweight']}}"><br>
+          <label for="food"># bisc</label><input id="food" type="digits" name="food" value="{{row['food']}}"><br>
+	</div>
+	<div class="form-group panel col-sm-3">
+          <label for="water_work">work (ml)</label><input id="water_work" type="digits" name="water_work" value="{{row['water_work']}}"><br>
+          <label for="water_sup">supp (ml)</label><input id="water_sup" type="digits" name="water_sup" value="{{row['water_sup']}}"><br>
+          <label for="fruit_ml">fruit (ml)</label><input id="fruit_ml" type="digits" name="fruit_ml" value="{{row['fruit_ml']}}"><br>
+          <label for="fruit">fruit descr</label><input id="fruit" name="fruit" value="{{row['fruit']}}"><br>
+	</div>
+	<div class="form-group panel col-sm-2">
+          <label for="restricted">restricted</label><input id="restricted" type="checkbox" name="restricted" {{ 'checked' if row['restricted'] }}><br>
+          <label for="tested">tested</label><input id="tested" type="checkbox" name="tested" {{ 'checked' if row['tested'] }}><br>
+          <label for="health_stool">stool</label><input id="health_stool" type="checkbox" name="health_stool" {{ 'checked' if row['health_stool'] }}><br>
+          <label for="health_urine">urine</label><input id="health_urine" type="checkbox" name="health_urine" {{ 'checked' if row['health_urine'] }}><br>
+          <label for="health_skin">skin</label><input id="health_skin" type="checkbox" name="health_skin" {{ 'checked' if row['health_skin'] }}><br>
+          <label for="health_pcv">pcv</label><input id="health_pcv" type="checkbox" name="health_pcv" {{ 'checked' if row['health_pcv'] }}><br>
+	</div>
+      </fieldset>
+      <fieldset>
+	<textarea id="{{boxid}}" name="note">{{row['note']}}</textarea>
+      </fieldset>
+      
+      {% include "donesavecancel.html" %}
+    </form>
+    
+    <script>
+      $("#editForm").validate();
+    </script>
+    
+  </body>
