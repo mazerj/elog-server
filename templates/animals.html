@@ -8,85 +8,80 @@
     {% include "navbar.html" %}
 
     <div class="container-fluid">
+      
+      <div class="well">
+        <h3>{{ANIMALS|length}} animals in database</h3>
+      </div>
+      
 
-      <div class="panel panel-default">
+      <div class="panel">
+        {% for (a,live) in ANIMALS %}
+	
+        <div class="panel panel-body" style="margin-bottom:15px; padding:0px;">
 
-        <div class="panel panel-heading">
-          <h1>{{ANIMALS|length}} animals in database</h1>
-        </div>
-
-        <div class="panel panel-body">
-          {% for (a,l) in ANIMALS %}
-          <div class="panel btn-group-horizontal">
-            {% if l == 1 %}
+            {% if live == 1 %}
               <label class="badge"
  		     style="background-color: green;
 			    width:90px; text-align: left; margin-right:10px;">
                 <span class="glyphicon glyphicon-heart-empty"></span>
                 {{a}}
               </label>
-            {% else %}
+              {% else %}
               <label class="badge btn-default"
                      style="width:90px; text-align:left;margin-right:10px;">
                 <span class="glyphicon glyphicon-remove"></span>
                 {{a}}
               </label>
-            {% endif %}
-            <button class="btn-default">
-              <a href="/animals/{{a}}">TOC</a></button>
-            <button class="btn-default">
-              <a href="/animals/{{a}}/gotodate">goto</a></button>
+              {% endif %}
 
-	    <!-- DOESN'T WORK YET	    
-	    <div class="btn-default dropdown">
-	      <button class="btn-default"
-		      type="button" id="dropdownMenuButton"
-		      data-toggle="dropdown">
-		jump to
-	      </button>
-	      <div class="dropdown-menu">
-		<a class="dropdown-item" href="/animals/{{a}}/sessions/today/0">today</a>
-		<a class="dropdown-item" href="/animals/{{a}}/sessions/today/1">yesterday</a>
-		<a class="dropdown-item" href="/animals/{{a}}/sessions/today/2">day before yesterday</a>
+	      <div class="btn-group">
+		<button type="button" class="btn btn-primary">
+		  <a style="color:white;" href="/animals/{{a}}">TOC</a></button>
+		
+		<button type="button" class="btn btn-primary">
+		  <a style="color:white;" href="/animals/{{a}}/gotodate">pick date</a></button>
+		
+		<div class="btn-group">
+		  <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+		    recent <span class="caret"></span></button>
+		  <ul class="dropdown-menu" role="menu">
+		    <li><a class="dropdown-item" href="/animals/{{a}}/sessions/today/0">today</a></li>
+		    <li><a class="dropdown-item" href="/animals/{{a}}/sessions/today/1">yesterday</a></li>
+		    <li><a class="dropdown-item" href="/animals/{{a}}/sessions/today/2">day before yesterday</a></li>
+		  </ul>
+		</div>
+		<div class="btn-group">
+		  <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+		    plots <span class="caret"></span></button>
+		  <ul class="dropdown-menu" role="menu">
+		    <li><a class="dropdown-item" href="/animals/{{a}}/fluid/plot" target="_blank">
+			fluids  <span class="glyphicon glyphicon-new-window"></span>
+		    </a></li>
+			  
+		    <li><a class="dropdown-item" href="/animals/{{a}}/weight/plot" target="_blank">
+			weights  <span class="glyphicon glyphicon-new-window"></span>
+		    </a></li>
+		  </ul>
+		</div>
 	      </div>
-	    </div>
-	    -->
-            <button class="btn-default">
-              <a href="/animals/{{a}}/sessions/today/0">today</a></button>
-            <button class="btn-default">
-              <a href="/animals/{{a}}/sessions/today/1">yesterday</a></button>
-            <button class="btn-default">
-              <a href="/animals/{{a}}/sessions/today/2">day before</a></button>
-            <button class="btn-default"
-                    style="margin-left:10px;">
-              <a href="/animals/{{a}}/fluid/plot" target="_blank">
-		fluids  <span class="glyphicon glyphicon-new-window"></span>
-	      </a>
-	    </button>
-            <button class="btn-default">
-              <a href="/animals/{{a}}/weight/plot" target="_blank">
-		weights  <span class="glyphicon glyphicon-new-window"></span>
-	      </a>
-	    </button>
-            <button class="btn-default"
-                    style="margin-left:10px;">
-              <a href="/animals/{{a}}/edit">
-		<span class="glyphicon glyphicon-info-sign"></span>
-		edit
-	      </a>
-	    </button>
-            <button type="button"
-                    style="background-color: pink; margin-left:10px;"
-                    onClick="bootbox.confirm('Really delete {{a}}?',
-                             function(r) {if (r) window.location.href='/animals/{{a}}/deleteC';})">
-              <a>
-		<span class="glyphicon glyphicon-warning-sign"></span>
-		Delete
-	      </a>
-	    </button>
-          </div>
-          {% endfor %}
-        </div>
+	      
+
+	      <div class="btn-group">
+		<button type="button" class="btn btn-primary">
+		  <a href="/animals/{{a}}/edit" style="color:white;">
+		    <span class="glyphicon glyphicon-info-sign"></span>
+		    edit
+		  </a>
+		</button>
+
+		<button type="button" class="btn btn-primary" style="background-color:pink;"
+			onClick="bootbox.confirm('Really delete {{a}}?',
+				 function(r) {if (r) window.location.href='/animals/{{a}}/deleteC';})">
+		  <a style="color:black;"><span class="glyphicon glyphicon-warning-sign"></span> Delete </a>
+		</button>
+	      </div>
+	  </div>
+        {% endfor %}
       </div>
 
       <div class="panel panel-footer">
