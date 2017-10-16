@@ -21,8 +21,8 @@
     <div class="container-fluid">
 
       <div class="panel panel-default">
-        <div class="panel-heading">
-          <h1>Sessions: {{ANIMAL}}</h1>
+        <div class="well">
+          <h3>Sessions: {{ANIMAL}}</h3>
         </div>
         <div class="panel-body">
 
@@ -35,15 +35,15 @@
 
           {% for year in years %}
           <div class="panel panel-default">
-            <div class="panel-heading">
-              {{year}}
+            <div class="well">
+              <h4>{{year}}</h4>
             </div>
             <div class="panel-body">
               {% for month in range(12,-1,-1) %}
                 {% if toc[year][month]|length > 0 %}
                   <div class="panel panel-default">
-                    <div class="panel-heading">
-                      {{MONTHS[month]}} {{year}}
+                    <div class="well">
+                      <h4>{{MONTHS[month]}} {{year}}</h4>
                     </div>
                     <div class="panel-body">
                       <div class="btn-group-horizontal" role="group">
