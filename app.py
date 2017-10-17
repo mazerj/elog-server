@@ -454,13 +454,14 @@ def ytdpick():
 	db = getdb()
 
 	rows = db.query("""SELECT date FROM session WHERE 1""")
-    
-	l = sorted(uniq(['/ytd/%s' % d[:4]
-					 for d in ['%s' % r['date'] for r in rows]]))[::-1]
+
+    labels = sorted(uniq(['%s' % d[:4]
+                             for d in ['%s' % r['date'] for r in rows]]))[::-1]
+    urls = ['/ytd/%s' % y for y in labels]
 	env = baseenv()
-	return render_template("searchresult.html",
-						   message="Select year",
-						   items=l, **env)
+	return render_template("searchresult2.html",
+						   message="Select year for YTD report",
+						   items=zip(labels, urls), **env)
 
 @app.route('/prefs/<name>/<value>/set')
 @requires_auth
@@ -732,14 +733,30 @@ def fluids_specific(year, month):
 @requires_auth
 def rpick():
 	db = getdb()
-
 	rows = db.query("""SELECT date FROM session WHERE 1""")
-	l = sorted(uniq(['/report/fluids/%s' % d[:7]
-					 for d in ['%s' % r['date'] for r in rows]]))[::-1]
+    
+    labels = sorted(uniq(['%s' % d[:4]
+                             for d in ['%s' % r['date'] for r in rows]]))[::-1]
+    urls = ['/report/pick/%s' % y for y in labels]
 	env = baseenv()
-	return render_template("searchresult.html",
-						   message="Select month",
-						   items=l, **env)
+	return render_template("searchresult2.html",
+						   message="Select report year",
+						   items=zip(labels, urls), **env)
+
+
+@app.route('/report/pick/<year>')
+@requires_auth
+def rpick_month(year):
+	db = getdb()
+	rows = db.query("""SELECT date FROM session WHERE YEAR(date) = %s""" % year)
+    
+    labels = sorted(uniq(['%s' % d[:7]
+                             for d in ['%s' % r['date'] for r in rows]]))[::-1]
+    urls = ['/report/fluids/%s' % m for m in labels]
+	env = baseenv()
+	return render_template("searchresult2.html",
+						   message="Select report month",
+						   items=zip(labels, urls), **env)
 
 @app.route('/expers/<exper>/edit')
 @requires_auth
