@@ -3,7 +3,7 @@
 <div class="panel panel-default panel-exper">
   <div class="well">
     <div class="btn-group">
-      <button disabled>
+      <button disabled style="border-width:0px; background-color:transparent;">
 	{{exper}}
       </button>
       {% if RW %}
@@ -17,7 +17,7 @@
     </div>
   </div>
   
-  <div class="panel panel-body">
+  <div class="panel panel-body" style="margin:0px; padding:0px">
     <!-- general notes -->
     {% for (code, content) in note %}
       {% if code == 0 %}
@@ -29,10 +29,10 @@
     
     <!-- units -->
     {% for unit in units %}
-      <div class="panel panel-default panel-unit">
+      <div class="panel panel-default panel-unit" style="margin:0px; padding:0px">
         <div class="well">
 	  <div class="btn-group">
-	    <button disabled>
+	    <button disabled style="border-width:0px; background-color:transparent;">
               {{exper}}:{{unit['unit']}}
 	    </button>
             {% if RW %}
@@ -42,12 +42,14 @@
 	      <button class="hidden-print">
 		<a style="color:red;"
 		   onClick="bootbox.confirm('Really delete {{exper}}:{{unit['unit']}}?',
-                   function(r) {if (r) window.location.href='/expers/{{exper}}/units/{{unit['unit']}}/deleteC';})">Delete Unit</a>
+                   function(r) {if (r) window.location.href='/expers/{{exper}}/units/{{unit['unit']}}/deleteC';})">
+		   Delete Unit <span class="glyphicon glyphicon-warning-sign"></span></a>
+		</a>
 	      </button>
             {% endif %}
           </div>
 	</div>
-        <div class="panel panel-body">
+        <div class="panel panel-body" style="margin:0px; padding:0px">
           <div class="panel panel-default col-sm-3">
             <div class="pbox-l col-sm-6">date</div>
             <div class="pbox-r col-sm-6">{{unit['date']}}&nbsp</div>

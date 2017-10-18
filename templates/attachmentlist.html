@@ -74,8 +74,8 @@
     <div class="panel">
 
       <div class="well">
-        <button disabled>Attachment Directory</button>
-        <button disabled>newest</button>
+	<button disabled style="border-width:0px; background-color:transparent;">Attachment Directory</button>
+        <button disabled style="border-width:0px; background-color:transparent;">newest</button>
 	<div class="btn-group">
           <button type="button" class="btn btn-primary">
 	    <a href="/attachments/showlist/1" style="color:white;"><span class="glyphicon glyphicon-fast-backward"></span></a>
@@ -96,8 +96,8 @@
 	    <a href="/attachments/showlist/10000" style="color:white;"><span class="glyphicon glyphicon-fast-forward"></span></a>
 	  </button>
 	</div>
-        <button disabled>oldest</button>
-        <button disabled>Page {{page}}/{{pages}}</button>
+        <button disabled style="border-width:0px; background-color:transparent;">oldest</button>
+        <button disabled style="border-width:0px; background-color:transparent;">Page {{page}}/{{pages}}</button>
 	
       </div>
 	  
@@ -116,7 +116,7 @@
                     </a>
                     <div class="caption">
                       <div class="btn-group">
-                        <button class="badge" disabled>
+			<button disabled style="border-width:1px; background-color:transparent;">			
 			  #{{'%d'|format(r['ID'])}}
 			</button>
                         <button>
@@ -134,7 +134,9 @@
                         <button>
 			  <a style="color:red;"
                              onClick="bootbox.confirm('Really delete attachment?',
-				      function(r) {if (r) window.location.href='/attachments/{{'%d'|format(r['ID'])}}/deleteC'})">delete</a>
+				      function(r) {if (r) window.location.href='/attachments/{{'%d'|format(r['ID'])}}/deleteC'})">
+			    delete <span class="glyphicon glyphicon-warning-sign"></span></a>
+			  </a>
 			</button>
                       </div>
                       <h4>{{r['title']}}</h4>

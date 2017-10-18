@@ -8,16 +8,18 @@
     {% include "navbar.html" %}
 
     <div class="container-fluid">
-      <div class="panel panel-warning">
+      <div class="panel">
         <div class="well">
           <h3>{{message}}</h3>
         </div>
         <div class="panel panel-body">
-          {% for item in items %}
-            <button class="btn btn-default">
-              <a href="{{item}}">{{item}}</a>
-            </button>
-          {% endfor %}
+	  <div class="btn-group-vertical">
+	    {% for item in items %}
+              <button class="btn btn-default">
+		<a href="{{item}}">{{item}}</a>
+              </button>
+            {% endfor %}
+	  </div>
         </div>
       </div>
     </div>

@@ -3,9 +3,9 @@
    line-height: 1.2;
 }
 
-.panel { margin-bottom: 0px; margin-top: 0px; margin-left: 0px; margin-right: 0px;}
+.panel { margin-bottom: 0px; margin-top: 0px; margin-left: 0px; margin-right: 0px; }
 
-.navbar { margin-left: 5px; margin-right: 5px; margin-top: 5px; font-size: 125%;}
+.navbar { margin-left: 5px; margin-right: 5px; margin-top: 5px; font-size: 125%; }
 
 .note {
     width:100%;
@@ -102,3 +102,5 @@ form.cmxform fieldset fieldset label {
     .pbox-l, .pbox-r { padding-left: 2px; padding-right: 2px;}
  }
 }
+
+*panel* {border: 0px};
