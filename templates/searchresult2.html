@@ -1,3 +1,5 @@
+{# -*- mode:jinja2 -*- #}
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -13,9 +15,9 @@
       </div>
       <div class="panel panel-body">
         {% for (name, item) in items %}
-        <button class="btn btn-default">
-          <a href="{{item}}">{{name}}</a>
-        </button>
+          <button class="btn btn-default">
+            <a href="{{item}}">{{name}}</a>
+          </button>
         {% endfor %}
       </div>
     </div>

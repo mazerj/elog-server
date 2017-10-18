@@ -1,158 +1,160 @@
+{# -*- mode:jinja2 -*- #}
+
 <DOCTYPE html>
-<html lang="en">
+  <html lang="en">
 
-  <head>
-    {% include "header2.html" %}
-    <script>
-      // SRC http://stackoverflow.com/questions/400212/how-do-i-copy-to-the-clipboard-in-javascript?noredirect=1&lq=1
-      function copyTextToClipboard(text) {
-      var textArea = document.createElement("textarea");
+    <head>
+      {% include "header2.html" %}
+      <script>
+	// SRC http://stackoverflow.com/questions/400212/how-do-i-copy-to-the-clipboard-in-javascript?noredirect=1&lq=1
+	function copyTextToClipboard(text) {
+	var textArea = document.createElement("textarea");
 
-      //
-      // *** This styling is an extra step which is likely not required. ***
-      //
-      // Why is it here? To ensure:
-      // 1. the element is able to have focus and selection.
-      // 2. if element was to flash render it has minimal visual impact.
-      // 3. less flakyness with selection and copying which **might** occur if
-      //    the textarea element is not visible.
-      //
-      // The likelihood is the element won't even render, not even a flash,
-      // so some of these are just precautions. However in IE the element
-      // is visible whilst the popup box asking the user for permission for
-      // the web page to copy to the clipboard.
-      //
-      
-      // Place in top-left corner of screen regardless of scroll position.
-      textArea.style.position = 'fixed';
-      textArea.style.top = 0;
-      textArea.style.left = 0;
-      
-      // Ensure it has a small width and height. Setting to 1px / 1em
-      // doesn't work as this gives a negative w/h on some browsers.
-      textArea.style.width = '2em';
-      textArea.style.height = '2em';
-      
-      // We don't need padding, reducing the size if it does flash render.
-      textArea.style.padding = 0;
-      
-      // Clean up any borders.
-      textArea.style.border = 'none';
-      textArea.style.outline = 'none';
-      textArea.style.boxShadow = 'none';
-      
-      // Avoid flash of white box if rendered for any reason.
-      textArea.style.background = 'transparent';
-      
-      
-      textArea.value = text;
-      
-      document.body.appendChild(textArea);
-      
-      textArea.select();
-      
-      try {
-      var successful = document.execCommand('copy');
-      var msg = successful ? 'successful' : 'unsuccessful';
-      console.log('Copying text command was ' + msg);
-      } catch (err) {
-      console.log('Oops, unable to copy');
-      }
-
-      document.body.removeChild(textArea);
-      }
-    </script>
-
-  </head>
-
-  <body>
-
-    {% include "navbar.html" %}
-
-
-    <div class="container-fluid">
-    <div class="panel">
-
-      <div class="well">
-	<button disabled style="border-width:0px; background-color:transparent;">Attachment Directory</button>
-        <button disabled style="border-width:0px; background-color:transparent;">newest</button>
-	<div class="btn-group">
-          <button type="button" class="btn btn-primary">
-	    <a href="/attachments/showlist/1" style="color:white;"><span class="glyphicon glyphicon-fast-backward"></span></a>
-	  </button>
-          <button type="button" class="btn btn-primary">
-	    <a href="/attachments/showlist/{{page-10}}" style="color:white;"><span class="glyphicon glyphicon-step-backward"></span></a>
-	  </button>
-          <button type="button" class="btn btn-primary">
-	    <a href="/attachments/showlist/{{page-1}}" style="color:white;"><span class="glyphicon glyphicon-chevron-left"></span></a>
-	  </button>
-          <button type="button" class="btn btn-primary">
-	    <a href="/attachments/showlist/{{page+1}}" style="color:white;"><span class="glyphicon glyphicon-chevron-right"></span></a>
-	  </button>
-          <button type="button" class="btn btn-primary">
-	    <a href="/attachments/showlist/{{page+10}}" style="color:white;"><span class="glyphicon glyphicon-step-forward"></span></a>
-	  </button>
-          <button type="button" class="btn btn-primary">
-	    <a href="/attachments/showlist/10000" style="color:white;"><span class="glyphicon glyphicon-fast-forward"></span></a>
-	  </button>
-	</div>
-        <button disabled style="border-width:0px; background-color:transparent;">oldest</button>
-        <button disabled style="border-width:0px; background-color:transparent;">Page {{page}}/{{pages}}</button>
+	//
+	// *** This styling is an extra step which is likely not required. ***
+	//
+	// Why is it here? To ensure:
+	// 1. the element is able to have focus and selection.
+	// 2. if element was to flash render it has minimal visual impact.
+	// 3. less flakyness with selection and copying which **might** occur if
+	//    the textarea element is not visible.
+	//
+	// The likelihood is the element won't even render, not even a flash,
+	// so some of these are just precautions. However in IE the element
+	// is visible whilst the popup box asking the user for permission for
+	// the web page to copy to the clipboard.
+	//
 	
-      </div>
+	// Place in top-left corner of screen regardless of scroll position.
+	textArea.style.position = 'fixed';
+	textArea.style.top = 0;
+	textArea.style.left = 0;
+	
+	// Ensure it has a small width and height. Setting to 1px / 1em
+	// doesn't work as this gives a negative w/h on some browsers.
+	textArea.style.width = '2em';
+	textArea.style.height = '2em';
+	
+	// We don't need padding, reducing the size if it does flash render.
+	textArea.style.padding = 0;
+	
+	// Clean up any borders.
+	textArea.style.border = 'none';
+	textArea.style.outline = 'none';
+	textArea.style.boxShadow = 'none';
+	
+	// Avoid flash of white box if rendered for any reason.
+	textArea.style.background = 'transparent';
+	
+	
+	textArea.value = text;
+	
+	document.body.appendChild(textArea);
+	
+	textArea.select();
+	
+	try {
+	var successful = document.execCommand('copy');
+	var msg = successful ? 'successful' : 'unsuccessful';
+	console.log('Copying text command was ' + msg);
+	} catch (err) {
+	console.log('Oops, unable to copy');
+	}
+
+	document.body.removeChild(textArea);
+	}
+      </script>
+
+    </head>
+
+    <body>
+
+      {% include "navbar.html" %}
+
+
+      <div class="container-fluid">
+	<div class="panel">
+
+	  <div class="well">
+	    <button disabled style="border-width:0px; background-color:transparent;">Attachment Directory</button>
+            <button disabled style="border-width:0px; background-color:transparent;">newest</button>
+	    <div class="btn-group">
+              <button type="button" class="btn btn-primary">
+		<a href="/attachments/showlist/1" style="color:white;"><span class="glyphicon glyphicon-fast-backward"></span></a>
+	      </button>
+              <button type="button" class="btn btn-primary">
+		<a href="/attachments/showlist/{{page-10}}" style="color:white;"><span class="glyphicon glyphicon-step-backward"></span></a>
+	      </button>
+              <button type="button" class="btn btn-primary">
+		<a href="/attachments/showlist/{{page-1}}" style="color:white;"><span class="glyphicon glyphicon-chevron-left"></span></a>
+	      </button>
+              <button type="button" class="btn btn-primary">
+		<a href="/attachments/showlist/{{page+1}}" style="color:white;"><span class="glyphicon glyphicon-chevron-right"></span></a>
+	      </button>
+              <button type="button" class="btn btn-primary">
+		<a href="/attachments/showlist/{{page+10}}" style="color:white;"><span class="glyphicon glyphicon-step-forward"></span></a>
+	      </button>
+              <button type="button" class="btn btn-primary">
+		<a href="/attachments/showlist/10000" style="color:white;"><span class="glyphicon glyphicon-fast-forward"></span></a>
+	      </button>
+	    </div>
+            <button disabled style="border-width:0px; background-color:transparent;">oldest</button>
+            <button disabled style="border-width:0px; background-color:transparent;">Page {{page}}/{{pages}}</button>
+	    
+	  </div>
 	  
-      <div class="panel-body">
-        {% for n in range(0, rows|length, 4) %}
-          <div class="row">
-            {% for k in range(4) %}
-              {% if (n+k) < rows|length %}
-                {% set r=rows[n+k] %}
-                <div class="col-sm-6 col-md-3">
-                  <div class="thumbnail">
-                    <a href="/attachments/{{'%d'|format(r['ID'])}}/edit"
-                       title="edit: #{{'%d'|format(r['ID'])}} {{r['date']}}">
-                      <img src="data:image/jpg;base64,{{r['data']|safe}}"
-                           style="max-height: 100px;">
-                    </a>
-                    <div class="caption">
-                      <div class="btn-group">
-			<button disabled style="border-width:1px; background-color:transparent;">			
-			  #{{'%d'|format(r['ID'])}}
-			</button>
-                        <button>
-			  <a
-                            href="/attachments/{{'%d'|format(r['ID'])}}/edit">edit</a>
-			</button>
-                        <button>
-			  <a
-                            onClick="copyTextToClipboard('<elog:attach={{r['ID']}}>')">copy</a>
-			</button>
-                        <button>
-			  <a
-			    href="/search/attach={{'%d'|format(r['ID'])}}">find</a>
-			</button>
-                        <button>
-			  <a style="color:red;"
-                             onClick="bootbox.confirm('Really delete attachment?',
-				      function(r) {if (r) window.location.href='/attachments/{{'%d'|format(r['ID'])}}/deleteC'})">
-			    delete <span class="glyphicon glyphicon-warning-sign"></span></a>
-			  </a>
-			</button>
-                      </div>
-                      <h4>{{r['title']}}</h4>
-                      {{r['note']}}
-                    </div>
-                  </div>
-                </div>
-              {% endif %}
-            {% endfor %}
-          </div>
-        {% endfor %}
-      </div>
+	  <div class="panel-body">
+            {% for n in range(0, rows|length, 4) %}
+              <div class="row">
+		{% for k in range(4) %}
+		  {% if (n+k) < rows|length %}
+                    {% set r=rows[n+k] %}
+                    <div class="col-sm-6 col-md-3">
+                      <div class="thumbnail">
+			<a href="/attachments/{{'%d'|format(r['ID'])}}/edit"
+			   title="edit: #{{'%d'|format(r['ID'])}} {{r['date']}}">
+			   <img src="data:image/jpg;base64,{{r['data']|safe}}"
+				style="max-height: 100px;">
+			</a>
+			<div class="caption">
+			  <div class="btn-group">
+			    <button disabled style="border-width:1px; background-color:transparent;">			
+			      #{{'%d'|format(r['ID'])}}
+			    </button>
+                            <button>
+			      <a
+				href="/attachments/{{'%d'|format(r['ID'])}}/edit">edit</a>
+			    </button>
+                            <button>
+			      <a
+				onClick="copyTextToClipboard('<elog:attach={{r['ID']}}>')">copy</a>
+			    </button>
+                            <button>
+			      <a
+				href="/search/attach={{'%d'|format(r['ID'])}}">find</a>
+			    </button>
+                            <button>
+			      <a style="color:red;"
+				 onClick="bootbox.confirm('Really delete attachment?',
+				 function(r) {if (r) window.location.href='/attachments/{{'%d'|format(r['ID'])}}/deleteC'})">
+				 delete <span class="glyphicon glyphicon-warning-sign"></span></a>
+</a>
+</button>
+</div>
+<h4>{{r['title']}}</h4>
+{{r['note']}}
+</div>
+</div>
+</div>
+{% endif %}
+{% endfor %}
+</div>
+{% endfor %}
+</div>
 
-    {% include "footer.html" %}
-    {% include "js.html" %}
+{% include "footer.html" %}
+{% include "js.html" %}
 
-  </body>
+</body>
 
 </html>

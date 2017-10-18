@@ -1,104 +1,106 @@
-{% if RW %}
-<script>
-  // catch paste event in the pastebox -- if it's really an image, then
-  // stick the data in the 'idata' hidden element and generate a submit
-  // event. Note: need to iterate over all clipboardData.items and find
-  // any images inside -- image might not be first item..
+{# -*- mode:jinja2 -*- #}
 
-  $(document).ready(function() {
+{% if RW %}
+  <script>
+    // catch paste event in the pastebox -- if it's really an image, then
+    // stick the data in the 'idata' hidden element and generate a submit
+    // event. Note: need to iterate over all clipboardData.items and find
+    // any images inside -- image might not be first item..
+
+    $(document).ready(function() {
     var pasteReciever = function(e) {
-      e.preventDefault();
-      $('#pastebox').val("");
-      if (e.clipboardData) {
-        d = e.clipboardData.items;
-      } else {
-        d = e.originalEvent.clipboardData.items;
-      }
-      for (n = 0; n < d.length; n++) {
-        if (/image\/.*/.test(d[n].type)) {
-          var data = d[n].getAsFile();
-          var fr = new FileReader;
-          fr.onloadend = function() {
-            $('#idata').val(fr.result);
-            $('#paste').submit();
-          };
-          fr.readAsDataURL(data);
-        }
-      }
+    e.preventDefault();
+    $('#pastebox').val("");
+    if (e.clipboardData) {
+    d = e.clipboardData.items;
+    } else {
+    d = e.originalEvent.clipboardData.items;
+    }
+    for (n = 0; n < d.length; n++) {
+    if (/image\/.*/.test(d[n].type)) {
+    var data = d[n].getAsFile();
+    var fr = new FileReader;
+    fr.onloadend = function() {
+    $('#idata').val(fr.result);
+    $('#paste').submit();
+    };
+    fr.readAsDataURL(data);
+    }
+    }
     };
     $('#pastebox').bind('paste', pasteReciever);
-  });
-</script>
-{% endif %}
+    });
+		    </script>
+		  {% endif %}
 
-<nav class="navbar navbar-default">
-  <div class="container-fluid">
+		  <nav class="navbar navbar-default">
+		    <div class="container-fluid">
 
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed"
-              data-toggle="collapse" data-target="#navbar"
-              aria-expanded="false" aria-controls="navbar">
-        {# show the hamburger when collapsed for small display #}
-        <span class="glyphicon glyphicon-menu-hamburger"></span>
-      </button>
-      <a class="navbar-brand" href="/about">
-        <img style="max-height:20px; vertical-align:middle;"
-             src="/assets/elog-logo.png">
-      </a>
-    </div>
+		      <div class="navbar-header">
+			<button type="button" class="navbar-toggle collapsed"
+				data-toggle="collapse" data-target="#navbar"
+				aria-expanded="false" aria-controls="navbar">
+				{# show the hamburger when collapsed for small display #}
+				<span class="glyphicon glyphicon-menu-hamburger"></span>
+			</button>
+			<a class="navbar-brand" href="/about">
+			  <img style="max-height:20px; vertical-align:middle;"
+			       src="/assets/elog-logo.png">
+			</a>
+		      </div>
 
-    <div id="navbar" class="navbar-collapse collapse">
-      <ul class="nav navbar-nav">
-        <li>
-          <a href="/">
-            <span class="glyphicon glyphicon-home"></span> Animals
-          </a>
-        </li>
-        <li>
-          <a href="/ytd/pick">YTD Rep</a>
-        </li>
-        <li>
-          <a href="/report/pick">Monthly Rep</a>
-        </li>
-        <li>
-          <a href="/attachments/showlist" target="_blank">
-            Attachments <span class="glyphicon glyphicon-new-window"></span>
-          </a>
-        </li>
-        <!-- <li>
-          <a href="/guidelines">Guidelines</a>
-        </li> -->
-        <li>
-          <a href="/logout">Logout {{session['username']}}</a>
-        </li>
-      </ul>
+		      <div id="navbar" class="navbar-collapse collapse">
+			<ul class="nav navbar-nav">
+			  <li>
+			    <a href="/">
+			      <span class="glyphicon glyphicon-home"></span> Animals
+			    </a>
+			  </li>
+			  <li>
+			    <a href="/ytd/pick">YTD Rep</a>
+			  </li>
+			  <li>
+			    <a href="/report/pick">Monthly Rep</a>
+			  </li>
+			  <li>
+			    <a href="/attachments/showlist" target="_blank">
+			      Attachments <span class="glyphicon glyphicon-new-window"></span>
+			    </a>
+			  </li>
+			  <!-- <li>
+			       <a href="/guidelines">Guidelines</a>
+			  </li> -->
+			  <li>
+			    <a href="/logout">Logout {{session['username']}}</a>
+			  </li>
+			</ul>
 
-      <ul class="nav navbar-nav navbar-right">
-        <li>
-          <form id="search" class="navbar-form"
-                role="search" method="post" action="/search">
-            <div class="form-group">
-              <input type="text" class="form-control"
-                     placeholder="exper, date, text" name="pattern">
-              <button type="submit" class="btn btn-default">Search</button>
-            </div>
-          </form>
-        </li>
+			<ul class="nav navbar-nav navbar-right">
+			  <li>
+			    <form id="search" class="navbar-form"
+				  role="search" method="post" action="/search">
+				  <div class="form-group">
+				    <input type="text" class="form-control"
+					   placeholder="exper, date, text" name="pattern">
+					   <button type="submit" class="btn btn-default">Search</button>
+				  </div>
+			    </form>
+			  </li>
 
-        {% if RW %}
-        <li>
-          <form id="paste" class="navbar-form" method="post" action="/paste">
-            <div class="form-group">
-              <input id="idata" name="idata" value="" type="hidden">
-              <input id="pastebox" name="pastebox" type="text"
-                     class="form-control" style="background-color: lightgreen;"
-                     placeholder="paste images here">
-              <button type="submit" class="hidden"></button>
-            </div>
-          </form>
-        </li>
-        {% endif %}
-      </ul>
-    </div>
-  </div>
-</nav>
+			  {% if RW %}
+			    <li>
+			      <form id="paste" class="navbar-form" method="post" action="/paste">
+				<div class="form-group">
+				  <input id="idata" name="idata" value="" type="hidden">
+				  <input id="pastebox" name="pastebox" type="text"
+					 class="form-control" style="background-color: lightgreen;"
+					 placeholder="paste images here">
+					 <button type="submit" class="hidden"></button>
+				</div>
+			      </form>
+			    </li>
+			  {% endif %}
+			</ul>
+		      </div>
+		    </div>
+		  </nav>

@@ -1,17 +1,19 @@
+{# -*- mode:jinja2 -*- #}
+
 <!DOCTYPE html>
 <html lang="en">
 
   <head>
-  {% include "header2.html" %}
+    {% include "header2.html" %}
 
-  <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
-  <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
-  <script>
-  $(function() {
-    $( "#datepicker" ).datepicker();
-    $( "#datepicker" ).datepicker('setDate', new Date());
-  });
-  </script>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+    <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+    <script>
+      $(function() {
+      $( "#datepicker" ).datepicker();
+      $( "#datepicker" ).datepicker('setDate', new Date());
+      });
+    </script>
   </head>
 
   <body>
@@ -29,9 +31,9 @@
 
           <form class="well" method="post"
                 action="/animals/{{ANIMAL}}/sessions/new">
-              <input type="text" id="datepicker" name="date">
-              <button type="submit"
-                      class="btn btn-default">Create/Goto session </button>
+		<input type="text" id="datepicker" name="date">
+		<button type="submit"
+			class="btn btn-default">Create/Goto session </button>
           </form>
         </div>
       </div>

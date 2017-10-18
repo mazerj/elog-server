@@ -1,17 +1,19 @@
+{# -*- mode:jinja2 -*- #}
+
 <!DOCTYPE html>
 <html lang="en">
 
   <head>
-  {% include "header2.html" %}
+    {% include "header2.html" %}
 
-  <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
-  <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
-  <script>
-  $(function() {
-    $( "#datepicker" ).datepicker();
-    $( "#datepicker" ).datepicker('setDate', new Date());
-  });
-  </script>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+    <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+    <script>
+      $(function() {
+      $( "#datepicker" ).datepicker();
+      $( "#datepicker" ).datepicker('setDate', new Date());
+      });
+    </script>
   </head>
 
   <body>
@@ -28,35 +30,35 @@
 
           <form class="well" method="post"
                 action="/animals/{{ANIMAL}}/sessions/new">
-              <input type="text" id="datepicker" name="date">
-              <button type="submit"
-                      class="btn btn-default">Create/Goto session </button>
+		<input type="text" id="datepicker" name="date">
+		<button type="submit"
+			class="btn btn-default">Create/Goto session </button>
           </form>
 
           {% for year in years %}
-          <div class="panel panel-default">
-            <div class="well">
-              <h4>{{year}}</h4>
-            </div>
-            <div class="panel-body">
-              {% for month in range(12,-1,-1) %}
-                {% if toc[year][month]|length > 0 %}
-                  <div class="panel panel-default">
-                    <div class="well">
-                      <h4>{{MONTHS[month]}} {{year}}</h4>
-                    </div>
-                    <div class="panel-body">
-                      <div class="btn-group-horizontal" role="group">
-                        {% for (label, session) in toc[year][month] %}
-                          <a class="btn btn-default" href="{{session}}">{{label|safe}}</a>
-                        {% endfor %}
+            <div class="panel panel-default">
+              <div class="well">
+		<h4>{{year}}</h4>
+              </div>
+              <div class="panel-body">
+		{% for month in range(12,-1,-1) %}
+                  {% if toc[year][month]|length > 0 %}
+                    <div class="panel panel-default">
+                      <div class="well">
+			<h4>{{MONTHS[month]}} {{year}}</h4>
+                      </div>
+                      <div class="panel-body">
+			<div class="btn-group-horizontal" role="group">
+                          {% for (label, session) in toc[year][month] %}
+                            <a class="btn btn-default" href="{{session}}">{{label|safe}}</a>
+                          {% endfor %}
+			</div>
                       </div>
                     </div>
-                  </div>
-                {% endif %}
-              {% endfor %}
+                  {% endif %}
+		{% endfor %}
+              </div>
             </div>
-          </div>
           {% endfor %}
         </div>
       </div>

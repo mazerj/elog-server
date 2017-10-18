@@ -1,3 +1,5 @@
+{# -*- mode:jinja2 -*- #}
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -20,28 +22,28 @@
           {{notes}}
         </div>
         <div class="panel panel-body">
-            {% for (id, json) in plots %}
-              <div class="thumbnail">
-                <div id="{{id}}"></div>
-              </div>
-            {% endfor %}
-          </div>
+          {% for (id, json) in plots %}
+            <div class="thumbnail">
+              <div id="{{id}}"></div>
+            </div>
+          {% endfor %}
         </div>
       </div>
     </div>
+</div>
 
-    <script type"text/javascript">
-      {% for (id, json) in plots %}
-         var j{{id}} = {{json|safe}};
-      {% endfor %}
+<script type"text/javascript">
+  {% for (id, json) in plots %}
+    var j{{id}} = {{json|safe}};
+  {% endfor %}
 
-      {% for (id, json) in plots %}
-        mpld3.draw_figure("{{id}}", j{{id}});
-      {% endfor %}
-    </script>
+  {% for (id, json) in plots %}
+    mpld3.draw_figure("{{id}}", j{{id}});
+  {% endfor %}
+</script>
 
-    {% include "footer.html" %}
-    {% include "js.html" %}
+{% include "footer.html" %}
+{% include "js.html" %}
 
-  </body>
+</body>
 </html>

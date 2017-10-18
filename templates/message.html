@@ -1,3 +1,5 @@
+{# -*- mode:jinja2 -*- #}
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -15,9 +17,9 @@
         <div class="panel panel-body">
           {{message}}
 
-        {% if goto|length > 1 %}
-          <a class="btn btn-default" href="{{goto[1]}}">{{goto[0]}}</a>
-        {% endif %}
+          {% if goto|length > 1 %}
+            <a class="btn btn-default" href="{{goto[1]}}">{{goto[0]}}</a>
+          {% endif %}
         </div>
       </div>
     </div>
