@@ -2,12 +2,21 @@
 
 <div class="panel panel-default panel-exper">
   <div class="well">
-    {% if RW %}
-      <a class="hidden-print btn btn-primary" href="/expers/{{exper}}/edit">Edit Exper</a>
-      <a class="hidden-print btn btn-primary" href="/expers/{{exper}}/newunit">New Unit</a>
-    {% endif %}
-    <h3>{{exper}}</h3>
+    <div class="btn-group">
+      <button disabled>
+	{{exper}}
+      </button>
+      {% if RW %}
+	<button class="hidden-print">
+	  <a href="/expers/{{exper}}/edit">Edit Exper <span class="glyphicon glyphicon-pencil"></span></a>
+	</button>
+	<button class="hidden-print">
+	  <a href="/expers/{{exper}}/newunit">New Unit <span class="glyphicon glyphicon-certificate"></span></a>      
+	</button>
+      {% endif %}
+    </div>
   </div>
+  
   <div class="panel panel-body">
     <!-- general notes -->
     {% for (code, content) in note %}
@@ -17,38 +26,45 @@
         {{content|safe}}
       {% endif %}
     {% endfor %}
-
+    
     <!-- units -->
     {% for unit in units %}
       <div class="panel panel-default panel-unit">
         <div class="well">
-          {% if RW %}
-            <a class="btn btn-primary hidden-print" 
-               href="/expers/{{exper}}/units/{{unit['unit']}}/edit">Edit Unit</a>
-            <a class="btn btn-danger pull-right hidden-print"
-               onClick="bootbox.confirm('Really delete {{exper}}:{{unit['unit']}}?',
-                        function(r) {if (r) window.location.href='/expers/{{exper}}/units/{{unit['unit']}}/deleteC';})">Delete Unit</a>
-          {% endif %}
-          {{exper}}:{{unit['unit']}}
-        </div>
+	  <div class="btn-group">
+	    <button disabled>
+              {{exper}}:{{unit['unit']}}
+	    </button>
+            {% if RW %}
+	      <button class="hidden-print">
+		<a href="/expers/{{exper}}/units/{{unit['unit']}}/edit">Edit Unit <span class="glyphicon glyphicon-pencil"></span></a>
+	      </button>
+	      <button class="hidden-print">
+		<a style="color:red;"
+		   onClick="bootbox.confirm('Really delete {{exper}}:{{unit['unit']}}?',
+                   function(r) {if (r) window.location.href='/expers/{{exper}}/units/{{unit['unit']}}/deleteC';})">Delete Unit</a>
+	      </button>
+            {% endif %}
+          </div>
+	</div>
         <div class="panel panel-body">
           <div class="panel panel-default col-sm-3">
             <div class="pbox-l col-sm-6">date</div>
             <div class="pbox-r col-sm-6">{{unit['date']}}&nbsp</div>
-
+	    
             <div class="pbox-l col-sm-6">well</div>
             <div class="pbox-r col-sm-6">{{unit['well']}}&nbsp</div>
-
+	    
             <div class="pbox-l col-sm-6">well loc</div>
             <div class="pbox-r col-sm-6">{{unit['wellloc']}}&nbsp</div>
           </div>
           <div class="panel panel-default col-sm-3">
             <div class="pbox-l col-sm-6">area</div>
             <div class="pbox-r col-sm-6">{{unit['area']}}&nbsp</div>
-
+	    
             <div class="pbox-l col-sm-6">hemi</div>
             <div class="pbox-r col-sm-6">{{unit['hemi']}}&nbsp</div>
-
+	    
             <div class="pbox-l col-sm-6">depth</div>
             <div class="pbox-r col-sm-6">{{unit['depth']}}um&nbsp</div>
           </div>
@@ -73,44 +89,50 @@
             <div class="pbox-r col-sm-6">{{unit['latency']}}ms&nbsp</div>
           </div>
 
-        <!-- general notes -->
-        {% for (code, content) in unit['note'] %}
-          {% if code == 0 %}
-            <textarea class="note" readonly style="width:100%; height:100%;">{{content}}</textarea>
-          {% else %}
-            {{content|safe}}
-          {% endif %}
-        {% endfor %}
-      </div>
-    {% endfor %}
-
-    {% if dfiles|length < 1 %}
-      <span class="label label-default">No Datafiles</span>
-    {% else %}
-      <ul class="list-group">
-        {% for d in dfiles %}
-          <li class="list-group-item">
-            {% if RW %}
-              <a class="btn btn-primary hidden-print" href="/dfile/{{d['ID']}}/edit">Edit</a>
-            {% endif %}
-            {% if d['crap'] %}
-              <strike>{{d['src']}}</strike>
+          <!-- general notes -->
+          {% for (code, content) in unit['note'] %}
+            {% if code == 0 %}
+              <textarea class="note" readonly style="width:100%; height:100%;">{{content}}</textarea>
             {% else %}
-              {{d['src']}}
+              {{content|safe}}
             {% endif %}
+          {% endfor %}
+	</div>
+      {% endfor %}
+      
+      {% if dfiles|length < 1 %}
+	<span class="label label-default">No Datafiles</span>
+      {% else %}
+        {% for d in dfiles %}
+          <div class="well">
+	    {% if d['crap'] %}
+	      <strike>{{d['src']}}</strike>
+            {% else %}
+	      {{d['src']}}
+            {% endif %}
+	    
+            {% if RW %}
+	      <button class="hidden-print">
+		<a href="/dfile/{{d['ID']}}/edit">Edit dfile <span class="glyphicon glyphicon-pencil"></span></a>
+	      </button>
+            {% endif %}
+	    
             {% if d['note']|length > 0 and d['note'][0][1]|length > 0 %}
-              <br>
-              {% for (code, content) in d['note'] %}
+	      <br>
+	      {% for (code, content) in d['note'] %}
                 {% if code == 0 %}
-                  <textarea class="note" readonly style="width:100%; height:100%;">{{content}}</textarea>
+                  <textarea class="note" readonly style="width:100%; height:100%;">
+		    {{content}}
+		  </textarea>
                 {% else %}
                   {{content|safe}}
                 {% endif %}
-              {% endfor %}
+	      {% endfor %}
             {% endif %}
-          </li>
-        {% endfor %}
-      </ul>
-    {% endif %}
+      </div>
+    {% endfor %}
+  {% endif %}
   </div>
 </div>
+</div>
+

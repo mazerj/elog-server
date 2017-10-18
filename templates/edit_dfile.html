@@ -18,14 +18,16 @@
 
       <form class="cmxform" id="editForm" method="post" action="{{action}}">
 	<fieldset>
+	  <legend>Datafile Params</legend>
           <input type="hidden" name="lastmod" value="{{row['lastmod']}}">
           <input type="hidden" name="ID" value="{{row['ID']}}">
-          <div class="panel panel-default col-sm-3" style="border: none;">
+          <div class="col-sm-3">
             <label for="crap">crap</label><input id="crap" type="checkbox" name="crap" {{ 'checked' if row['crap'] }}>
           </div>
 	</fieldset>
 	
 	<fieldset>
+	  <legend>Notes</legend>
           <textarea id="{{boxid}}" name="note">{{row['note']}}</textarea>
 	</fieldset>
         

@@ -19,15 +19,17 @@
 
       <form class="cmxform" id="editForm" method="post" action="{{action}}">
 	<fieldset>
+	  <legend>Exper Params</legend>
           <input type="hidden" name="lastmod" value="{{row['lastmod']}}">
           <input type="hidden" name="ID" value="{{row['ID']}}">
           <input type="hidden" name="exper" value="{{row['exper']}}">
-          <div class="panel panel-default col-sm-3" style="border: none;">
+          <div class="col-sm-3">
             <label for="exper">exper </label><input disabled id="exper" name="exper" value="{{row['exper']}}"><br>
           </div>
 	</fieldset>
 
 	<fieldset>
+	  <legend>Notes</legend>
           <textarea id="{{boxid}}" name="note">{{row['note']}}</textarea>
         </fieldset>
         {% include "donesavecancel.html" %}

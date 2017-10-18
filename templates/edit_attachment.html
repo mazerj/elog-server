@@ -18,14 +18,16 @@
 
       <form class="cmxform" id="editForm" method="post" action="{{action}}">
 	<fieldset>
+	  <legend>Attachment Params</legend>
           <input type="hidden" name="lastmod" value="{{row['lastmod']}}">
           <input type="hidden" name="ID" value="{{row['ID']}}">
-          <div class="panel panel-default col-sm-3" style="border: none;">
+          <div class="col-sm-3">
             <label for="title">title</label><input title id="title" name="title" value="{{row['title']}}"><br>
           </div>
 	</fieldset>
 	
 	<fieldset>
+	  <legend>Notes</legend>
           <textarea id="{{boxid}}" name="note">{{row['note']}}</textarea>
 	</fieldset>
 

@@ -1,30 +1,46 @@
 {% include "textarea-expand.html" %}
 
-<div class="panel panel-info">
+<div class="panel panel-default">
 
   <div class="well">
-    <a class="hidden-print btn btn-primary" href="/animals/{{animal}}/sessions/{{date}}/prev">
-      <span class="glyphicon glyphicon-chevron-left"></span>
-    </a>
-    <a class="hidden-print btn btn-primary" href="/animals/{{animal}}">
-      TOC
-    </a>
-    
-    <a class="hidden-print btn btn-primary" href="/animals/{{animal}}/sessions/{{date}}/next">
-      <span class="glyphicon glyphicon-chevron-right"></span>
-    </a>
 
-    {% if RW %}
-    <a class="hidden-print btn btn-primary" href="/animals/{{animal}}/sessions/{{date}}/edit">
-      Edit Session
-    </a>
-    <a class="hidden-print btn btn-primary"
-       href="/animals/{{animal}}/sessions/{{date}}/newexper">
-      New Exper
-    </a>
+    <div class="btn-group">
+      <button disabled>
+        {{date}} {{animal}}
+      </button>
+    </div>
 
-    {% endif %}
-    {{date}} {{animal}}
+    <div class="btn-group">
+      {% if RW %}
+	<button>
+	  <a href="/animals/{{animal}}/sessions/{{date}}/edit">
+	    Edit Session <span class="glyphicon glyphicon-pencil"></span>
+	  </a>
+	</button>
+	<button>
+	  <a href="/animals/{{animal}}/sessions/{{date}}/newexper">
+	    New Exper <span class="glyphicon glyphicon-certificate"></span>
+	  </a>
+	</button>
+      {% endif %}
+    </div>
+    <div class="btn-group">
+      <button>
+	<a href="/animals/{{animal}}/sessions/{{date}}/prev">
+	  <span class="glyphicon glyphicon-chevron-left"></span>
+	</a>
+      </button>
+      <button>
+	<a href="/animals/{{animal}}">
+	  TOC
+	</a>
+      </button>
+      <button>
+	<a href="/animals/{{animal}}/sessions/{{date}}/next">
+	  <span class="glyphicon glyphicon-chevron-right"></span>
+	</a>
+      </button>
+    </div>
   </div>
 
   <div class="panel panel-body">
@@ -85,10 +101,10 @@
 
 
   {% for (code, content) in note %}
-  {% if code == 0 %}
-  <textarea class="note" readonly style="width:100%">{{content}}</textarea>
-  {% else %}
-  {{content|safe}}
-  {% endif %}
+    {% if code == 0 %}
+      <textarea class="note" readonly style="width:100%">{{content}}</textarea>
+    {% else %}
+      {{content|safe}}
+    {% endif %}
   {% endfor %}
 </div>

@@ -23,9 +23,10 @@
       
       <form class="cmxform" id="editForm" method="post" action="{{action}}">
         <fieldset>
+	  <legend>Animal Info</legend>
           <input type="hidden" name="lastmod" value="{{row['lastmod']}}">
           <input type="hidden" name="ID" value="{{row['ID']}}">
-          <div class="panel panel-default col-sm-3" style="border: none;">
+          <div class="col-sm-3">
             <label for="animal">animal</label><input id="animal" name="animal" value="{{row['animal']}}"><br>
             <label for="idno">idno</label><input id="idno" name="idno" value="{{row['idno']}}"><br>
             <label for="dob">dob</label><input id="dob" name="dob" type="date" value="{{row['dob']}}"><br>
@@ -36,6 +37,7 @@
 	</fieldset>
 	
 	<fieldset>
+	  <legend>Notes</legend>
           <textarea id="{{boxid}}" name="note">{{row['note']}}</textarea>
 	</fieldset>
 	

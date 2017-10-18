@@ -23,12 +23,13 @@
       
       <form class="cmxform" id="editForm" method="post" action="{{action}}">
         <fieldset>
+	  <legend>Unit Params</legend>
           <input type="hidden" name="lastmod" value="{{row['lastmod']}}">
           <input type="hidden" name="ID" value="{{row['ID']}}">
           <input type="hidden" name="animal" value="{{row['animal']}}">
           <input type="hidden" name="date" value="{{row['date']}}">
           <input type="hidden" name="exper" value="{{row['exper']}}">
-          <div class="panel panel-default col-sm-3" style="border: none;">
+          <div class="col-sm-3">
             <label for="exper">exper</label><input disabled id="exper" name="exper" value="{{row['exper']}}"><br>
             <label for="unit">unit</label><input id="unit" name="unit" value="{{row['unit']}}"><br>
             <label for="well">well</label><input id="well" name="well" value="{{row['well']}}"><br>
@@ -36,12 +37,12 @@
             <label for="hemi">hemi</label><input id="hemi" name="hemi" value="{{row['hemi']}}"><br>
             <label for="area">area</label> <input id="area" name="area" value="{{row['area']}}"><br>
           </div>
-          <div class="panel panel-default col-sm-3" style="border: none;">
+          <div class="col-sm-3">
             <label for="depth">&mu;m depth</label><input id="depth" type="number" name="depth" value="{{row['depth']}}"><br>
             <label for="qual">qual (1-10)</label><input id="qual" type="number" name="qual" value="{{row['qual']}}"><br>
             <label for="latency">ms lat</label><input id="latency" type="number" name="latency" value="{{row['latency']}}"><br>
           </div>
-          <div class="panel panel-default col-sm-3" style="border: none;">
+          <div class="col-sm-3">
             <label for="rfx">rfx</label><input id="rfx" type="number" name="rfx" value="{{row['rfx']}}"><br>
             <label for="rfy">rfy</label><input id="rfy" type="number" name="rfy" value="{{row['rfy']}}"><br>
             <label for="rfr">rfr</label><input id="rfr" type="number" name="rfr" value="{{row['rfr']}}"><br>
@@ -51,6 +52,7 @@
         </fieldset>
 	
         <fieldset>
+	  <legend>Notes</legend>
           <textarea style="width:100%;" rows="7" id="{{boxid}}" name="note">{{row['note']}}</textarea>
         </fieldset>
 
