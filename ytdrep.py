@@ -24,7 +24,7 @@ def ytd_rep_stream(db, year):
     CENTER = workbook.add_format({'align':'center','border':1})
     npages = 0
     year = '%04d' % int(year)
-    for m in range(1,12):
+    for m in range(1,13):
         npages += dump(db, workbook, '%s-%02d' % (year, m,))
     workbook.close()
     output.seek(0)
