@@ -94,7 +94,7 @@ def dump(db, workbook, monthstr):
                     """ FROM session WHERE """
                     """ date >= '%s' AND date <= '%s' AND """
                     """ restricted > 0"""
-                    """ ORDER BY date""" % (start, start,))
+                    """ ORDER BY date""" % (start, stop,))
     animals = list(set([r['animal'] for r in rows]))
     animals.sort()
     
