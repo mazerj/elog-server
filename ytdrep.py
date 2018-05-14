@@ -97,7 +97,7 @@ def dump(db, workbook, monthstr):
                     """ ORDER BY date""" % (start, stop,))
     animals = list(set([r['animal'] for r in rows]))
     animals.sort()
-    
+
     if len(animals) == 0:
         # no animals on restriction in the specified month
         return 0
@@ -165,5 +165,4 @@ def dump(db, workbook, monthstr):
             emit(w)
         emit(w)
         w.set_column('E:J', 4)
-        return 1
-
+    return 1
