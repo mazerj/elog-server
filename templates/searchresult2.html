@@ -15,9 +15,11 @@
       </div>
       <div class="panel panel-body">
         {% for (name, item) in items %}
-          <button class="btn btn-default">
-            <a href="{{item}}">{{name}}</a>
-          </button>
+          <a href="{{item}}">
+            <button class="btn btn-default">
+	      {{name}}
+            </button>
+	  </a>
         {% endfor %}
       </div>
     </div>

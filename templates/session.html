@@ -14,34 +14,34 @@
 
     <div class="btn-group">
       {% if RW %}
-	<button>
-	  <a href="/animals/{{animal}}/sessions/{{date}}/edit">
+	<a href="/animals/{{animal}}/sessions/{{date}}/edit">
+	  <button>
 	    Edit Session <span class="glyphicon glyphicon-pencil"></span>
-	  </a>
-	</button>
-	<button>
-	  <a href="/animals/{{animal}}/sessions/{{date}}/newexper">
+	  </button>
+	</a>
+	<a href="/animals/{{animal}}/sessions/{{date}}/newexper">
+	  <button>
 	    New Exper <span class="glyphicon glyphicon-certificate"></span>
-	  </a>
-	</button>
+	  </button>
+	</a>
       {% endif %}
     </div>
     <div class="btn-group">
-      <button>
-	<a href="/animals/{{animal}}/sessions/{{date}}/prev">
+      <a href="/animals/{{animal}}/sessions/{{date}}/prev">
+	<button>
 	  <span class="glyphicon glyphicon-chevron-left"></span>
-	</a>
-      </button>
-      <button>
-	<a href="/animals/{{animal}}">
+	</button>
+      </a>
+      <a href="/animals/{{animal}}">
+	<button>
 	  TOC
-	</a>
-      </button>
-      <button>
-	<a href="/animals/{{animal}}/sessions/{{date}}/next">
+	</button>
+      </a>
+      <a href="/animals/{{animal}}/sessions/{{date}}/next">
+	<button>
 	  <span class="glyphicon glyphicon-chevron-right"></span>
-	</a>
-      </button>
+	</button>
+      </a>
     </div>
   </div>
 

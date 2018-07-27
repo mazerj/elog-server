@@ -79,24 +79,36 @@
 	    <button disabled style="border-width:0px; background-color:transparent;">Attachment Directory</button>
             <button disabled style="border-width:0px; background-color:transparent;">newest</button>
 	    <div class="btn-group">
-              <button type="button" class="btn btn-primary">
-		<a href="/attachments/showlist/1" style="color:white;"><span class="glyphicon glyphicon-fast-backward"></span></a>
+	      <a href="/attachments/showlist/1" style="color:white;">
+		<button type="button" class="btn btn-primary">
+		  <span class="glyphicon glyphicon-fast-backward"></span>
 	      </button>
-              <button type="button" class="btn btn-primary">
-		<a href="/attachments/showlist/{{page-10}}" style="color:white;"><span class="glyphicon glyphicon-step-backward"></span></a>
-	      </button>
-              <button type="button" class="btn btn-primary">
-		<a href="/attachments/showlist/{{page-1}}" style="color:white;"><span class="glyphicon glyphicon-chevron-left"></span></a>
-	      </button>
-              <button type="button" class="btn btn-primary">
-		<a href="/attachments/showlist/{{page+1}}" style="color:white;"><span class="glyphicon glyphicon-chevron-right"></span></a>
-	      </button>
-              <button type="button" class="btn btn-primary">
-		<a href="/attachments/showlist/{{page+10}}" style="color:white;"><span class="glyphicon glyphicon-step-forward"></span></a>
-	      </button>
-              <button type="button" class="btn btn-primary">
-		<a href="/attachments/showlist/10000" style="color:white;"><span class="glyphicon glyphicon-fast-forward"></span></a>
-	      </button>
+	      </a>
+	      <a href="/attachments/showlist/{{page-10}}" style="color:white;">
+		<button type="button" class="btn btn-primary">
+		  <span class="glyphicon glyphicon-step-backward"></span>
+		</button>
+	      </a>
+	      <a href="/attachments/showlist/{{page-1}}" style="color:white;">
+		<button type="button" class="btn btn-primary">
+		  <span class="glyphicon glyphicon-chevron-left"></span>
+		</button>
+	      </a>
+	      <a href="/attachments/showlist/{{page+1}}" style="color:white;">
+		<button type="button" class="btn btn-primary">
+		  <span class="glyphicon glyphicon-chevron-right"></span>
+		</button>
+	      </a>
+	      <a href="/attachments/showlist/{{page+10}}" style="color:white;">
+		<button type="button" class="btn btn-primary">
+		  <span class="glyphicon glyphicon-step-forward"></span>
+		</button>
+	      </a>
+	      <a href="/attachments/showlist/10000" style="color:white;">
+		<button type="button" class="btn btn-primary">
+		  <span class="glyphicon glyphicon-fast-forward"></span>
+		</button>
+	      </a>
 	    </div>
             <button disabled style="border-width:0px; background-color:transparent;">oldest</button>
             <button disabled style="border-width:0px; background-color:transparent;">Page {{page}}/{{pages}}</button>
@@ -121,40 +133,43 @@
 			    <button disabled style="border-width:1px; background-color:transparent;">			
 			      #{{'%d'|format(r['ID'])}}
 			    </button>
-                            <button>
-			      <a
-				href="/attachments/{{'%d'|format(r['ID'])}}/edit">edit</a>
-			    </button>
-                            <button>
-			      <a
-				onClick="copyTextToClipboard('<elog:attach={{r['ID']}}>')">copy</a>
-			    </button>
-                            <button>
-			      <a
-				href="/search/attach={{'%d'|format(r['ID'])}}">find</a>
-			    </button>
-                            <button>
-			      <a style="color:red;"
-				 onClick="bootbox.confirm('Really delete attachment?',
-				 function(r) {if (r) window.location.href='/attachments/{{'%d'|format(r['ID'])}}/deleteC'})">
-				 delete <span class="glyphicon glyphicon-warning-sign"></span></a>
-</a>
-</button>
-</div>
-<h4>{{r['title']}}</h4>
-{{r['note']}}
-</div>
-</div>
-</div>
-{% endif %}
-{% endfor %}
-</div>
-{% endfor %}
-</div>
+			    <a href="/attachments/{{'%d'|format(r['ID'])}}/edit">
+                              <button>
+				edit
+			      </button>
+			    </a>
+			    <a onClick="copyTextToClipboard('<elog:attach={{r['ID']}}>')">
+                              <button>
+				copy
+			      </button>
+			    </a>
+			    <a href="/search/attach={{'%d'|format(r['ID'])}}">
+                              <button>
+				find
+			      </button>
+			      </a>
+			    <a style="color:red;"
+			       onClick="bootbox.confirm('Really delete attachment?',
+					function(r) {if (r) window.location.href='/attachments/{{'%d'|format(r['ID'])}}/deleteC'})">
+                              <button>
+				delete <span class="glyphicon glyphicon-warning-sign"></span>
+			      </button>
+			    </a>
+			  </div>
+			  <h4>{{r['title']}}</h4>
+			  {{r['note']}}
+			</div>
+		      </div>
+		    </div>
+		    {% endif %}
+		    {% endfor %}
+	      </div>
+	      {% endfor %}
+	  </div>
+	  
+	  {% include "footer.html" %}
+	  {% include "js.html" %}
+	  
+    </body>
 
-{% include "footer.html" %}
-{% include "js.html" %}
-
-</body>
-
-</html>
+  </html>

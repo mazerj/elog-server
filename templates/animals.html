@@ -62,19 +62,22 @@
 	  
 	  
 	  <div class="btn-group">
-	    <button type="button" class="btn btn-primary">
-	      <a href="/animals/{{animal}}/edit" style="color:white;">
+	    <a href="/animals/{{animal}}/edit" style="color:white;">
+	      <button type="button" class="btn btn-primary">
 		<span class="glyphicon glyphicon-info-sign"></span>
 		edit
-	      </a>
-	    </button>
+	      </button>
+	    </a>
 	  </div>
 	  <div class="btn-group">
-	    <button type="button" class="btn btn-primary" style="background-color:pink;"
-		    onClick="bootbox.confirm('Really delete {{animal}}?',
-		    function(r) {if (r) window.location.href='/animals/{{animal}}/deleteC';})">
-		    <a style="color:black;"><span class="glyphicon glyphicon-warning-sign"></span> Delete </a>
-	    </button>
+	    <a style="color:black;">
+	      <button type="button" class="btn btn-primary" style="background-color:pink;"
+		      onClick="bootbox.confirm('Really delete {{animal}}?',
+			       function(r) {if (r) window.location.href='/animals/{{animal}}/deleteC';})">
+		<span class="glyphicon glyphicon-warning-sign"></span>
+		Delete
+	      </button>
+	    </a>
 	  </div>
 	</div>
       {% endfor %}

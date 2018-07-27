@@ -17,9 +17,11 @@
         <div class="panel panel-body">
 	  <div class="btn-group-vertical">
 	    {% for item in items %}
-              <button class="btn btn-default">
-		<a href="{{item}}">{{item}}</a>
-              </button>
+	      <a href="{{item}}">
+		<button class="btn btn-default">
+		  {{item}}
+		</button>
+	      </a>
             {% endfor %}
 	  </div>
         </div>

@@ -9,12 +9,16 @@
 	{{exper}}
       </button>
       {% if RW %}
-	<button class="hidden-print">
-	  <a href="/expers/{{exper}}/edit">Edit Exper <span class="glyphicon glyphicon-pencil"></span></a>
-	</button>
-	<button class="hidden-print">
-	  <a href="/expers/{{exper}}/newunit">New Unit <span class="glyphicon glyphicon-certificate"></span></a>      
-	</button>
+	<a href="/expers/{{exper}}/edit">
+	  <button class="hidden-print">
+	    Edit Exper <span class="glyphicon glyphicon-pencil"></span>
+	  </button>
+	</a>
+	<a href="/expers/{{exper}}/newunit">
+	  <button class="hidden-print">
+	    New Unit <span class="glyphicon glyphicon-certificate"></span>
+	  </button>
+	</a>      
       {% endif %}
     </div>
   </div>
@@ -38,105 +42,110 @@
               {{exper}}:{{unit['unit']}}
 	    </button>
             {% if RW %}
-	      <button class="hidden-print">
-		<a href="/expers/{{exper}}/units/{{unit['unit']}}/edit">Edit Unit <span class="glyphicon glyphicon-pencil"></span></a>
-	      </button>
-	      <button class="hidden-print">
-		<a style="color:red;"
-		   onClick="bootbox.confirm('Really delete {{exper}}:{{unit['unit']}}?',
-                   function(r) {if (r) window.location.href='/expers/{{exper}}/units/{{unit['unit']}}/deleteC';})">
-		   Delete Unit <span class="glyphicon glyphicon-warning-sign"></span></a>
-</a>
-</button>
-{% endif %}
-</div>
-</div>
-<div class="panel panel-body" style="margin:0px; padding:0px">
-  <div class="panel panel-default col-sm-3">
-    <div class="pbox-l col-sm-6">date</div>
-    <div class="pbox-r col-sm-6">{{unit['date']}}&nbsp</div>
-    
-    <div class="pbox-l col-sm-6">well</div>
-    <div class="pbox-r col-sm-6">{{unit['well']}}&nbsp</div>
-    
-    <div class="pbox-l col-sm-6">well loc</div>
-    <div class="pbox-r col-sm-6">{{unit['wellloc']}}&nbsp</div>
-  </div>
-  <div class="panel panel-default col-sm-3">
-    <div class="pbox-l col-sm-6">area</div>
-    <div class="pbox-r col-sm-6">{{unit['area']}}&nbsp</div>
-    
-    <div class="pbox-l col-sm-6">hemi</div>
-    <div class="pbox-r col-sm-6">{{unit['hemi']}}&nbsp</div>
-    
-    <div class="pbox-l col-sm-6">depth</div>
-    <div class="pbox-r col-sm-6">{{unit['depth']}}um&nbsp</div>
-  </div>
-  <div class="panel panel-default col-sm-3">
-    <div class="pbox-l col-sm-6">isol qual</div>
-    <div class="pbox-r col-sm-6">{{unit['qual']}}/10&nbsp</div>
+	      <a href="/expers/{{exper}}/units/{{unit['unit']}}/edit">
+		<button class="hidden-print">
+		  Edit Unit <span class="glyphicon glyphicon-pencil"></span>
+		</button>
+	      </a>
+	      <a style="color:red;"
+		 onClick="bootbox.confirm('Really delete {{exper}}:{{unit['unit']}}?',
+                 function(r) {if (r) window.location.href='/expers/{{exper}}/units/{{unit['unit']}}/deleteC';})">
+		 <button class="hidden-print">
+		   Delete Unit <span class="glyphicon glyphicon-warning-sign"></span>
+		 </button>
+	      </a>
+	    {% endif %}
+	  </div>
+	</div>
+	
+	<div class="panel panel-body" style="margin:0px; padding:0px">
+	  <div class="panel panel-default col-sm-3">
+	    <div class="pbox-l col-sm-6">date</div>
+	    <div class="pbox-r col-sm-6">{{unit['date']}}&nbsp</div>
+	    
+	    <div class="pbox-l col-sm-6">well</div>
+	    <div class="pbox-r col-sm-6">{{unit['well']}}&nbsp</div>
+	    
+	    <div class="pbox-l col-sm-6">well loc</div>
+	    <div class="pbox-r col-sm-6">{{unit['wellloc']}}&nbsp</div>
+	  </div>
+	  <div class="panel panel-default col-sm-3">
+	    <div class="pbox-l col-sm-6">area</div>
+	    <div class="pbox-r col-sm-6">{{unit['area']}}&nbsp</div>
+	    
+	    <div class="pbox-l col-sm-6">hemi</div>
+	    <div class="pbox-r col-sm-6">{{unit['hemi']}}&nbsp</div>
+	    
+	    <div class="pbox-l col-sm-6">depth</div>
+	    <div class="pbox-r col-sm-6">{{unit['depth']}}um&nbsp</div>
+	  </div>
+	  <div class="panel panel-default col-sm-3">
+	    <div class="pbox-l col-sm-6">isol qual</div>
+	    <div class="pbox-r col-sm-6">{{unit['qual']}}/10&nbsp</div>
 
-    <div class="pbox-l col-sm-6">ori</div>
-    <div class="pbox-r col-sm-6">{{unit['ori']}}&nbsp</div>
+	    <div class="pbox-l col-sm-6">ori</div>
+	    <div class="pbox-r col-sm-6">{{unit['ori']}}&nbsp</div>
 
-    <div class="pbox-l col-sm-6">color</div>
-    <div class="pbox-r col-sm-6">{{unit['color']}}&nbsp</div>
-  </div>
-  <div class="panel panel-default col-sm-3">
-    <div class="pbox-l col-sm-6">rf loc</div>
-    <div class="pbox-r col-sm-6">({{unit['rfx']|int}},{{unit['rfy']|int}})&nbsp</div>
+	    <div class="pbox-l col-sm-6">color</div>
+	    <div class="pbox-r col-sm-6">{{unit['color']}}&nbsp</div>
+	  </div>
+	  <div class="panel panel-default col-sm-3">
+	    <div class="pbox-l col-sm-6">rf loc</div>
+	    <div class="pbox-r col-sm-6">({{unit['rfx']|int}},{{unit['rfy']|int}})&nbsp</div>
 
-    <div class="pbox-l col-sm-6">rf rad</div>
-    <div class="pbox-r col-sm-6">{{unit['rfr']|int}}px&nbsp</div>
+	    <div class="pbox-l col-sm-6">rf rad</div>
+	    <div class="pbox-r col-sm-6">{{unit['rfr']|int}}px&nbsp</div>
+	    
+	    <div class="pbox-l col-sm-6">lat</div>
+	    <div class="pbox-r col-sm-6">{{unit['latency']}}ms&nbsp</div>
+	  </div>
 
-    <div class="pbox-l col-sm-6">lat</div>
-    <div class="pbox-r col-sm-6">{{unit['latency']}}ms&nbsp</div>
-  </div>
+	  <!-- general notes -->
+	  {% for (code, content) in unit['note'] %}
+	    {% if code == 0 %}
+	      <textarea class="note" readonly style="width:100%; height:100%;">{{content}}</textarea>
+	    {% else %}
+	      {{content|safe}}
+	    {% endif %}
+	  {% endfor %}
+	</div>
+      {% endfor %}
 
-  <!-- general notes -->
-  {% for (code, content) in unit['note'] %}
-    {% if code == 0 %}
-      <textarea class="note" readonly style="width:100%; height:100%;">{{content}}</textarea>
-    {% else %}
-      {{content|safe}}
-    {% endif %}
-  {% endfor %}
-</div>
-{% endfor %}
-
-{% if dfiles|length < 1 %}
-  <span class="label label-default">No Datafiles</span>
-{% else %}
-  {% for d in dfiles %}
-    <div class="well">
-      {% if d['crap'] %}
-	<strike>{{d['src']}}</strike>
+      {% if dfiles|length < 1 %}
+	<span class="label label-default">No Datafiles</span>
       {% else %}
-	{{d['src']}}
-      {% endif %}
-      
-      {% if RW %}
-	<button class="hidden-print">
-	  <a href="/dfile/{{d['ID']}}/edit">Edit dfile <span class="glyphicon glyphicon-pencil"></span></a>
-	</button>
-      {% endif %}
-      
-      {% if d['note']|length > 0 and d['note'][0][1]|length > 0 %}
-	<br>
-	{% for (code, content) in d['note'] %}
-          {% if code == 0 %}
-            <textarea class="note" readonly style="width:100%; height:100%;">
-	      {{content}}
-	    </textarea>
-          {% else %}
-            {{content|safe}}
-          {% endif %}
-	{% endfor %}
-      {% endif %}
-</div>
-{% endfor %}
-{% endif %}
-</div>
+	{% for d in dfiles %}
+	  <div class="well">
+	    {% if d['crap'] %}
+	      <strike>{{d['src']}}</strike>
+	    {% else %}
+	      {{d['src']}}
+	    {% endif %}
+	    
+	    {% if RW %}
+	      <a href="/dfile/{{d['ID']}}/edit">
+		<button class="hidden-print">
+		  Edit dfile <span class="glyphicon glyphicon-pencil"></span>
+		</button>
+	      </a>
+	    {% endif %}
+	    
+	    {% if d['note']|length > 0 and d['note'][0][1]|length > 0 %}
+	      <br>
+	      {% for (code, content) in d['note'] %}
+		{% if code == 0 %}
+		  <textarea class="note" readonly style="width:100%; height:100%;">
+		    {{content}}
+		  </textarea>
+		{% else %}
+		  {{content|safe}}
+		{% endif %}
+	      {% endfor %}
+	    {% endif %}
+      </div>
+    {% endfor %}
+  {% endif %}
+  </div>
 </div>
 </div>
 
