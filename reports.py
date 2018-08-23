@@ -13,7 +13,8 @@ import numpy as np
 from bokeh.plotting import figure
 from bokeh.resources import CDN
 from bokeh.embed import file_html
-from bokeh.io import gridplot
+#from bokeh.io import gridplot
+from bokeh.layouts import row
 from bokeh.models.formatters import DatetimeTickFormatter
 import pandas as pd
 import bokeh.palettes
@@ -323,7 +324,7 @@ def fluid_report(animal):
         plots.append(p)
         plots.append(None)
 
-	html = file_html(gridplot(plots, ncols=2), CDN, "%s fluids" % animal)
+	html = file_html(row(plots[0], plots[1]), CDN, "%s fluids" % animal)
     
 	return html
 
@@ -390,6 +391,6 @@ def weight_report(animal):
 
         plots.append(p)
 		
-	html = file_html(gridplot(plots, ncols=1), CDN, "%s fluids" % animal)
+	html = file_html(row(plots[0], plots[1]), CDN, "%s fluids" % animal)
     
 	return html

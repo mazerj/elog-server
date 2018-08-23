@@ -18,8 +18,10 @@ USE_SSL	 = False						# requires valid SSL certificate
 
 try:
 	import pam
+    sys.stderr.write("Use pam for authentication\n")
 except ImportError:
 	pam = None
+    sys.stderr.write("Using `userdata.txt` for authentication\n")
 
 def loaduserdata():
 	"""
@@ -342,7 +344,7 @@ def check_auth(username, password):
 	'userdata' file fille be read. At least one has to be available..
 	"""
 	if pam:
-		if pam.pam().authenticate(username, password):
+		if pam.authenticate(username, password):
 			session['username'] = username
 			session['prefs'] = get_userdata(username)
 			app.logger.info('PAM login %s rw=%d from %s' %
