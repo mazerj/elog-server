@@ -33,7 +33,15 @@
 	  
 	  <div class="btn-group">
 
-	    <div class="btn-group">
+	  <div class="btn-group">
+	    <a href="/animals/{{animal}}/sessions/today/0">
+	      <button type="button" class="btn btn-primary">
+		<span class="glyphicon glyphicon-arrow-right"></span>today
+	      </button>
+	    </a>
+	  </div>
+
+	  <div class="btn-group">
 	      <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
 		jump to... <span class="caret"></span></button>
 		<ul class="dropdown-menu" role="menu">
@@ -65,10 +73,11 @@
 	    <a href="/animals/{{animal}}/edit" style="color:white;">
 	      <button type="button" class="btn btn-primary">
 		<span class="glyphicon glyphicon-info-sign"></span>
-		edit
+		edit info
 	      </button>
 	    </a>
 	  </div>
+	  
 	  <div class="btn-group">
 	    <a style="color:black;">
 	      <button type="button" class="btn btn-primary" style="background-color:pink;"
