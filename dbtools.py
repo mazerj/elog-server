@@ -36,6 +36,9 @@ class Database(object):
             sys.stderr.write('Error: %s\n' % errstr)
             self.connection = None
             sys.exit(1)
+        sys.stderr.write('Using `%s` at %s@%s:%d.\n' % \
+                             (self.db, self.user, self.host, self.port))
+
 
     def flush(self):
         self.connection.commit()
@@ -78,7 +81,7 @@ def getdb(**kwargs):
     Database constructor as follows:
 
     quiet (bool) - print debugging info to stderr
-    host (str)   - hostname ('sql.mlab.yale.edu')
+    host (str)   - hostname ('sql.mlab')
     db (str)     - database name ('mlabdata')
     user (str)   - database user ('mlab')
     passwd (str) - database password for specified ('mlab')
