@@ -10,14 +10,34 @@ import sys
 from dbtools import getdb
 from ytdrep import ytd_rep_stream
 
+
 if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        sys.stderr.write('usage: %s year\n' % sys.argv[0])
-        sys.exit(1)
-        
+    import argparse
+
+    parser = argparse.ArgumentParser(
+        description="Dump YTD summary as .xlsx file."
+        )
+    parser.add_argument('year', metavar='year', \
+                        help="year to dump", \
+                        type=int, nargs=1)
+    parser.add_argument('--all', action="store_true", \
+                        help="show all animals (vs restricted)")
+    parser.add_argument('--animal', metavar='animal', \
+                        help="specify animal id",
+                        default='%',
+                        type=str)
+    args = parser.parse_args()
+    if args.animal is not None:
+        args.all = 1
+
     db = getdb()
-    year = '%04d' % int(sys.argv[1])
-    h = ytd_rep_stream(db, year)
+    year = '%04d' % args.year[0]
+
+    if args.all:
+        h = ytd_rep_stream(db, year, restricted=False, animal=args.animal)
+    else:
+        h = ytd_rep_stream(db, year, animal=args.animal)
+        
     while 1:
         x = h.read()
         if not x:

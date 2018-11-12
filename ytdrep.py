@@ -12,7 +12,7 @@ from io import BytesIO
 BOLD = None
 CENTER = None
 
-def ytd_rep_stream(db, year):
+def ytd_rep_stream(db, year, restricted=True, animal='%'):
     """Generate excel file year-to-date summary for specified year.
 
     This is the only real externally visible function in this module!
@@ -25,7 +25,8 @@ def ytd_rep_stream(db, year):
     npages = 0
     year = '%04d' % int(year)
     for m in range(1,13):
-        npages += dump(db, workbook, '%s-%02d' % (year, m,))
+        npages += dump(db, workbook, '%s-%02d' % (year, m,),
+                       restricted=restricted, animal=animal)
     workbook.close()
     output.seek(0)
     return output
@@ -83,18 +84,26 @@ def s2wt(s):
     else:
         return s
 
-def dump(db, workbook, monthstr):
+def dump(db, workbook, monthstr, restricted=True, animal='%'):
     # what month are we dumping?
     year, month = map(int, monthstr.split('-'))
     start = '%04d-%02d-%02d' % (year, month, 1)
     stop = '%04d-%02d-%02d' % (year, month, 31)
 
-    # first find all animals that were on restriction during that month
-    rows = db.query("""SELECT * """
-                    """ FROM session WHERE """
-                    """ date >= '%s' AND date <= '%s' AND """
-                    """ restricted > 0"""
-                    """ ORDER BY date""" % (start, stop,))
+    if restricted:
+        # first find all animals that were on restriction during that month
+        rows = db.query("""SELECT * """
+                        """ FROM session WHERE """
+                        """ date >= '%s' AND date <= '%s' AND """
+                        """ animal LIKE '%s' AND restricted > 0"""
+                        """ ORDER BY date""" % (start, stop, animal,))
+    else:
+        # just fine all animals with entries specified month
+        rows = db.query("""SELECT * """
+                        """ FROM session WHERE """
+                        """ date >= '%s' AND date <= '%s' AND """
+                        """ animal LIKE '%s' """
+                        """ ORDER BY date""" % (start, stop, animal,))
     animals = list(set([r['animal'] for r in rows]))
     animals.sort()
 
