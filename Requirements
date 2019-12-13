@@ -1,4 +1,8 @@
 This packages are required:
 
-sudo apt-get install python-flask python-pip python-pandas python-xlsxwriter
-sudo pip install bokeh pam
+> sudo apt-get install python-flask python-pip python-pandas python-xlsxwriter python-numpy
+> sudo pip install bokeh pam
+
+For some reason python-pam doesn't work, but pip version does.
+
+
