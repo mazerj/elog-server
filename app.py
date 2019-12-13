@@ -583,6 +583,7 @@ def session_new(animal, date):
 
 	animal = animal.encode()
 	date = date.encode()
+	user = session['username'].encode()
 	
 	db = getdb()
 	rows = db.query("""SELECT date FROM session WHERE """
@@ -593,7 +594,7 @@ def session_new(animal, date):
 						""" animal='%s' ORDER BY date DESC LIMIT 1""" % (animal,))
 
 		r = { 'computer':'web',
-			  'animal':animal, 'date':date, 'user':session['username'] }
+			  'animal':animal, 'date':date, 'user':user }
 		if len(rows):
 			# propagate these values from last entry..
 			r['restricted'] = int(rows[0]['restricted'])
@@ -606,7 +607,8 @@ def session_new(animal, date):
 			r['health_pcv'] = safeint(rows[0]['health_pcv'])
 
 		x = db.query("""INSERT INTO session (%s) VALUES %s""" % \
-					 (string.join(r.keys(), ','), tuple([r[k] for k in r.keys()]),))
+					 (string.join(r.keys(), ','), \
+					  tuple([r[k] for k in r.keys()]),))
 		if x is None:
 			return Error("Can't insert %s/%s" % (animal, date))
 
