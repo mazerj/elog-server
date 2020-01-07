@@ -1,0 +1,5 @@
+#!/bin/sh
+#
+# start flask-based elog server running using gunicorn on port 5000
+cd /auto/www/elogapp
+/usr/bin/gunicorn --workers 3 --bind 0.0.0.0:5000 wsgi:app
