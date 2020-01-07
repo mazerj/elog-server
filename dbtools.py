@@ -36,8 +36,8 @@ class Database(object):
             sys.stderr.write('Error: %s\n' % errstr)
             self.connection = None
             sys.exit(1)
-        sys.stderr.write('Using `%s` at %s@%s:%d.\n' % \
-                             (self.db, self.user, self.host, self.port))
+        #sys.stderr.write('Using `%s` at %s@%s:%d.\n' % \
+        #                     (self.db, self.user, self.host, self.port))
 
 
     def flush(self):

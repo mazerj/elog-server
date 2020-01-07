@@ -17,11 +17,11 @@ USERS	 = {}
 USE_SSL	 = False						# requires valid SSL certificate
 
 try:
+	# try to use PAM for authentication (first choice)
 	import pam
-    sys.stderr.write("Use pam for authentication\n")
 except ImportError:
+	# fall back to `userdata.txt` file in this directory.
 	pam = None
-    sys.stderr.write("Using `userdata.txt` for authentication\n")
 
 def loaduserdata():
 	"""
@@ -1161,6 +1161,23 @@ def insert_glyph(name):
 	<span class="glyphicon glyphicon-%s" aria-hidden="true"></span>
 	""" % name
 
+def create_app():
+	if pam is None and not loaduserdata():
+		sys.stderr.write("Must provide PAM or 'userdata' file\n")
+		
+	try:
+		getanimals()
+	except TypeError:
+		sys.stderr.write('run fix-animals to update database\n')
+		sys.exit(1)
+
+	if not LOGGING:
+		import logging
+		log = logging.getLogger('werkzeug')
+		log.setLevel(logging.ERROR)
+
+	app.secret_key = 'aslLKJLjkasdf90u8s(&*(&assdfslkjfasLKJdf8'
+    return app
 
 if __name__ == "__main__":
 	if pam is None and not loaduserdata():
